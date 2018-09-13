@@ -1,5 +1,6 @@
-# BoardGame/Chess
-' created by Leonard Pauli, 7-8 sept 2018
+# Chess
+' LeonardPauli/chess
+	Created by Leonard Pauli, 7-8 sept 2018
 
 ' changes:
 	- using initial index 0 instead of common verbal index 1
@@ -8,50 +9,8 @@
 ' rim:
 	(a where b) -> (a | filter b)
 
+import (:{BoardGame})
 
-' TODO
-	allowed moves
-		move types definition of available tiles as a function
-	move as subtype of action?
-	undo functionallity
-	player.captured pieces
-		score
-			use for remi
-	game logic
-		on start:
-			delaUt pieces
-			do rounds: round
-				do moves
-					handle capture?
-					handle state change?
-					handle en pesant
-					handle promotion
-	simple NPC
-		- random
-		- capture if possible
-		- prioritise higher score
-		- inspect possible reaches of two moves of same piece
-			- if possible capture much higher then after just one
-				- move to allow it during next move
-	time limit per round option
-	generate moves sequence string / serialize according to standards
-	simple terminal stream based
-		- input
-			- move {move command}\n // performs move action
-			- show // prints board + player scores
-	simple terminal interactive
-		- like the stream based, but using clear screen + show + prompts for better UI
-	specify tests
-	setup java project
-	setup tests
-	implement tests
-	implement BoardGame
-	implement Chess
-	etc
-	commit final
-	
-
-# Chess
 
 Chess is BoardGame
 	rule:
@@ -191,54 +150,3 @@ Chess is BoardGame
 			- all (tilesInbetween king |> .safe with player) // all alias and
 			- all (toBeVacant |> .pieces(not (rook or king)) is Empty)
 			- player.moves(is Action.Castling).count is 0
-
-
-# BoardGame
-
-BoardGame
-	players is many Player
-		name is String
-		pieces is many Piece
-
-	rounds is many Round
-		moves is many Move
-			time{(start, end) is Date, duration is Time}
-			player is Player
-			piece is Piece
-			movement is Movement
-				type is Movement.Type
-					name is String
-					reaches{is Boolean} with {tile, startingTile}
-				from is Position or Empty
-				to is Position or Empty
-				do reverse: ... // for undo
-
-	states is many State
-
-	Player
-		name is String
-		moves is many Move
-		pieces is many Piece
-		active is Boolean
-
-	Board
-		tiles is many Tile
-			edges is many Edge
-				tiles is many{2} Tile
-				movement.type{is Movement.Type or Empty} with origin{is in tiles}:
-					' returns:
-						- None if blocked/one directional
-						- same if unidirectional
-						- else conditional // (eg. pawn in chess cannot move backwards)
-			pieces is many Piece
-			position is Position
-				as String
-
-
-	Piece
-		owner.player is Player
-		tile is Tile
-		type is Type
-			name is String
-			moves.possible.types is many Movement.Type
-			// moves.possible.types with state: ...

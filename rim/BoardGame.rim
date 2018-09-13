@@ -1,0 +1,54 @@
+# BoardGame
+' LeonardPauli/chess
+	Created by Leonard Pauli, 7-8 sept 2018
+
+BoardGame
+	players is many Player
+	board is Board
+
+	states is many State
+	rounds is many Round
+
+
+	Player
+		name is String
+		moves is many Move
+		pieces is many Piece
+		active is Boolean
+
+	State // to be extended
+
+	Board
+		tiles is many Tile:
+			edges is many Edge:
+				tiles is many{2} Tile
+				movement.type{is Movement.Type or Empty} with origin{is in tiles}:
+					' returns:
+						- None if blocked/one directional
+						- same if unidirectional
+						- else conditional // (eg. pawn in chess cannot move backwards)
+			pieces is many Piece
+			position is Position:
+				as String
+
+	Piece
+		owner.player is Player
+		tile is Tile
+		type is Type:
+			name is String
+			moves.possible.types is many Movement.Type
+			// moves.possible.types with state: ...
+
+
+	Round
+		moves is many Move:
+			time{(start, end) is Date, duration is Time}
+			player is Player
+			piece is Piece
+			movement is Movement:
+				type is Movement.Type
+					name is String
+					reaches{is Boolean} with {tile, startingTile}
+				from is Position or Empty
+				to is Position or Empty
+				do reverse: ... // for undo

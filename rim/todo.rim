@@ -1,0 +1,43 @@
+# todo
+' LeonardPauli/chess
+	Created by Leonard Pauli, 7-8 sept 2018
+
+- allowed moves
+		move types definition of available tiles as a function
+- move as subtype of action?
+- undo functionallity
+- player.captured pieces
+		score
+			use for remi
+- game logic
+		on start:
+			delaUt pieces
+			do rounds: round
+				do moves
+					handle capture?
+					handle state change?
+					handle en pesant
+					handle promotion
+- simple NPC
+		- random
+		- capture if possible
+		- prioritise higher score
+		- inspect possible reaches of two moves of same piece
+			- if possible capture much higher then after just one
+				- move to allow it during next move
+- time limit per round option
+- generate moves sequence string / serialize according to standards
+- simple terminal stream based
+		- input
+			- move {move command}\n // performs move action
+			- show // prints board + player scores
+- simple terminal interactive
+		- like the stream based, but using clear screen + show + prompts for better UI
+- specify tests
+- setup java project
+- setup tests
+- implement tests
+- implement BoardGame
+- implement Chess
+- etc
+- commit final
