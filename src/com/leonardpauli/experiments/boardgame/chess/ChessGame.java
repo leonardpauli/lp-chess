@@ -8,13 +8,15 @@ public class ChessGame {
 	Player[] players = new Player[2]; // order determines play order
 	Board board;
 	List<Round> rounds = new ArrayList<Round>();
+	List<Piece> pieces = new ArrayList<Piece>();
 
 	public static void ChessGame() {
 		this.players = [
-			new Player("White", "white"),
-			new Player("Black", "black"),
+			new Player("White", Color.white),
+			new Player("Black", Color.black),
 		];
 		this.board = new Board();
+		resetPieces();
 	}
 
 	public Round currentRound() {
@@ -24,49 +26,7 @@ public class ChessGame {
 		Round round = currentRound();
 		return players[round.moves.size() % players.length];
 	}
-}
 
-class Player {
-	String name;
-	String color;
-	Player(String name, String color) {
-		this.name = name; this.color = color;
-	}
-}
 
-class Board {
-	Tile[][] tiles;
-	Size size = new Size(8, 8);
-
-	Board() {
-		tiles = new Tiles[size.x][size.y];
-		for (int x = 0; x<size.x; x++) {
-			for (int y = 0; y<size.y; y++) {
-				Tile tile = tiles[x][y] = new Tile();
-				tile.position = new Position(x, y);
-			}	
-		}
-	};
-}
-
-class Point {public int x; public int y; Point(int x, int y) {this.x = x; this.y = y;}}
-class Size extends Point {Size(int x, int y) {super(x, y)}}
-class Position extends Point {
-	Position(int x, int y) {super(x, y)}
-
-}
-
-class Tile {
-	public Position position;
-	Tile(Position position) {this.position = position;}
-}
-
-class Round {
-	public List<Move> moves = new ArrayList<Move>();
-	Round() {}
-}
-
-class Move {
-	Player player;
-	Move(Player player) {this.player = player;}
+	public void resetPieces() { /* ... */ }
 }
