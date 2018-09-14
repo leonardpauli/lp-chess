@@ -19,6 +19,8 @@ public class ChessGame {
 
 		givePlayersHome();
 		resetPieces();
+
+		rounds.add(new Round());
 	}
 
 	public Round currentRound() {
@@ -80,5 +82,16 @@ public class ChessGame {
 	public void resetPieces() {
 		for (Player p : players)
 			resetPieces(player);
+	}
+
+
+	void validateMove(Move move) throws InvalidMoveException {
+		// TODO
+		if (move.player != getCurrentPlayer())
+			throw InvalidMoveException("not that players turn");
+	}
+	public void playMove(Move move) throws InvalidMoveException {
+		validateMove(move);
+		
 	}
 }

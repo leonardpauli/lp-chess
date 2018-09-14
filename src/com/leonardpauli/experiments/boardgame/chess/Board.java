@@ -14,6 +14,24 @@ class Board {
 			}
 		}
 
+		public Tile getTileAt(Position position) throws InvalidMoveException {
+			bool inBounds =
+				0 <= position.x && position.x < tiles.length &&
+				0 <= position.y && position.y < tiles[position.x].length
+
+			if (!inBounds) throw InvalidMoveException(
+				InvalidMoveException.Type.DESTINATION_NOT_FOUND);
+
+			return tiles[position.x][position.y];
+		}
+
+		public Piece getPieceAt(Position position) throws InvalidMoveException {
+			return getTileAt(position).piece;
+		}
+		public Piece getPieceAt(String code) throws ChessException, InvalidMoveException {
+			return getPieceAt(new Position(code));
+		}
+
 
 		public void removePiece(Piece piece) {
 			if (piece.position)
@@ -22,18 +40,13 @@ class Board {
 		}
 
 		public void placePiece(Piece piece, Position position) throws InvalidMoveException {
-			bool inBounds =
-				0 <= position.x && position.x < tiles.length &&
-				0 <= position.y && position.y < tiles[position.x].length
+			Tile tile = getTileAt(position);
 
-			if (!inBounds) throw InvalidMoveException(
-				InvalidMoveException.Type.DESTINATION_NOT_FOUND);
-
-			if (tiles[position.x][position.y].piece!=null) throw InvalidMoveException(
+			if (tile.piece!=null) throw InvalidMoveException(
 				InvalidMoveException.Type.DESTINATION_OCCUPIED);
 
 			piece.position = position;
-			tiles[position.x][position.y].piece = piece;
+			tile.piece = piece;
 		}
 	}
 
@@ -84,6 +97,13 @@ class Board {
 
 class Position extends Point {
 	Position(int x, int y) {super(x, y);}
+	Position(String code) throws ChessException {
+		if (code.length() != 2) throw new ChessException(
+			"code.length has to be 2, was "+Integer.toString(code.length()));
+		int x = ((int)code.charAt(0)) - 65;
+		int y = Integer.parseInt(code.substring(1,2));
+		super(x, y);
+	}
 	public String toString() { return colString() + rowString(); }
 	public String colString() { return Character.toString((char) (x + 65)); }
 	public String rowString() { return Integer.toString(y+1); }

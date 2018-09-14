@@ -31,6 +31,8 @@ public class PieceType {
 }
 
 
+// TODO: use extended enum instead??
+
 class King extends PieceType {
 	public static String name = "King";
 	public static int defaultValue = 20;

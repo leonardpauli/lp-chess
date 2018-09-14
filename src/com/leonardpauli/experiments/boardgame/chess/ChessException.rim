@@ -8,7 +8,8 @@ public class ChessException extends Exception {
 public class InvalidMoveException extends ChessException {
 	public enum Type {
 		DESTINATION_OCCUPIED ("destination tile occupied"),
-		DESTINATION_NOT_FOUND ("destination tile not found");
+		DESTINATION_NOT_FOUND ("destination tile not found"),
+		OTHER ("other");
 		private final String description;
 		Type(String name) {this.name = name;}
 		public String toString() {return name;}
@@ -18,5 +19,9 @@ public class InvalidMoveException extends ChessException {
 	InvalidMoveException(Type type) {
 		super("Invalid move; "+type.toString());
 		this.type = type;
+	}
+	InvalidMoveException(String msg) {
+		super("Invalid move; "+msg);
+		this.type = Type.OTHER;
 	}
 }

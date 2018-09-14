@@ -14,7 +14,12 @@ product usage:
 	- instantiate
 		ChessGame game = new ChessGame()
 	- get whose players turn it is
-		Player p = game.getCurrentPlayer()
+		Player player = game.getCurrentPlayer()
+	- try faulty move
+		Piece piece = board.pieceAt(Position position)
+		Piece piece = board.pieceAt(String code) // "A2"
+		
+		game.playMove(new Move(player, piece, new Movement(Movement.Type.Diagonal, )))
 
 
 	- automated tests using online db chess notations + expected resulting boards
