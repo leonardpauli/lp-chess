@@ -1,6 +1,7 @@
 # Chess.Simple
 ' LeonardPauli/chess
 	Created by Leonard Pauli, 14 sept 2018
+	some notes inspired by discussion during indataplusplus lesson
 
 ' changes:
 	- using initial index 0 instead of common verbal index 1
@@ -14,7 +15,9 @@ product usage:
 		ChessGame game = new ChessGame()
 	- get whose players turn it is
 		Player p = game.getCurrentPlayer()
-	
+	- automated tests using online db chess notations + expected resulting boards
+	- test piece placements
+	- test by board formatted as unicode strings
 
 tests:
 	- getCurrentPlayer

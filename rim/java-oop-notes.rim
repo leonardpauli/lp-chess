@@ -164,6 +164,11 @@ arrays:
 			(d, b): simple unit testable, no dependencies
 			c: unit test includes one dependency, a little bit larger surface area
 			a: many dependencies, more of an integration test
+
+			- expected true cases
+			- expected false cases
+			- edge cases
+			- extreme cases
 		- end-to-end, e2e, test
 			like an automated userflow
 			to find missing unit tests
