@@ -12,9 +12,21 @@ product usage:
 	- import ChessGame from package "com.leonardpauli.experiments.boardgame.chess.simple"
 	- instantiate
 		ChessGame game = new ChessGame()
-		
-'
-	Chess.Simple
+	- get whose players turn it is
+		Player p = game.getCurrentPlayer()
+	
+
+tests:
+	- getCurrentPlayer
+		instantiate
+		is players[0]
+		do move
+		is players[1]
+		do move
+		is players[0]
+
+
+' Chess.Simple
 		movesPerPlayerAndRound is Int: 1
 		playersCountTarget is Int: 2
 		constructor () {

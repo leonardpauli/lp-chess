@@ -121,3 +121,23 @@ enum:
 	example:
 		enum ChessPlayer { WHITE, BLACK }
 		ChessPlayer.WHITE
+
+
+
+# primitives
+
+arrays:
+	constant size:
+		int[] xs = new int[size]
+		xs.length == size
+		xs[0] = 5;
+		xs[0] == 5;
+	dynamic size:
+		import java.util.List;
+		import java.util.ArrayList;
+		List<MyType> xs = new ArrayList<MyType>();
+		MyType x = new MyType()
+		xs.add(x)
+		xs.get(0) == x
+		xs.size() // length
+
