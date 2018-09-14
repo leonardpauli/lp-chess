@@ -1,11 +1,18 @@
 # LeonardPauli/chess
 *code experiments with the board game chess as subject*
 
+## WIP
+
+see `rim/Chess.Simple.rim` for current MVP goal, then the rest of the files in `rim/` for notes about the final goal.
+
+`rim/Chess.Simple.rim` is being implemented in `src`; open the repo folder with intelliJ + see tests
+
+
+### notes
+
 - using rim
 - using js
 - using java
-
-### notes
 
 #### idea: to create a general/abstract "BoardGame" base class (extended by Chess); following the normalisation principle.
 

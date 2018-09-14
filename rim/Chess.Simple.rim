@@ -1,0 +1,23 @@
+# Chess.Simple
+' LeonardPauli/chess
+	Created by Leonard Pauli, 14 sept 2018
+
+' changes:
+	- using initial index 0 instead of common verbal index 1
+		eg. for row, rank, etc
+
+
+product usage:
+	- include Chess.jar as lib (?)
+	- import ChessGame from package "com.leonardpauli.experiments.boardgame.chess.simple"
+	- instantiate
+		ChessGame game = new ChessGame()
+		
+'
+	Chess.Simple
+		movesPerPlayerAndRound is Int: 1
+		playersCountTarget is Int: 2
+		constructor () {
+		}
+	MovementType
+		name is String
