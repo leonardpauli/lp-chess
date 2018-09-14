@@ -41,3 +41,33 @@
 - implement Chess
 - etc
 - commit final
+
+
+' notes:
+	Checkmate, stalemate, draw by repetition, draw by insufficient force, 50-move draw.
+	http://alefwiki.se/index.php?title=Dimensionsschack
+
+' links
+	https://docs.gradle.org/current/userguide/tutorial_java_projects.html
+	https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
+	maven vs gradle?
+	https://www.tutorialspoint.com/behavior_driven_development/behavior_driven_development_quick_guide.htm
+	http://www.functionaljava.org/
+	https://dzone.com/articles/junit-tutorial-beginners // meh.., reference maybe
+
+git bisect // binary search from last known good commit to current commit to find commit that introdued an issue
+	// https://blog.javabien.net/2010/03/23/git-bisect-might-save-your-day/
+	manually
+		last-known-good-version // eg. HEAD VERSION1.1.3
+		- git bisect start last-known-good-version
+		- repeat:
+			- test current commit
+			- (git bisect good) or (git bisect bad) // will checkout a different commit
+		- when done, HEAD is at the commit that introduced the issue
+		- git bisect reset // get back to commit where you started
+	automatic
+		- cat ../maveneclipse.sh
+			#!/bin/sh
+			mvn eclipse:eclipse > /dev/null
+		- git bisect start HEAD VERSION1.1.3
+		- git bisect run ../maveneclipse.sh
