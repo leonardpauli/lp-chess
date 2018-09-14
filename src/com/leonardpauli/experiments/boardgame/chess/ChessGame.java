@@ -8,6 +8,17 @@ public class ChessGame {
 	Player[] players = new Player[2]; // order determines play order
 	Board board;
 	List<Round> rounds = new ArrayList<Round>();
+	
+	public enum State {
+		Default,
+		Check, // escapable immediate threat for target's king by source
+		Remi,
+		Stalemate, // player unable to move, but isn't in check or checkmate
+		Checkmate;
+	}
+	State state = State.Default;
+
+	static int movesPerRound = 2;
 
 	public ChessGame() {
 		players = [
@@ -89,9 +100,28 @@ public class ChessGame {
 		// TODO
 		if (move.player != getCurrentPlayer())
 			throw InvalidMoveException("not that players turn");
+
+		// TODO if state != State.Default ...
 	}
 	public void playMove(Move move) throws InvalidMoveException {
 		validateMove(move);
+
+		Round round = currentRound();
+		round.addMove(move);
 		
+		// TODO: check times, etc
+
+		refreshState();
+
+		if (round.moves.size() == movesPerRound) {
+			rounds.add(new Round());
+		}
 	}
+
+	public void refreshState() {
+		// TODO: check if check mate, etc
+		// state = ...
+	}
+
+	public State getState() { return state; }
 }

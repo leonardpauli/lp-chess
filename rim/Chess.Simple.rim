@@ -16,10 +16,32 @@ product usage:
 	- get whose players turn it is
 		Player player = game.getCurrentPlayer()
 	- try faulty move
-		Piece piece = board.pieceAt(Position position)
-		Piece piece = board.pieceAt(String code) // "A2"
-		
-		game.playMove(new Move(player, piece, new Movement(Movement.Type.Diagonal, )))
+		Piece piece = board.pieceAt("A2")
+		Position destination = new Position("A4")
+		Movement movement = board.getAvailableMovements(piece, destination).get(0)
+		game.playMove(new Move(player, piece, movement))
+		' variants:
+			- move not available to piece
+			- to occupied tile
+			- wrong player
+			- to non-existent tile
+			- during check
+			- after too much time (if time mode enabled)
+			- Position(code).test: wrong format to position code
+				- outside range
+				- empty
+				- long
+				- faulty char conversion to int
+	- try ok move // like above but different pos
+		- make sure all movements are tried, inc. casteling
+	- load board + next player turn (currentPlayer) from string
+	- save board to string
+	- load game from standard movement codes
+	- save game to standard movement codes
+	- try undo:
+		game.playMove(game.rounds.last().moves.last().getReverseMove())
+		// TODO: how to interact with times? Restart timer?
+
 
 
 	- automated tests using online db chess notations + expected resulting boards

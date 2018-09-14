@@ -4,6 +4,8 @@ package com.leonardpauli.experiments.boardgame.chess;
 class Round {
 	public List<Move> moves = new ArrayList<Move>();
 	Round() {}
+
+	public void addMove(Move move) { moves.add(move); }
 }
 
 class Move {
@@ -17,6 +19,11 @@ class Move {
 		this.event = new Event();
 		this.piece = piece;
 		this.movement = movement;
+	}
+
+	public Move getReverseMove() {
+		// TODO: for undo
+		return null;
 	}
 }
 

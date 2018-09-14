@@ -42,6 +42,9 @@
 - etc
 - commit final
 
+- variant:
+	items! ability to place eg. hidden mines on tiles; lowering a piece's value (+ increasing partial capture score), until zero (taken).
+	ability to craft tools, etc :)))
 
 ' notes:
 	Checkmate, stalemate, draw by repetition, draw by insufficient force, 50-move draw.

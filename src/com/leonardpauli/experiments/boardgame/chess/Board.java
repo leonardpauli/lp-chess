@@ -50,6 +50,17 @@ class Board {
 		}
 	}
 
+
+	public List<Movement> getAvailableMovements(Piece piece, Position destination) {
+		List<Movement> movements = new ArrayList<Movement>();
+
+		// TODO
+
+		return movements;
+	}
+
+
+
 	public enum PrintStyle { Plain, Pretty, PrettyWithNumbers };
 	public String toString(PrintStyle style) {
 		StringBuilder sb = new StringBuilder("");
