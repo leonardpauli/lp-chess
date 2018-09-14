@@ -129,6 +129,43 @@ enum:
 	example:
 		enum ChessPlayer { WHITE, BLACK }
 		ChessPlayer.WHITE
+		ChessPlayer.WHITE.name() == "WHITE"
+	example.extended:
+		public enum Modes {
+			mode1 ("a"),
+			mode2 ("b"),
+			mode3 ("c");
+
+			private final String name;
+			private Modes(String name) { this.name = name; }
+			public String toString() { return name; }
+		}
+		Modes.mode1.toString() == "a"
+
+
+exceptions:
+	example:
+		// based on https://www.protechtraining.com/content/java_fundamentals_tutorial-exceptions
+		public class InsufficientBalanceException extends Exception {
+			private final double available;
+			private final double required;
+
+			public InsufficientBalanceException(double available, double required) {
+				super("Available $"+available+" but required $"+required);
+				this.available = available; this.required = required;
+			}
+
+			public double getAvailable() { return available; }
+			public double getRequired() { return required; }
+		}
+	usage:
+		void doSomething() throws InsufficientBalanceException {
+			if (1==2) throw new InsufficientBalanceException(1, 2);
+		}
+		void proxy() throws InsufficientBalanceException { doSomething(); }
+		void nice() {
+			try { proxy(); } catch (InsufficientBalanceException e) { ... }
+		}
 
 
 
@@ -149,8 +186,13 @@ arrays:
 		xs.get(0) == x
 		xs.size() // length
 		for (MyType x : xs) { ...x... }
+		xs.addAll(xs2)
 
 
+strings:
+	StringBuilder sb = new StringBuilder("");
+	sb.append("...");
+	sb.toString();
 
 
 # testing
