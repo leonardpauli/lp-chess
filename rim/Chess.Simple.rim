@@ -15,6 +15,8 @@ product usage:
 		ChessGame game = new ChessGame()
 	- get whose players turn it is
 		Player p = game.getCurrentPlayer()
+
+
 	- automated tests using online db chess notations + expected resulting boards
 	- test piece placements
 	- test by board formatted as unicode strings
@@ -27,6 +29,36 @@ tests:
 		is players[1]
 		do move
 		is players[0]
+	- boardPlain
+		Board board = new Board();
+		assert(board.toString(), "
+			  ╭────────────────────────╮
+			8 │ .     .     .     .    │
+			7 │    .     .     .     . │
+			6 │ .     .     .     .    │
+			5 │    .     .     .     . │
+			4 │ .     .     .     .    │
+			3 │    .     .     .     . │
+			2 │ .     .     .     .    │
+			1 │    .     .     .     . │
+			  ╰────────────────────────╯
+			    A  B  C  D  E  F  G  H
+	- boardAtStart
+		instantiate
+		assert(game.board.toString(), "
+			  ╭────────────────────────╮
+			8 │ ♖  ♘  ♗  ♔  ♕  ♗  ♘  ♖ │
+			7 │ ♙  ♙  ♙  ♙  ♙  ♙  ♙  ♙ │
+			6 │ .     .     .     .    │
+			5 │    .     .     .     . │
+			4 │ .     .     .     .    │
+			3 │    .     .     .     . │
+			2 │ ♟  ♟  ♟  ♟  ♟  ♟  ♟  ♟ │
+			1 │ ♜  ♞  ♝  ♚  ♛  ♝  ♞  ♜ │
+			  ╰────────────────────────╯
+			    A  B  C  D  E  F  G  H
+
+
 
 
 ' Chess.Simple

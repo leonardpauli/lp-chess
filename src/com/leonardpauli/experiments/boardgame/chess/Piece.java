@@ -10,7 +10,11 @@ public class Piece {
 	}
 
 	public Color getColor() { return owner.color; }
-	public String toChar() { return type.toChar(getColor()); }
+	public String toChar() { return getColor()==Color.black
+		? type.getLetter().toLowerCase()
+		: type.getLetter().toUpperCase();
+	}
+	public String toCharPretty() { return type.toChar(getColor()); }
 }
 
 public class PieceType {
