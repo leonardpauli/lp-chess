@@ -84,6 +84,8 @@ Chess is BoardGame
 			file: col as String
 			as String // eg. A4
 
+		char with color: "⬛" if black else "︎⬜︎"
+
 	Board.homerank with player: .tiles where (.position.row.rank with player) is home
 
 	Piece
@@ -92,15 +94,21 @@ Chess is BoardGame
 
 	Piece.Type:
 		- King
+			char with color: "♔" if black else "♚"
 		- Queen
+			char with color: "♕" if black else "♛"
 			value: 9
 		- Rook
+			char with color: "♖" if black else "♜"
 			value: 5
 		- Knight
+			char with color: "♘" if black else "♞"
 			value: 3
 		- Bishop
+			char with color: "♗" if black else "♝"
 			value: 3
 		- Pawn
+			char with color: "♙" if black else "♟"
 			value: 1
 
 	Player
