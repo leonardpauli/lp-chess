@@ -1,0 +1,22 @@
+package com.leonardpauli.experiments.boardgame.chess;
+
+
+public class ChessException extends Exception {
+	public ChessException(String msg) { super(msg); }
+}
+
+public class InvalidMoveException extends ChessException {
+	public enum Type {
+		DESTINATION_OCCUPIED ("destination tile occupied"),
+		DESTINATION_NOT_FOUND ("destination tile not found");
+		private final String description;
+		Type(String name) {this.name = name;}
+		public String toString() {return name;}
+	}
+	public Type type;
+
+	InvalidMoveException(Type type) {
+		super("Invalid move; "+type.toString());
+		this.type = type;
+	}
+}

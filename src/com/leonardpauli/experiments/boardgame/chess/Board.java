@@ -13,6 +13,28 @@ class Board {
 				Tile tile = tiles[x][y] = new Tile(position);
 			}
 		}
+
+
+		public void removePiece(Piece piece) {
+			if (piece.position)
+				tiles[piece.position.x][piece.position.y].piece = null;
+			piece.position = null;
+		}
+
+		public void placePiece(Piece piece, Position position) throws InvalidMoveException {
+			bool inBounds =
+				0 <= position.x && position.x < tiles.length &&
+				0 <= position.y && position.y < tiles[position.x].length
+
+			if (!inBounds) throw InvalidMoveException(
+				InvalidMoveException.Type.DESTINATION_NOT_FOUND);
+
+			if (tiles[position.x][position.y].piece!=null) throw InvalidMoveException(
+				InvalidMoveException.Type.DESTINATION_OCCUPIED);
+
+			piece.position = position;
+			tiles[position.x][position.y].piece = piece;
+		}
 	}
 
 	public enum PrintStyle { Plain, Pretty, PrettyWithNumbers };
