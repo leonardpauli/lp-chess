@@ -5,8 +5,7 @@ BoardGame
 	states is many State
 	State // to be extended
 
-	Board.Tile.Edge:
-		tiles is many{2} Tile
+	' Board.Tile.Edge:
 		movement.type{is Movement.Type or Empty} with origin{is in tiles}:
 			' returns:
 				- None if blocked/one directional
@@ -41,8 +40,8 @@ Chess is BoardGame
 		- "diagonal"
 		- "left"
 		- "right"
-		- "up"
-		- "down"
+		- "forward"
+		- "backwards"
 		- "l-move" // the horse
 		- "castling" // rokad? tower and king?
 		- "en-passant" // bonde tar snett

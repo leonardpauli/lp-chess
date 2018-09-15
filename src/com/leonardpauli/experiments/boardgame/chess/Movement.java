@@ -2,31 +2,42 @@ package com.leonardpauli.experiments.boardgame.chess;
 
 
 public class Movement {
+	MovementType type;
+	Edge edge;
+
 	Piece capturedPiece;
 	int value;
-	public MovementType type;
 
-	Movement(MovementType type) {
+	Movement(MovementType type, Edge edge) {
 		this.type = type;
+		this.edge = edge;
+	}
+
+	setCapturedPiece(Piece piece) {
+		this.capturedPiece = piece;
+		this.value = piece.type.getValue();
 	}
 }
 
 public enum MovementType {
-	DIAGONAL ("diagonal", [EdgeType.LEFT, EdgeType.RIGHT]),
-	LEFT ("left"),
-	RIGHT ("right"),
+	ONE_STEP ("one-step"),
+
+	DIAGONAL ("diagonal"),
+	STRAIGHT ("straight"),
+
+	FORWARD_ONE ("forward-one"),
+	FORWARD_TWO_AT_START ("forward-two-at-start"),
+
 	FORWARD ("forward"),
-	BACKWARDS ("backwards"),
+
 	LMOVE ("l-move"),
 	CASTLING ("castling"),
 	ENPASSANT ("en-passant"),
 	PROMOTION ("promotion");
 
 	public final String name;
-	public final EdgeType[] path;
 
-	private MovementType(String name, EdgeType[] path) {
+	private MovementType(String name) {
 		this.name = name;
-		this.path = path;
 	}
 }
