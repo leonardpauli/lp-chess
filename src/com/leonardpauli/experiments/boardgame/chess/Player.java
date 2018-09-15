@@ -16,9 +16,13 @@ class Player {
 		this.name = name; this.color = color;
 	}
 
+
+	// piece
+
 	public Piece addPiece(Piece piece) {
 		pieces.add(piece);
 		piece.owner = this;
 		return Piece;
 	}
+
 }

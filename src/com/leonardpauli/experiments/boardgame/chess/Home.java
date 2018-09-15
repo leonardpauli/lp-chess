@@ -10,4 +10,8 @@ class Home {
 		this.positionForward = positionForward;
 		this.delta = positionForward.sub(position);
 	}
+
+	public int getRank(Position pos) {
+		return delta.y * (pos.y - position.y);
+	}
 }

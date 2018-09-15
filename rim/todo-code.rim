@@ -3,33 +3,27 @@
 
 BoardGame
 	states is many State
-
 	State // to be extended
 
-	Board
-		tiles is many Tile:
-			edges is many Edge:
-				tiles is many{2} Tile
-				movement.type{is Movement.Type or Empty} with origin{is in tiles}:
-					' returns:
-						- None if blocked/one directional
-						- same if unidirectional
-						- else conditional // (eg. pawn in chess cannot move backwards)
+	Board.Tile.Edge:
+		tiles is many{2} Tile
+		movement.type{is Movement.Type or Empty} with origin{is in tiles}:
+			' returns:
+				- None if blocked/one directional
+				- same if unidirectional
+				- else conditional // (eg. pawn in chess cannot move backwards)
 
-	Piece
-		type is Type:
-			moves.possible.types is many Movement.Type
-			// moves.possible.types with state: ...
+	Piece.Type:
+		moves.possible.types is many Movement.Type
+		// moves.possible.types with state: ...
 
-	Round
-		moves is many Move:
-			movement is Movement:
-				type is Movement.Type
-					name is String
-					reaches{is Boolean} with {tile, startingTile}
-				from is Position or Empty
-				to is Position or Empty
-				do reverse: ... // for undo
+	Round.Move.Movement:
+		type is Movement.Type
+			name is String
+			reaches{is Boolean} with {tile, startingTile}
+		from is Position or Empty
+		to is Position or Empty
+		do reverse: ... // for undo
 
 
 Chess is BoardGame
@@ -86,10 +80,6 @@ Chess is BoardGame
 		is safe with player: not some (players(active, not player) |> underAttack)
 		path{direct, between} with tile: ...
 			// self.edges(is direct) ...
-
-		position is Position
-			row is Int
-				rank with player:
 
 	Piece
 		canAttack with tile: some (.type.moves.possible.types |> .reaches {tile, startingTile: self})
