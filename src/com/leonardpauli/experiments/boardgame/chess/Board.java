@@ -85,13 +85,31 @@ class Board {
 	}
 	
 
-	// other
+	// movement
+
+	private void getAvaliableMovementsAppended(MovementType type, Piece piece, List<Movement> movements) {
+		Edge forwardEdge = piece.owner.getHomeEdgeForward();
+		if (type == FORWARD_ONE) {
+			Edge edge = piece.tile.getEdge(forwardEdge.type);
+			Movement movement = new Movement(type, edge);
+			movements.add(movement);
+		} else {
+			// TODO
+			throw new ChessException("not implemented");
+		}
+	}
+
+	public List<Movement> getAvailableMovements(Piece piece) {
+		List<Movement> movements = new ArrayList<Movement>();
+		for (MovementType type : piece.type.movementTypes) {
+			getAvaliableMovementsAppended(type, piece, movements);
+		}
+		return movements;
+	}
 
 	public List<Movement> getAvailableMovements(Piece piece, Position destination) {
-		List<Movement> movements = new ArrayList<Movement>();
-
-		// TODO
-
+		List<Movement> movements = getAvailableMovements(piece);
+		movements.removeIf(movement -> !movement.edge.target.position.equals(destination));
 		return movements;
 	}
 
