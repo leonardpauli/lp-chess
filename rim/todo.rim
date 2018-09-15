@@ -39,6 +39,7 @@
 - implement tests
 - implement BoardGame
 - implement Chess
+- all errors should be declared (eg. in enum, not string)
 - etc
 - commit final
 

@@ -13,43 +13,50 @@ class Board {
 				Tile tile = tiles[x][y] = new Tile(position);
 			}
 		}
-
-		public Tile getTileAt(Position position) throws InvalidMoveException {
-			bool inBounds =
-				0 <= position.x && position.x < tiles.length &&
-				0 <= position.y && position.y < tiles[position.x].length
-
-			if (!inBounds) throw InvalidMoveException(
-				InvalidMoveException.Type.DESTINATION_NOT_FOUND);
-
-			return tiles[position.x][position.y];
-		}
-
-		public Piece getPieceAt(Position position) throws InvalidMoveException {
-			return getTileAt(position).piece;
-		}
-		public Piece getPieceAt(String code) throws ChessException, InvalidMoveException {
-			return getPieceAt(new Position(code));
-		}
-
-
-		public void removePiece(Piece piece) {
-			if (piece.position)
-				tiles[piece.position.x][piece.position.y].piece = null;
-			piece.position = null;
-		}
-
-		public void placePiece(Piece piece, Position position) throws InvalidMoveException {
-			Tile tile = getTileAt(position);
-
-			if (tile.piece!=null) throw InvalidMoveException(
-				InvalidMoveException.Type.DESTINATION_OCCUPIED);
-
-			piece.position = position;
-			tile.piece = piece;
-		}
 	}
 
+
+	// tile
+
+	public Tile getTileAt(Position position) throws InvalidMoveException {
+		bool inBounds =
+			0 <= position.x && position.x < tiles.length &&
+			0 <= position.y && position.y < tiles[position.x].length
+
+		if (!inBounds) throw InvalidMoveException(
+			InvalidMoveException.Type.DESTINATION_NOT_FOUND);
+
+		return tiles[position.x][position.y];
+	}
+
+
+	// piece
+
+	public void removePiece(Piece piece) {
+		if (piece.position)
+			tiles[piece.position.x][piece.position.y].piece = null;
+		piece.position = null;
+	}
+
+	public void placePiece(Piece piece, Position position) throws InvalidMoveException {
+		Tile tile = getTileAt(position);
+
+		if (tile.piece!=null) throw InvalidMoveException(
+			InvalidMoveException.Type.DESTINATION_OCCUPIED);
+
+		piece.position = position;
+		tile.piece = piece;
+	}
+
+	public Piece getPieceAt(Position position) throws InvalidMoveException {
+		return getTileAt(position).piece;
+	}
+	public Piece getPieceAt(String code) throws ChessException, InvalidMoveException {
+		return getPieceAt(new Position(code));
+	}
+	
+
+	// other
 
 	public List<Movement> getAvailableMovements(Piece piece, Position destination) {
 		List<Movement> movements = new ArrayList<Movement>();
@@ -60,49 +67,10 @@ class Board {
 	}
 
 
+	// utils
 
-	public enum PrintStyle { Plain, Pretty, PrettyWithNumbers };
-	public String toString(PrintStyle style) {
-		StringBuilder sb = new StringBuilder("");
-		bool pretty = style==PrintStyle.Pretty || style==PrintStyle.PrettyWithNumbers;
-		bool numbers = style==PrintStyle.PrettyWithNumbers;
-		
-		if (pretty && numbers) sb.append("  ");
-		if (pretty) sb.append("╭────────────────────────╮\n");
-
-		for (int y = 0; y<size.y; x++) {
-			if (pretty && numbers) sb.append(tiles[0][y].position.rowString()+" ");
-			if (pretty) sb.append("│");
-
-			for (int x = 0; x<size.x; x++) {
-				Tile tile = tiles[x][y];
-				if (pretty) sb.append(" ");
-				sb.append(pretty ? tile.toCharPretty(): tile.toChar());
-				if (pretty) sb.append(" ");
-			}
-
-			if (pretty) sb.append("│");
-			sb.append("\n");
-		}
-
-		if (pretty && numbers) sb.append("  ");
-		if (pretty) sb.append("╰────────────────────────╯\n");
-
-		if (numbers) {
-			sb.append("  ");
-			if (pretty) sb.append(" ");
-			for (int x = 0; x<size.x; x++) {
-				Tile tile = tiles[x][0];
-				if (pretty) sb.append(" ");
-				sb.append(tile.position.colString());
-				if (pretty) sb.append(" ");
-			}
-			sb.append("\n");
-		}
-
-		return sb.toString();
-	}
-	public String toString() { return toString(PrintStyle.Pretty); }
+	public String toString(Style style) { return Printer.boardToString(this, style); }
+	public String toString() { return toString(Printer.Style.PRETTY); }
 }
 
 
@@ -119,6 +87,7 @@ class Position extends Point {
 	public String colString() { return Character.toString((char) (x + 65)); }
 	public String rowString() { return Integer.toString(y+1); }
 }
+
 
 class Tile {
 	public final Position position;
