@@ -1,0 +1,129 @@
+# todo-code.rim
+' what's left to implement from Chess.rim + BoardGame.rim
+
+BoardGame
+	states is many State
+
+	State // to be extended
+
+	Board
+		tiles is many Tile:
+			edges is many Edge:
+				tiles is many{2} Tile
+				movement.type{is Movement.Type or Empty} with origin{is in tiles}:
+					' returns:
+						- None if blocked/one directional
+						- same if unidirectional
+						- else conditional // (eg. pawn in chess cannot move backwards)
+
+	Piece
+		type is Type:
+			moves.possible.types is many Movement.Type
+			// moves.possible.types with state: ...
+
+	Round
+		moves is many Move:
+			movement is Movement:
+				type is Movement.Type
+					name is String
+					reaches{is Boolean} with {tile, startingTile}
+				from is Position or Empty
+				to is Position or Empty
+				do reverse: ... // for undo
+
+
+Chess is BoardGame
+	rule:
+		rounds.repeated.max: 3 // else; force other move or checkmate/remi
+		variants:
+			- "Chess960" alias "Fischer Random Chess" // https://en.wikipedia.org/wiki/Chess960
+				' on start.after:
+					// randomize players homeranks with same seed while keeping Bishops on opposite color
+				// ... action.castle.allowed with player: true if not done already
+
+	movesPerPlayerAndRound is Int: 1
+	players.count.target is Int: 2
+	Board.size.(x, y) is Int: 8
+	Board.Tile.pieces.count.max is Int: 1
+	Round.Move.time.duration.max: 30s
+	Round.Move.Movement.Type
+		- "diagonal"
+		- "left"
+		- "right"
+		- "up"
+		- "down"
+		- "l-move" // the horse
+		- "castling" // rokad? tower and king?
+		- "en-passant" // bonde tar snett
+		- "promotion" // bonde konverterar vid kanten
+		- "action"
+			is Action // TODO: shouldn't movement be an action?
+
+	Round.Move.Movement
+		capture is Piece
+		value: capture.type.value or 0
+
+	// TODO: automatic type detection probable by name? (ie. player -> is Player (if exists))
+	on gameover with player:
+		do player.active: false
+
+	State
+		- Check // escapable immediate threat for target's king by source
+			source is Player
+			target is Player
+		- Remi
+			// alias: Draw
+		- Stalemate // player unable to move, but isn't in check or checkmate
+		- Checkmate // inescapable immediate threat for target's king by source
+			source is Player
+			target is Player
+			on activated:
+				do gameover with target
+
+	Board.Tile
+		// alias "Square"
+		is underAttack with player: some (player.pieces(.tile isn't self) |> .canAttack self)
+		is safe with player: not some (players(active, not player) |> underAttack)
+		path{direct, between} with tile: ...
+			// self.edges(is direct) ...
+
+		position is Position
+			row is Int
+				rank with player:
+
+	Piece
+		canAttack with tile: some (.type.moves.possible.types |> .reaches {tile, startingTile: self})
+
+	Player
+		color is Color
+		on resign:
+			do gameover with self
+
+	on start:
+		do players: 0..players.count.target |> Player
+			name: "Player \(.it + 1)"
+			color: ...
+				- else: Color.random{saturation: 0.5, lightness: 0.5}
+
+	Action.Castling
+		// treated as a move
+		' moves both the king and a rook be:
+			- "queenside castling"
+				// alias "a-side castling" if Chess960
+				king.position: c-file
+				rook(a-side): d-file
+				move.notation: "0-0-0"
+			- "kingside castling"
+				// alias "h-side castling" if Chess960
+				king.position: g-file
+				rook(h-side).position: f-file
+				move.notation: "0-0"
+		' if Chess960
+			supports all the different possible initial positions of king and rook
+		prerequisites:
+			tilesInbetween:| it.tile.path{direct, between} it.tile.next
+			toBeVacant: (tilesInbetween king) + king.tile.next + (tilesInbetween rook) + rook.tile.next
+			- (king, castling rook).moves.previously.count: 0
+			- all (tilesInbetween king |> .safe with player) // all alias and
+			- all (toBeVacant |> .pieces(not (rook or king)) is Empty)
+			- player.moves(is Action.Castling).count is 0

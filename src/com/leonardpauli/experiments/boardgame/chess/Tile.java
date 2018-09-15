@@ -6,13 +6,16 @@ class Tile {
 	public Piece piece;
 	private Edge[][] edgeMap;
 
-	// eg. 2 in variant with 3 kingdoms
+	// eg. = 2 for a game variant with 3 kingdoms
 	private final int maxNrEdgesOfSameType = 1;
 
 	Tile(Position position) {
 		this.position = position;
 		this.color = position.x%2==position.y%2? Color.black: Color.white;
 	}
+
+
+	// edges
 
 	public Edge[] getEdges(EdgeType type) {
 		return edgeMap[type.ordinal()];
@@ -41,6 +44,9 @@ class Tile {
 
 		edgeMap = mapFinal;
 	}
+
+
+	// string
 
 	String toCharPlain() { return color == Color.black? " ": ".︎"; }
 	public String toChar() { return piece==null? toCharPlain(): piece.toChar(p); }

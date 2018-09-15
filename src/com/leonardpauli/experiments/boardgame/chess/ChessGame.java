@@ -8,14 +8,6 @@ public class ChessGame {
 	Player[] players = new Player[2]; // order determines play order
 	Board board;
 	List<Round> rounds = new ArrayList<Round>();
-	
-	public enum State {
-		Default,
-		Check, // escapable immediate threat for target's king by source
-		Remi,
-		Stalemate, // player unable to move, but isn't in check or checkmate
-		Checkmate;
-	}
 	State state = State.Default;
 
 	static int movesPerRound = 2;
@@ -34,21 +26,20 @@ public class ChessGame {
 		rounds.add(new Round());
 	}
 
+
+	// round
+
 	public Round currentRound() {
 		return rounds.get(rounds.size()-1);
 	}
+
+
+	// player
+
 	public Player getCurrentPlayer() {
 		Round round = currentRound();
 		return players[round.moves.size() % players.length];
 	}
-
-	public List<Piece> getPieces() {
-		List<Piece> pieces = new ArrayList<Piece>();
-		for (Player p : players)
-			pieces.addAll(p.pieces);
-		return pieces;
-	}
-
 
 	void givePlayersHome() {
 		players[0].home = new Home(
@@ -61,6 +52,15 @@ public class ChessGame {
 		);
 	}
 
+
+	// piece
+
+	public List<Piece> getPieces() {
+		List<Piece> pieces = new ArrayList<Piece>();
+		for (Player p : players)
+			pieces.addAll(p.pieces);
+		return pieces;
+	}
 
 	void removePiece(Piece piece) {
 		piece.owner.pieces.remove(piece);
@@ -96,6 +96,8 @@ public class ChessGame {
 	}
 
 
+	// move
+
 	void validateMove(Move move) throws InvalidMoveException {
 		// TODO
 		if (move.player != getCurrentPlayer())
@@ -117,6 +119,9 @@ public class ChessGame {
 			rounds.add(new Round());
 		}
 	}
+
+
+	// state
 
 	public void refreshState() {
 		// TODO: check if check mate, etc
