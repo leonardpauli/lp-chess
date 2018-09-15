@@ -87,12 +87,43 @@ class Board {
 
 	// movement
 
-	private void getAvaliableMovementsAppended(MovementType type, Piece piece, List<Movement> movements) {
+	private void getAvaliableMovementsAppended(
+		MovementType type, Piece piece, List<Movement> movements) {
 		Edge forwardEdge = piece.owner.getHomeEdgeForward();
+		EdgeType forward = forwardEdge.type;
+		Player player = piece.owner;
+
 		if (type == FORWARD_ONE) {
-			Edge edge = piece.tile.getEdge(forwardEdge.type);
+			EdgeType[] path = [forward];
+			bool skipOccupiedInBetween = false;
+
+			Edge[] branches = piece.tile.getEdges(forwardEdge.type);
+			for (Edge edge : branches) {
+				bool isInBetween = false;
+				bool skipOccupiedCkeck = isInBetween && skipOccupiedInBetween;
+				if (!skipOccupiedCkeck && edge.target.isOccupiedBy(player)) continue;
+
+				// TODO
+
+				Movement movement = new Movement(type, edge);
+				movements.add(movement);
+			}
+
+		} else if (type == FORWARD_TWO_AT_START) {
+
+			// TODO
+
+			EdgeType[] path = [forward, forward];
+			bool skipOccupiedInBetween = false;
+
+			Tile target = piece.tile.getEdge(forwardEdge.type).target.getEdge(forwardEdge.type).target;
+
+			Edge edge = new Edge(piece.tile, target);
+			if (edge.target.isOccupiedBy(player)) return;
+
 			Movement movement = new Movement(type, edge);
 			movements.add(movement);
+
 		} else {
 			// TODO
 			throw new ChessException("not implemented");

@@ -32,6 +32,16 @@ class Tile {
 	public Edge[] getEdges(EdgeType type) {
 		return edgeMap[type.ordinal()];
 	}
+	public Edge[] getEdges(EdgeType[] path) {
+		int maxBranchCountPerSegment = Tile.maxNrEdgesOfSameType;
+		int maxBranchesCount = path.length * maxBranchCountPerSegment;
+		Edge[] resultingEdges = new Edge[maxBranchesCount];
+
+		// TODO: ... for ()
+
+		return resultingEdges;
+	}
+
 	void setEdges(Edge[] edges) {
 		int edgeTypeCount = EdgeType.values().length;
 		Edge[][] map = Edge[edgeTypeCount][];
