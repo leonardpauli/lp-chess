@@ -6,6 +6,14 @@ class Board {
 	public final Size size = new Size(8, 8);
 
 	Board() {
+		setupTiles();
+		setupTileEdges();
+	}
+
+
+	// tile
+
+	private void setupTiles() {
 		tiles = new Tiles[size.x][size.y];
 		for (int x = 0; x<size.x; x++) {
 			for (int y = 0; y<size.y; y++) {
@@ -14,19 +22,40 @@ class Board {
 			}
 		}
 	}
+	private void setupTileEdges() {
+		for (int x = 0; x<size.x; x++) {
+			for (int y = 0; y<size.y; y++) {
+				Position position = new Position(x, y);
+				Tile tile = tiles[x][y];
+				tile.setEdges(getTileEdges(tile));
+			}
+		}
+	}
 
-
-	// tile
-
-	public Tile getTileAt(Position position) throws InvalidMoveException {
+	public bool tileExistsAt(Position position) {
 		bool inBounds =
 			0 <= position.x && position.x < tiles.length &&
-			0 <= position.y && position.y < tiles[position.x].length
+			0 <= position.y && position.y < tiles[position.x].length;
+		return inBounds;
+	}
 
-		if (!inBounds) throw InvalidMoveException(
+	public Tile getTileAt(Position position) throws InvalidMoveException {
+		if (!tileExistsAt(position)) throw InvalidMoveException(
 			InvalidMoveException.Type.DESTINATION_NOT_FOUND);
 
 		return tiles[position.x][position.y];
+	}
+
+	private Edge[] getTileEdges(Tile tile) {
+		int maxSize = EdgeType.values().length;
+		Edge[] edges = new Edge[maxSize];
+		int i = 0;
+		for (EdgeType type : EdgeType.values()) {
+			if (tileExistsAt(type.direction))
+				edges[i++] = new Edge(tile, type, getTileAt(position));
+		}
+		int actualSize = i;
+		return Arrays.copyOf(edges, actualSize);
 	}
 
 
@@ -93,10 +122,28 @@ class Tile {
 	public final Position position;
 	public final Color color;
 	public Piece piece;
+	private Edge[][] edgeMap;
 
 	Tile(Position position) {
 		this.position = position;
 		this.color = position.x%2==position.y%2? Color.black: Color.white;
+	}
+
+	public Edge[] getEdges(EdgeType type) {
+		return edgeMap[type.ordinal()];
+	}
+	void setEdges(Edge[] edges) {
+		Edge[][] map = Edge[EdgeType.values().length][];
+		for (EdgeType t : EdgeType.values()) {
+			int maxSize = 1; // for now, multiple for eg. 3p chess
+			map[t.ordinal()] = new Edge[maxSize];
+		}
+		for (Edge e : edges) {
+			// TODO add item
+			// map[e.type.ordinal()] ...
+		}
+		// TODO clean
+		edgeMap = map;
 	}
 
 	String toCharPlain() { return color == Color.black? " ": ".︎"; }
