@@ -46,14 +46,14 @@ public class ChessGame {
 	}
 
 	void givePlayersHome() {
-		players[0].home = new Home(
+		players[0].setHome(new Home(
 			new Position(board.size.x/2, 0),
 			new Position(board.size.x/2, 1)
-		);
-		players[1].home = new Home(
+		));
+		players[1].setHome(new Home(
 			new Position(board.size.x/2+1, board.size.y-1-0),
 			new Position(board.size.x/2+1, board.size.y-1-1)
-		);
+		));
 	}
 
 

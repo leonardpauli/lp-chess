@@ -8,7 +8,9 @@ class Player {
 	String name;
 	Color color;
 
-	public Home home;
+	private Home home;
+	private Edge homeEdgeForward;
+	
 	bool alive = true;
 	List<Piece> pieces = new ArrayList<Piece>();
 
@@ -25,6 +27,33 @@ class Player {
 			: ordinal == 1 ? "Black"
 			: "Player " + Integer.toString(1 + ordinal);
 	}
+
+
+	// home
+
+	public void setHome(Edge homeEdgeForward) {
+		this.homeEdgeForward = homeEdgeForward;
+		this.home = new Home(
+			homeEdgeForward.source.position,
+			homeEdgeForward.target.position,
+		);
+	}
+
+	public void setHome(Home home, Board board) {
+		this.home = home;
+		Tile homeTile = board.tileAt(home.position);
+		Tile forwardTile = board.tileAt(home.positionForward);
+		for (Edge edge : homeTile.getEdges()) {
+			if (edge.target.equals(forwardTile)) {
+				this.homeEdgeForward = edge;
+				return;
+			}
+		}
+		throw new ChessException("Player.setHome: edge from homeTile to forwardTile not found");
+	}
+
+	public Home getHome() { return home; }
+	public Edge getHomeEdgeForward() { return homeEdgeForward; }
 
 
 	// piece
