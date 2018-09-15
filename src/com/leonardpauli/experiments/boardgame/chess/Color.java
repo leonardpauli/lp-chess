@@ -6,4 +6,12 @@ class Color {
 
 	String name;
 	Color(String name) {this.name = name;}
+
+	public static Color fromHSL(float hue, float saturation, float lightness) {
+		String name = "hsl("+
+			Long.toString(hue)+", "+
+			Long.toString(saturation)+", "+
+			Long.toString(lightness)+")";
+		return new Color(name);
+	}
 }

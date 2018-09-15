@@ -5,24 +5,20 @@ import java.util.ArrayList;
 
 
 public class ChessGame {
-	Player[] players = new Player[2]; // order determines play order
+	Player[] players;
 	Board board;
 	List<Round> rounds = new ArrayList<Round>();
 	State state = State.Default;
 
 	static int movesPerRound = 2;
+	static int playersCount = 2;
+
 
 	public ChessGame() {
-		players = [
-			new Player("White", Color.white),
-			new Player("Black", Color.black),
-		];
-		
+		createPlayers()
 		board = new Board();
-
 		givePlayersHome();
 		resetPieces();
-
 		rounds.add(new Round());
 	}
 
@@ -35,6 +31,12 @@ public class ChessGame {
 
 
 	// player
+
+	void createPlayers() {
+		players = new Player[ChessGame.playersCount];
+		for (int i = 0; i<players.length; i++)
+			players[i] = new Player(i);
+	}
 
 	public Player getCurrentPlayer() {
 		Round round = currentRound();
@@ -115,7 +117,7 @@ public class ChessGame {
 
 		refreshState();
 
-		if (round.moves.size() == movesPerRound) {
+		if (round.moves.size() == ChessGame.movesPerRound) {
 			rounds.add(new Round());
 		}
 	}

@@ -36,7 +36,6 @@ Chess is BoardGame
 				// ... action.castle.allowed with player: true if not done already
 
 	movesPerPlayerAndRound is Int: 1
-	players.count.target is Int: 2
 	Board.size.(x, y) is Int: 8
 	Board.Tile.pieces.count.max is Int: 1
 	Round.Move.time.duration.max: 30s
@@ -85,15 +84,8 @@ Chess is BoardGame
 		canAttack with tile: some (.type.moves.possible.types |> .reaches {tile, startingTile: self})
 
 	Player
-		color is Color
 		on resign:
 			do gameover with self
-
-	on start:
-		do players: 0..players.count.target |> Player
-			name: "Player \(.it + 1)"
-			color: ...
-				- else: Color.random{saturation: 0.5, lightness: 0.5}
 
 	Action.Castling
 		// treated as a move
