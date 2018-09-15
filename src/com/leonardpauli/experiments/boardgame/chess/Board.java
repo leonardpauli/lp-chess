@@ -124,6 +124,9 @@ class Tile {
 	public Piece piece;
 	private Edge[][] edgeMap;
 
+	// eg. 2 in variant with 3 kingdoms
+	private final int maxNrEdgesOfSameType = 1;
+
 	Tile(Position position) {
 		this.position = position;
 		this.color = position.x%2==position.y%2? Color.black: Color.white;
@@ -133,17 +136,28 @@ class Tile {
 		return edgeMap[type.ordinal()];
 	}
 	void setEdges(Edge[] edges) {
-		Edge[][] map = Edge[EdgeType.values().length][];
+		int edgeTypeCount = EdgeType.values().length;
+		Edge[][] map = Edge[edgeTypeCount][];
+		int[] mapSizes = int[edgeTypeCount];
+
 		for (EdgeType t : EdgeType.values()) {
-			int maxSize = 1; // for now, multiple for eg. 3p chess
-			map[t.ordinal()] = new Edge[maxSize];
+			int typeNr = t.ordinal();
+			int maxSize = maxNrEdgesOfSameType;
+			map[typeNr] = new Edge[maxSize];
 		}
 		for (Edge e : edges) {
-			// TODO add item
-			// map[e.type.ordinal()] ...
+			int typeNr = e.type.ordinal();
+			map[typeNr][mapSizes[typeNr]++] = e;
 		}
-		// TODO clean
-		edgeMap = map;
+
+		Edge[][] mapFinal = Edge[edgeTypeCount][];
+		for (EdgeType t : EdgeType.values()) {
+			int typeNr = t.ordinal();
+			int actualSize = mapSizes[typeNr];
+			mapFinal[typeNr] = Arrays.copyOf(map[typeNr], actualSize);
+		}
+
+		edgeMap = mapFinal;
 	}
 
 	String toCharPlain() { return color == Color.black? " ": ".︎"; }
