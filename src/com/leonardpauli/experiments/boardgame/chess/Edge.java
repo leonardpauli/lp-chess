@@ -10,13 +10,19 @@ class Edge {
 		this.type = type;
 		this.target = target;
 	}
+	Edge(Tile source, Tile target) {
+		this.source = source;
+		this.type = EdgeType.ANY;
+		this.target = target;
+	}
 }
 
 public enum EdgeType {
 	LEFT ("<", [-1, 0], "left"),
 	RIGHT (">", [1, 0], "right"),
 	UP ("^", [0, 1], "up"),
-	DOWN ("v", [0, -1], "down");
+	DOWN ("v", [0, -1], "down"),
+	ANY (".", [0, 0], "any");
 
 	public final String code;
 	public final Point direction;

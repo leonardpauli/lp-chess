@@ -3,11 +3,13 @@ package com.leonardpauli.experiments.boardgame.chess;
 class Tile {
 	public final Position position;
 	public final Color color;
-	public Piece piece;
+	
+	private Piece piece;
 	private Edge[][] edgeMap;
+	private Edge[] edges;
 
 	// eg. = 2 for a game variant with 3 kingdoms
-	private final int maxNrEdgesOfSameType = 1;
+	private static final int maxNrEdgesOfSameType = 1;
 
 	Tile(Position position) {
 		this.position = position;
@@ -15,8 +17,18 @@ class Tile {
 	}
 
 
+	// piece
+
+	public Piece getPiece() { return piece; }
+	public bool hasPiece() { return piece!=null; }
+	public bool isOccupiedBy(Player player) {
+		return hasPiece() && getPiece().owner.equals(player);
+	}
+
+
 	// edges
 
+	public Edge[] getEdges() { return edges; }
 	public Edge[] getEdges(EdgeType type) {
 		return edgeMap[type.ordinal()];
 	}
@@ -27,7 +39,7 @@ class Tile {
 
 		for (EdgeType t : EdgeType.values()) {
 			int typeNr = t.ordinal();
-			int maxSize = maxNrEdgesOfSameType;
+			int maxSize = Tile.maxNrEdgesOfSameType;
 			map[typeNr] = new Edge[maxSize];
 		}
 		for (Edge e : edges) {
@@ -43,6 +55,7 @@ class Tile {
 		}
 
 		edgeMap = mapFinal;
+		this.edges = edges;
 	}
 
 
