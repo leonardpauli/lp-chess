@@ -10,7 +10,7 @@ public class ChessGame {
 	List<Round> rounds = new ArrayList<Round>();
 	State state = State.Default;
 
-	static int movesPerRound = 2;
+	static int movesPerPlayerAndRound = 1;
 	static int playersCount = 2;
 
 
@@ -40,7 +40,9 @@ public class ChessGame {
 
 	public Player getCurrentPlayer() {
 		Round round = currentRound();
-		return players[round.moves.size() % players.length];
+		int turnNr = round.moves.size() / ChessGame.movesPerPlayerAndRound;
+		int turnNrSafe = turnNr % players.length;
+		return players[turnNrSafe];
 	}
 
 	void givePlayersHome() {
@@ -117,7 +119,7 @@ public class ChessGame {
 
 		refreshState();
 
-		if (round.moves.size() == ChessGame.movesPerRound) {
+		if (round.moves.size() == ChessGame.movesPerPlayerAndRound * players.length) {
 			rounds.add(new Round());
 		}
 	}

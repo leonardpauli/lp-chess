@@ -35,9 +35,7 @@ Chess is BoardGame
 					// randomize players homeranks with same seed while keeping Bishops on opposite color
 				// ... action.castle.allowed with player: true if not done already
 
-	movesPerPlayerAndRound is Int: 1
-	Board.size.(x, y) is Int: 8
-	Board.Tile.pieces.count.max is Int: 1
+	// Board.Tile.pieces.count.max is Int: 1
 	Round.Move.time.duration.max: 30s
 	Round.Move.Movement.Type
 		- "diagonal"
