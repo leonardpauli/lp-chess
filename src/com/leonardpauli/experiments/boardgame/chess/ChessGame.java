@@ -69,7 +69,7 @@ public class ChessGame {
 	}
 	void addPieceToPlayer(Player player, int deltaY, PieceType type, Position p) throws InvalidMoveException {
 		board.placePiece(player.addPiece(new Piece(type)), p)
-		board.placePiece(player.addPiece(new Piece(Pawn)), p.add(0, deltaY))
+		board.placePiece(player.addPiece(new Piece(PieceType.Pawn)), p.add(0, deltaY))
 	}
 	public void resetPieces(Player player) throws InvalidMoveException {
 		for (Piece p : player.pieces)
@@ -80,14 +80,14 @@ public class ChessGame {
 		int q = queenDeltaFromKing;
 		Position qp = h.add(1*q, 0);
 
-		addPieceToPlayer(player, q, Rook, h.add(-3*q, 0));
-		addPieceToPlayer(player, q, Knight, h.add(-2*q, 0));
-		addPieceToPlayer(player, q, Bishop, h.add(-1*q, 0));
-		addPieceToPlayer(player, q, King, h);
-		addPieceToPlayer(player, q, Queen, qp);
-		addPieceToPlayer(player, q, Bishop, qp.add(1*q, 0));
-		addPieceToPlayer(player, q, Knight, qp.add(2*q, 0));
-		addPieceToPlayer(player, q, Rook, qp.add(3*q, 0));
+		addPieceToPlayer(player, q, PieceType.Rook, h.add(-3*q, 0));
+		addPieceToPlayer(player, q, PieceType.Knight, h.add(-2*q, 0));
+		addPieceToPlayer(player, q, PieceType.Bishop, h.add(-1*q, 0));
+		addPieceToPlayer(player, q, PieceType.King, h);
+		addPieceToPlayer(player, q, PieceType.Queen, qp);
+		addPieceToPlayer(player, q, PieceType.Bishop, qp.add(1*q, 0));
+		addPieceToPlayer(player, q, PieceType.Knight, qp.add(2*q, 0));
+		addPieceToPlayer(player, q, PieceType.Rook, qp.add(3*q, 0));
 	}
 
 	public void resetPieces() {

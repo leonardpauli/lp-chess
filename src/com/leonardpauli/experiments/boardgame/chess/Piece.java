@@ -5,7 +5,7 @@ public class Piece {
 	Position position;
 	Player owner;
 
-	Piece(Type type) {
+	Piece(PieceType type) {
 		this.type = type;
 	}
 
@@ -17,55 +17,31 @@ public class Piece {
 	public String toCharPretty() { return type.toChar(getColor()); }
 }
 
-public class PieceType {
+public enum PieceType {
+	KING ("King", 20, "♚", "♔"),
+	QUEEN ("Queen", 9, "♛", "♕"),
+	ROOK ("Rook", 5, "♜", "♖"),
+	KNIGHT ("Knight", 3, "♞", "♘"),
+	BISHOP ("Bishop", 3, "♝", "♗"),
+	PAWN ("Pawn", 1, "♟", "♙");
+
 	public static String name;
 	static int defaultValue;
 	static String defaultChar = "◆︎";
 	static String defaultCharBlack = "◇";
+
+	private PieceType(
+		String name, int defaultValue,
+		String defaultChar, String defaultCharBlack) {
+		this.name = name;
+		this.defaultValue = defaultValue;
+		this.defaultChar = defaultChar;
+		this.defaultCharBlack = defaultCharBlack;
+	}
 
 	public static getValue() { return defaultValue; }
 	public static String toChar(Color color) {
 		return color == Color.black? defaultCharBlack: defaultChar;
 	}
 	public static String getLetter() { return name.substring(0, 1); }
-}
-
-
-// TODO: use extended enum instead??
-
-class King extends PieceType {
-	public static String name = "King";
-	public static int defaultValue = 20;
-	public static String defaultChar = "♚";
-	public static String defaultCharBlack = "♔";
-}
-class Queen extends PieceType {
-	public static String name = "Queen";
-	public static int defaultValue = 9;
-	public static String defaultChar = "♛";
-	public static String defaultCharBlack = "♕";
-}
-class Rook extends PieceType {
-	public static String name = "Rook";
-	public static int defaultValue = 5;
-	public static String defaultChar = "♜";
-	public static String defaultCharBlack = "♖";
-}
-class Knight extends PieceType {
-	public static String name = "Knight";
-	public static int defaultValue = 3;
-	public static String defaultChar = "♞";
-	public static String defaultCharBlack = "♘";
-}
-class Bishop extends PieceType {
-	public static String name = "Bishop";
-	public static int defaultValue = 3;
-	public static String defaultChar = "♝";
-	public static String defaultCharBlack = "♗";
-}
-class Pawn extends PieceType {
-	public static String name = "Pawn";
-	public static int defaultValue = 1;
-	public static String defaultChar = "♟";
-	public static String defaultCharBlack = "♙";
 }

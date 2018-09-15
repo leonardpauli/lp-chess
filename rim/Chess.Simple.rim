@@ -47,6 +47,7 @@ product usage:
 	- automated tests using online db chess notations + expected resulting boards
 	- test piece placements
 	- test by board formatted as unicode strings
+	- fix all access policies
 
 tests:
 	- getCurrentPlayer
@@ -84,7 +85,9 @@ tests:
 			1 │ ♜  ♞  ♝  ♚  ♛  ♝  ♞  ♜ │
 			  ╰────────────────────────╯
 			    A  B  C  D  E  F  G  H
-
+	- board.setupTileEdges
+	- tileExistsAt
+	- ...
 
 
 
