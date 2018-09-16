@@ -16,7 +16,7 @@ class BoardMovementProcessor {
 	// public
 
 	// TODO: all "available" methods could probably be static
-	// 	and doen't need the reference to Board
+	// 	and doesn't need the reference to Board
 	// 	(because navigation through edges)
 
 	public List<Movement> getAvailable(Piece piece) throws ChessException {
@@ -122,10 +122,12 @@ class BoardMovementProcessor {
 			Options opt = new Options();
 			opt.type = ONE_STEP;
 			opt.source = piece.tile;
+
 			opt.path = new EdgeType[]{UP}; addAvailableTo(movements, opt);
 			opt.path = new EdgeType[]{DOWN}; addAvailableTo(movements, opt);
 			opt.path = new EdgeType[]{LEFT}; addAvailableTo(movements, opt);
 			opt.path = new EdgeType[]{RIGHT}; addAvailableTo(movements, opt);
+
 			opt.skipOccupiedInBetween = true;
 			opt.path = new EdgeType[]{UP, LEFT}; addAvailableTo(movements, opt);
 			opt.path = new EdgeType[]{UP, RIGHT}; addAvailableTo(movements, opt);
@@ -156,9 +158,17 @@ class BoardMovementProcessor {
 				.withMultiDirectionalRepeatablePath(new EdgeType[]{UP, LEFT}, piece, DIAGONAL))
 				addAvailableTo(movements, opt);
 
+		} else if (type == CASTLING) {
+			// TODO
+
+		} else if (type == ENPASSANT) {
+			// TODO
+
+		} else if (type == PROMOTION) {
+			// TODO
+
 		} else {
-			// TODO: CASTLING, ENPASSANT, PROMOTION
-			throw new ChessException("not implemented");
+			throw new ChessException("MovementType movements not implemented for type: "+type);
 		}
 	}
 

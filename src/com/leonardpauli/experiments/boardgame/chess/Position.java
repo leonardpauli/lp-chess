@@ -8,8 +8,8 @@ class Position extends Point {
 	public static Position fromString(String code) throws ChessException {
 		if (code.length() != 2) throw new ChessException(
 						"code.length has to be 2, was "+Integer.toString(code.length()));
-		int x = ((int)code.charAt(0)) - 65;
-		int y = Integer.parseInt(code.substring(1,2));
+		int x = ((int)code.toUpperCase().charAt(0)) - 65;
+		int y = Integer.parseInt(code.substring(1,2))-1;
 		return new Position(x, y);
 	}
 

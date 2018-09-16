@@ -1,5 +1,7 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -35,6 +37,21 @@ class Player {
 		pieces.add(piece);
 		piece.owner = this;
 		return piece;
+	}
+
+	public Piece[] getAlivePieces() {
+		Piece[] alivePieces = new Piece[pieces.size()];
+		int i = 0;
+		for (Piece piece : pieces) if (piece.isAlive()) alivePieces[i++] = piece;
+		return Arrays.copyOf(alivePieces, i);
+	}
+
+	public Piece getFirstMovablePiece(Board board) throws ChessException {
+		for (Piece piece : getAlivePieces()) {
+			List<Movement> movements = board.movement.getAvailable(piece);
+			if (movements.size()>0) return piece;
+		}
+		throw new ChessException("no movable pieces for that player");
 	}
 
 }

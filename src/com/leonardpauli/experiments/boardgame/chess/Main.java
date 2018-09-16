@@ -1,5 +1,6 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -17,34 +18,51 @@ public class Main {
 	private static void doTurn(ChessGame game, Scanner scanner) throws ChessException {
 		String command;
 
-		System.out.print(game.getCurrentPlayer().name+"'s turn. Enter source tile (eg. A4): ");
+		Piece firstMovable = game.getCurrentPlayer().getFirstMovablePiece(game.board);
+		System.out.print(game.getCurrentPlayer().name+"'s turn. Enter source tile (eg. "+
+						firstMovable.tile.position.toString()+"): ");
+
 		command = scanner.next();
 		Position source = Position.fromString(command);
 		Piece piece = game.board.pieceAt(source);
+		// System.out.println(piece);
 
-		System.out.print("Enter target tile: ");
+		List<Movement> movements = game.board.movement.getAvailable(piece);
+		if (movements.size()==0) {
+			System.out.println("Not movable, try another one");
+			return;
+		}
+
+		String egTargetPos = movements.get(0).edge.target.position.toString();
+		System.out.print("Enter target tile (eg. "+egTargetPos+"): ");
 		command = scanner.next();
 		Position target = Position.fromString(command);
 
-		Movement movement = game.board.movement.getAvailable(piece, target).get(0);
+		List<Movement> movementsFinal = game.board.movement.getAvailable(piece, target);
+		if (movementsFinal.size()==0) {
+			System.out.println("Not movable there, try again");
+			return;
+		}
+
+		Movement movement = movementsFinal.get(0);
 		game.playMove(new Move(game.getCurrentPlayer(), piece, movement));
 	}
 
 	private static void startInteractiveREPL(Scanner scanner) throws Exception {
 		System.out.println("Welcome to Chess!");
-		System.out.println("\n");
 
 		ChessGame game = new ChessGame();
 
 		while (game.getState()==State.DEFAULT) {
 
-			System.out.println("\n\n\n");
+			System.out.println("\n");
 			System.out.println(game.board.toString(Printer.Style.PRETTY_WITH_NUMBERS));
 
 			try {
 				doTurn(game, scanner);
 			} catch (ChessException e) {
 				System.out.println("Try again! ("+e.getMessage()+")");
+				throw e;
 			}
 		}
 

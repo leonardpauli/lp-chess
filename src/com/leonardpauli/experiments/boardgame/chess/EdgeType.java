@@ -65,4 +65,10 @@ public enum EdgeType {
 			path[i++] = fromCode(ch);
 		return path;
 	}
+	public static String stringFromPath(EdgeType[] path) {
+		StringBuilder sb = new StringBuilder();
+		for (EdgeType type : path) sb.append(String.valueOf(type.code));
+		return sb.toString();
+	}
+
 }

@@ -3,14 +3,14 @@ package com.leonardpauli.experiments.boardgame.chess;
 public class Printer {
 	public enum Style { PLAIN, PRETTY, PRETTY_WITH_NUMBERS };
 	public static String boardToString(Board board, Style style) {
-		StringBuilder sb = new StringBuilder("");
+		StringBuilder sb = new StringBuilder();
 		boolean pretty = style==Style.PRETTY || style==Style.PRETTY_WITH_NUMBERS;
 		boolean numbers = style==Style.PRETTY_WITH_NUMBERS;
 		
 		if (pretty && numbers) sb.append("  ");
 		if (pretty) sb.append("╭────────────────────────╮\n");
 
-		for (int y = 0; y<board.size.y; y++) {
+		for (int y = board.size.y-1; y>=0; y--) {
 			if (pretty && numbers) sb.append(board.tiles[0][y].position.rowString()+" ");
 			if (pretty) sb.append("│");
 

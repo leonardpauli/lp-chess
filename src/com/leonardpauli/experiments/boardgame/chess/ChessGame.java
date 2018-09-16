@@ -49,13 +49,13 @@ public class ChessGame {
 
 	private void givePlayersHome() throws ChessException {
 		players[0].home = new Home(
-			new Position(board.size.x/2, 0),
-			new Position(board.size.x/2, 1),
+			new Position(board.size.x/2-1, 0),
+			new Position(board.size.x/2-1, 1),
 			board
 		);
 		players[1].home = new Home(
-			new Position(board.size.x/2+1, board.size.y-1),
-			new Position(board.size.x/2+1, board.size.y-1-1),
+			new Position(board.size.x/2-1+1, board.size.y-1),
+			new Position(board.size.x/2-1+1, board.size.y-1-1),
 			board
 		);
 	}
@@ -124,6 +124,15 @@ public class ChessGame {
 
 		Round round = currentRound();
 		round.addMove(move);
+
+		Tile target = move.movement.edge.target;
+		boolean shouldCapture = target.hasPiece();
+		if (shouldCapture) {
+			move.movement.setCapturedPiece(target.getPiece());
+			target.getPiece().tile.removePiece();
+		}
+
+		target.setPiece(move.piece);
 		
 		// TODO: check times, etc
 

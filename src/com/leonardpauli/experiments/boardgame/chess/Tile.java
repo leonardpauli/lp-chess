@@ -24,7 +24,9 @@ class Tile {
 	void removePiece() { this.piece.tile = null; this.piece = null; }
 	void setPiece(Piece piece) {
 		if (hasPiece()) removePiece();
+		if (piece.tile!=null) piece.tile.removePiece();
 		this.piece = piece;
+		piece.tile = this;
 	}
 	public Piece getPiece() { return piece; }
 	public boolean hasPiece() { return piece!=null; }
@@ -91,7 +93,7 @@ class Tile {
 
 	// string
 
-	String toCharPlain() { return color == Color.black? " ": ".︎"; }
+	String toCharPlain() { return color == Color.black? " ": "."; }
 	public String toChar() { return piece==null? toCharPlain(): piece.toChar(); }
 	public String toCharPretty() { return piece==null? toCharPlain(): piece.toCharPretty(); }
 }
