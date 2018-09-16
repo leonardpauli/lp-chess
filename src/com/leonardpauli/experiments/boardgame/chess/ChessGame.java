@@ -76,11 +76,12 @@ public class ChessGame {
 	void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws InvalidMoveException {
 		int turns = player.home.getAngleInTurns();
 		EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
-		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns)
+		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
 
-		Tile tile = player.home.getTile().getRelative(path)[0]
-		Position pawnTile = tile.getRelative(player.home.getEdgeForward().type)[0];
-		
+		Tile tile = player.home.getTile().getFirstRelative(path);
+		EdgeType forward = player.home.getEdgeForward().type;
+		Position pawnTile = tile.getRelative(forward)[0];
+
 		Piece pawn = new Piece(PAWN)
 		Piece piece = new Piece(type);
 

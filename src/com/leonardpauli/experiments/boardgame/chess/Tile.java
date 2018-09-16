@@ -60,6 +60,28 @@ class Tile {
 	}
 
 
+	// path
+
+	public Tile[] getRelative(EdgeType pathSegment) {
+		Edge[] edges = getEdges(pathSegment);
+		Tile[] tiles = new Tile[edges.length];
+		int i = 0; for (Edge edge : edges) tiles[i++] = edge.target;
+		return tiles;
+	}
+	public Tile getFirstRelative(EdgeType[] path) {
+		Tile tile = this;
+		for (EdgeType segment : path) {
+			Tile[] tiles = tile.getRelative(segment);
+			if (tiles.length==0) throw new ChessException("path is broken");
+			tile = tiles[0];
+		}
+		return tile;
+	}
+	public Tile[] getRelative(EdgeType[] path) throws ChessException {
+		new ChessException("not implemented");
+	}
+
+
 	// string
 
 	String toCharPlain() { return color == Color.black? " ": ".︎"; }
