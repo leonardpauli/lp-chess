@@ -12,7 +12,7 @@ class BoardMovementProcessor {
 	public List<Movement> getAvailable(Piece piece) {
 		List<Movement> movements = new ArrayList<Movement>();
 		for (MovementType type : piece.type.movementTypes) {
-			addAvaliableMovementsTo(movements, type, piece);
+			addAvaliableTo(movements, type, piece);
 		}
 		return movements;
 	}
@@ -26,22 +26,22 @@ class BoardMovementProcessor {
 
 	// private
 
-	private class MovementDescription {
+	private class Options {
 		public Tile source;
 		public EdgeType[] path;
 		public bool skipOccupiedInBetween = false;
 		public bool repeatable = false;
 
-		public static MovementDescription[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece) {
+		public static Options[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece) {
 			int directions = 4;
 			EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
 			for (int turns = 0; turns<directions; turns++) {
 				paths[turns] = EdgeType.turnedPath(pathIdeal, turns);
 			}
 
-			MovementDescription[] opts = new MovementDescription[paths.length]
+			Options[] opts = new Options[paths.length]
 			for (int i = 0; i<paths.length; i++) {
-				MovementDescription opt = new MovementDescription();
+				Options opt = new Options();
 				opt.source = piece.tile;
 				opt.repeatable = true;
 				opt.path = paths[i];
@@ -51,7 +51,7 @@ class BoardMovementProcessor {
 			return opts;
 		}
 	}
-	private int addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt,
+	private int addAvaliableTo(List<Movement> movements, Options opt,
 		Tile lastTile, int segmentIndex) {
 
 		EdgeType[] segments = opt.path;
@@ -68,7 +68,7 @@ class BoardMovementProcessor {
 			if (!skipOccupiedCheck && edge.target.isOccupiedBy(player)) continue;
 
 			if (!isAtDestination) {
-				addedCount += addAvaliableMovementsTo(movements, opt, edge.target, segmentIndex+1);
+				addedCount += addAvaliableTo(movements, opt, edge.target, segmentIndex+1);
 				continue;
 			}
 
@@ -80,45 +80,45 @@ class BoardMovementProcessor {
 
 		return addedCount;
 	}
-	private int addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt) {
-		return addAvaliableMovementsTo(movements, opt, opt.source, 0);
+	private int addAvaliableTo(List<Movement> movements, Options opt) {
+		return addAvaliableTo(movements, opt, opt.source, 0);
 	}
 
-	private void addAvaliableMovementsTo(List<Movement> movements, MovementType type, Piece piece) {
+	private void addAvaliableTo(List<Movement> movements, MovementType type, Piece piece) {
 		Edge forwardEdge = piece.owner.getHomeEdgeForward();
 		EdgeType forward = forwardEdge.type;
 		Player player = piece.owner;
 
 		if (type == FORWARD_ONE) {
-			MovementDescription opt = new MovementDescription();
+			Options opt = new Options();
 			opt.source = piece.tile;
 			opt.path = {forward};
-			addAvaliableMovementsTo(movements, opt);
+			addAvaliableTo(movements, opt);
 
 		} else if (type == FORWARD_TWO_FROM_HOME) {
 
 			if (!piece.isAtHome()) return;
 
-			MovementDescription opt = new MovementDescription();
+			Options opt = new Options();
 			opt.source = piece.tile;
 			opt.path = {forward, forward};
-			addAvaliableMovementsTo(movements, opt);
+			addAvaliableTo(movements, opt);
 
 		} else if (type == ONE_STEP) {
-			MovementDescription opt = new MovementDescription();
+			Options opt = new Options();
 			opt.source = piece.tile;
-			opt.path = {EdgeType.UP}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.DOWN}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.UP}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.DOWN}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.LEFT}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.RIGHT}; addAvaliableTo(movements, opt);
 			opt.skipOccupiedInBetween = true
-			opt.path = {EdgeType.UP, EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.UP, EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.DOWN, EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
-			opt.path = {EdgeType.DOWN, EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.UP, EdgeType.LEFT}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.UP, EdgeType.RIGHT}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.DOWN, EdgeType.LEFT}; addAvaliableTo(movements, opt);
+			opt.path = {EdgeType.DOWN, EdgeType.RIGHT}; addAvaliableTo(movements, opt);
 
 		} else if (type == LMOVE) {
-			MovementDescription opt = new MovementDescription();
+			Options opt = new Options();
 			opt.source = piece.tile;
 			opt.skipOccupiedInBetween = true;
 
@@ -126,19 +126,19 @@ class BoardMovementProcessor {
 			EdgeType[] pathIdealMirrored = {EdgeType.UP, EdgeType.UP, EdgeType.RIGHT};
 
 			for (int turns = 0; turns<4; turns++) {
-				opt.path = EdgeType.turnedPath(pathIdeal, turns); addAvaliableMovementsTo(movements, opt);
-				opt.path = EdgeType.turnedPath(pathIdealMirrored, turns); addAvaliableMovementsTo(movements, opt);
+				opt.path = EdgeType.turnedPath(pathIdeal, turns); addAvaliableTo(movements, opt);
+				opt.path = EdgeType.turnedPath(pathIdealMirrored, turns); addAvaliableTo(movements, opt);
 			}
 
 		} else if (type == STRAIGHT) {
-			for (MovementDescription opt : MovementDescription
+			for (Options opt : Options
 				.withMultiDirectionalRepeatablePath({EdgeType.UP}, piece))
-				addAvaliableMovementsTo(movements, opt);
+				addAvaliableTo(movements, opt);
 
 		} else if (type == DIAGONAL) {
-			for (MovementDescription opt : MovementDescription
+			for (Options opt : Options
 				.withMultiDirectionalRepeatablePath({EdgeType.UP, EdgeType.LEFT}, piece))
-				addAvaliableMovementsTo(movements, opt);
+				addAvaliableTo(movements, opt);
 
 		} else {
 			// TODO: CASTLING, ENPASSANT, PROMOTION
