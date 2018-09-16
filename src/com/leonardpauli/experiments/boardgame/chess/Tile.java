@@ -1,8 +1,10 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import java.util.Arrays;
+
 class Tile {
 	public final Position position;
-	public final Color color;
+	private final Color color;
 	
 	private Piece piece;
 	private Edge[][] edgeMap;
@@ -19,9 +21,14 @@ class Tile {
 
 	// piece
 
+	void removePiece() { this.piece.tile = null; this.piece = null; }
+	void setPiece(Piece piece) {
+		if (hasPiece()) removePiece();
+		this.piece = piece;
+	}
 	public Piece getPiece() { return piece; }
-	public bool hasPiece() { return piece!=null; }
-	public bool isOccupiedBy(Player player) {
+	public boolean hasPiece() { return piece!=null; }
+	public boolean isOccupiedBy(Player player) {
 		return hasPiece() && getPiece().owner.equals(player);
 	}
 
@@ -35,8 +42,8 @@ class Tile {
 
 	void setEdges(Edge[] edges) {
 		int edgeTypeCount = EdgeType.values().length;
-		Edge[][] map = Edge[edgeTypeCount][];
-		int[] mapSizes = int[edgeTypeCount];
+		Edge[][] map = new Edge[edgeTypeCount][];
+		int[] mapSizes = new int[edgeTypeCount];
 
 		for (EdgeType t : EdgeType.values()) {
 			int typeNr = t.ordinal();
@@ -48,7 +55,7 @@ class Tile {
 			map[typeNr][mapSizes[typeNr]++] = e;
 		}
 
-		Edge[][] mapFinal = Edge[edgeTypeCount][];
+		Edge[][] mapFinal = new Edge[edgeTypeCount][];
 		for (EdgeType t : EdgeType.values()) {
 			int typeNr = t.ordinal();
 			int actualSize = mapSizes[typeNr];
@@ -68,7 +75,7 @@ class Tile {
 		int i = 0; for (Edge edge : edges) tiles[i++] = edge.target;
 		return tiles;
 	}
-	public Tile getFirstRelative(EdgeType[] path) {
+	public Tile getFirstRelative(EdgeType[] path) throws ChessException {
 		Tile tile = this;
 		for (EdgeType segment : path) {
 			Tile[] tiles = tile.getRelative(segment);
@@ -78,13 +85,13 @@ class Tile {
 		return tile;
 	}
 	public Tile[] getRelative(EdgeType[] path) throws ChessException {
-		new ChessException("not implemented");
+		throw new ChessException("not implemented");
 	}
 
 
 	// string
 
 	String toCharPlain() { return color == Color.black? " ": ".︎"; }
-	public String toChar() { return piece==null? toCharPlain(): piece.toChar(p); }
+	public String toChar() { return piece==null? toCharPlain(): piece.toChar(); }
 	public String toCharPretty() { return piece==null? toCharPlain(): piece.toCharPretty(); }
 }

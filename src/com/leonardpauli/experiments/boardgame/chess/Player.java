@@ -9,7 +9,7 @@ class Player {
 	Color color;
 
 	public Home home;
-	bool alive = true;
+	boolean alive = true;
 	List<Piece> pieces = new ArrayList<Piece>();
 
 	Player(String name, Color color) {
@@ -23,7 +23,7 @@ class Player {
 			color = Color.black;
 			name = "Black";
 		} else {
-			color = Color.fromHSL((float) ordinal / 10, 0.5, 0.5);
+			color = Color.fromHSL( ordinal / 10f, 0.5f, 0.5f);
 			name = "Player " + Integer.toString(1 + ordinal);
 		}
 	}
@@ -34,7 +34,7 @@ class Player {
 	public Piece addPiece(Piece piece) {
 		pieces.add(piece);
 		piece.owner = this;
-		return Piece;
+		return piece;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import static com.leonardpauli.experiments.boardgame.chess.MovementType.*;
+
 public class Piece {
 	PieceType type;
 	Tile tile;
@@ -10,7 +12,7 @@ public class Piece {
 		this.type = type;
 	}
 
-	public bool isAtHome() { return tile==homeTile; }
+	public boolean isAtHome() { return tile==homeTile; }
 	public void setHome(Tile tile) { homeTile = tile; }
 
 	public Color getColor() { return owner.color; }
@@ -21,37 +23,3 @@ public class Piece {
 	public String toCharPretty() { return type.toChar(getColor()); }
 }
 
-public enum PieceType {
-	KING ("King", 20, "♚", "♔", {ONE_STEP, CASTLING}),
-	QUEEN ("Queen", 9, "♛", "♕", {STRAIGHT, DIAGONAL}),
-	ROOK ("Rook", 5, "♜", "♖", {STRAIGHT}),
-	KNIGHT ("Knight", 3, "♞", "♘", {LMOVE}),
-	BISHOP ("Bishop", 3, "♝", "♗", {DIAGONAL}),
-	PAWN ("Pawn", 1, "♟", "♙", {FORWARD_ONE, FORWARD_TWO_FROM_HOME, ENPASSANT, PROMOTION});
-
-	public static String title;
-	private int defaultValue = 0;
-	private String defaultChar = "◆︎";
-	private String defaultCharBlack = "◇";
-	public final MovementType[] movementTypes;
-
-	private PieceType(
-		String title, int defaultValue,
-		String defaultChar, String defaultCharBlack,
-		MovementType movementTypes) {
-		this.title = title;
-		this.defaultValue = defaultValue;
-		this.defaultChar = defaultChar;
-		this.defaultCharBlack = defaultCharBlack;
-		this.movementTypes = movementTypes;
-	}
-
-
-	// string
-
-	public static getValue() { return defaultValue; }
-	public static String toChar(Color color) {
-		return color == Color.black? defaultCharBlack: defaultChar;
-	}
-	public static String getLetter() { return title.substring(0, 1); }
-}

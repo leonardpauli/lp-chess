@@ -3,7 +3,7 @@ package com.leonardpauli.experiments.boardgame.chess;
 public enum State {
 	DEFAULT ("Default", ""),
 	CHECK ("Check", "escapable immediate threat for target's king by source"),
-	REMI ("Remi", ""),
+	REMI ("Draw", ""),
 	STALEMATE ("Stalemate", "player unable to move, but isn't in check or checkmate"),
 	CHECKMATE ("Checkmate", "");
 

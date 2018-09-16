@@ -4,8 +4,8 @@ public class Printer {
 	public enum Style { PLAIN, PRETTY, PRETTY_WITH_NUMBERS };
 	public static String boardToString(Board bord, Style style) {
 		StringBuilder sb = new StringBuilder("");
-		bool pretty = style==Style.PRETTY || style==Style.PRETTY_WITH_NUMBERS;
-		bool numbers = style==Style.PRETTY_WITH_NUMBERS;
+		boolean pretty = style==Style.PRETTY || style==Style.PRETTY_WITH_NUMBERS;
+		boolean numbers = style==Style.PRETTY_WITH_NUMBERS;
 		
 		if (pretty && numbers) sb.append("  ");
 		if (pretty) sb.append("╭────────────────────────╮\n");

@@ -3,19 +3,21 @@ package com.leonardpauli.experiments.boardgame.chess;
 import java.util.List;
 import java.util.ArrayList;
 
+import static com.leonardpauli.experiments.boardgame.chess.PieceType.*;
+
 
 public class ChessGame {
-	Player[] players;
+	private Player[] players;
 	Board board;
-	List<Round> rounds = new ArrayList<Round>();
-	State state = State.DEFAULT;
+	private List<Round> rounds = new ArrayList<Round>();
+	private State state = State.DEFAULT;
 
-	static int movesPerPlayerAndRound = 1;
-	static int playersCount = 2;
+	private static int movesPerPlayerAndRound = 1;
+	private static int playersCount = 2;
 
 
-	public ChessGame() {
-		createPlayers()
+	public ChessGame() throws Exception {
+		createPlayers();
 		board = new Board();
 		givePlayersHome();
 		resetPieces();
@@ -32,7 +34,7 @@ public class ChessGame {
 
 	// player
 
-	void createPlayers() {
+	private void createPlayers() {
 		players = new Player[ChessGame.playersCount];
 		for (int i = 0; i<players.length; i++)
 			players[i] = new Player(i);
@@ -45,17 +47,17 @@ public class ChessGame {
 		return players[turnNrSafe];
 	}
 
-	void givePlayersHome() {
-		players[0].setHome(new Home(
+	private void givePlayersHome() throws ChessException {
+		players[0].home = new Home(
 			new Position(board.size.x/2, 0),
 			new Position(board.size.x/2, 1),
 			board
-		));
-		players[1].setHome(new Home(
-			new Position(board.size.x/2+1, board.size.y-1-0),
+		);
+		players[1].home = new Home(
+			new Position(board.size.x/2+1, board.size.y-1),
 			new Position(board.size.x/2+1, board.size.y-1-1),
 			board
-		));
+		);
 	}
 
 
@@ -68,27 +70,27 @@ public class ChessGame {
 		return pieces;
 	}
 
-	void removePiece(Piece piece) {
+	private void removePiece(Piece piece) {
 		piece.owner.pieces.remove(piece);
 		piece.owner = null;
 		board.removePiece(piece);
 	}
-	void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws InvalidMoveException {
+	private void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws ChessException {
 		int turns = player.home.getAngleInTurns();
 		EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
 		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
 
 		Tile tile = player.home.getTile().getFirstRelative(path);
 		EdgeType forward = player.home.getEdgeForward().type;
-		Position pawnTile = tile.getRelative(forward)[0];
+		Tile pawnTile = tile.getRelative(forward)[0];
 
-		Piece pawn = new Piece(PAWN)
+		Piece pawn = new Piece(PAWN);
 		Piece piece = new Piece(type);
 
 		piece.setHome(board.placePiece(player.addPiece(piece), tile));
 		pawn.setHome(board.placePiece(player.addPiece(pawn), pawnTile));
 	}
-	public void resetPieces(Player player) throws InvalidMoveException {
+	private void resetPieces(Player player) throws ChessException {
 		for (Piece p : player.pieces)
 			removePiece(p);
 
@@ -102,18 +104,18 @@ public class ChessGame {
 		addPieceToPlayer(player, ROOK, ">>>>");
 	}
 
-	public void resetPieces() {
-		for (Player p : players)
+	private void resetPieces() throws ChessException {
+		for (Player player : players)
 			resetPieces(player);
 	}
 
 
 	// move
 
-	void validateMove(Move move) throws InvalidMoveException {
+	public void validateMove(Move move) throws InvalidMoveException {
 		// TODO
 		if (move.player != getCurrentPlayer())
-			throw InvalidMoveException("not that players turn");
+			throw new InvalidMoveException("not that players turn");
 
 		// TODO if state != State.DEFAULT ...
 	}
@@ -135,7 +137,7 @@ public class ChessGame {
 
 	// state
 
-	public void refreshState() {
+	private void refreshState() {
 		// TODO: check if check mate, etc
 		// state = ...
 	}

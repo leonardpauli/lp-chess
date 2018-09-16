@@ -17,7 +17,7 @@ product usage:
 		Player player = game.getCurrentPlayer()
 	- try faulty move
 		Piece piece = board.pieceAt("A2")
-		Position destination = new Position("A4")
+		Position destination = new Position.fromString("A4")
 		Movement movement = board.movement.getAvailable(piece, destination).get(0)
 		game.playMove(new Move(player, piece, movement))
 		' variants:

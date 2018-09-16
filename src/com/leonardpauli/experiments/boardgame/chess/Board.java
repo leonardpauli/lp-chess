@@ -1,12 +1,14 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
 
+import java.util.Arrays;
+
 class Board {
 	public Tile[][] tiles;
 	public final Size size = new Size(8, 8);
 	public final BoardMovementProcessor movement;
 
-	Board() {
+	Board() throws Exception {
 		movement = new BoardMovementProcessor(this);
 		setupTiles();
 		setupTileEdges();
@@ -16,45 +18,45 @@ class Board {
 	// tile
 
 	private void setupTiles() {
-		tiles = new Tiles[size.x][size.y];
+		tiles = new Tile[size.x][size.y];
 		for (int x = 0; x<size.x; x++) {
 			for (int y = 0; y<size.y; y++) {
 				Position position = new Position(x, y);
-				Tile tile = tiles[x][y] = new Tile(position);
+				tiles[x][y] = new Tile(position);
 			}
 		}
 	}
-	private void setupTileEdges() {
+	private void setupTileEdges() throws Exception {
 		for (int x = 0; x<size.x; x++) {
 			for (int y = 0; y<size.y; y++) {
-				Position position = new Position(x, y);
 				Tile tile = tiles[x][y];
 				tile.setEdges(getTileEdges(tile));
 			}
 		}
 	}
 
-	public bool tileExistsAt(Position position) {
-		bool inBounds =
+	public boolean tileExistsAt(Position position) {
+		boolean inBounds =
 			0 <= position.x && position.x < tiles.length &&
 			0 <= position.y && position.y < tiles[position.x].length;
 		return inBounds;
 	}
 
-	public Tile getTileAt(Position position) throws InvalidMoveException {
-		if (!tileExistsAt(position)) throw InvalidMoveException(
+	public Tile tileAt(Position position) throws InvalidMoveException {
+		if (!tileExistsAt(position)) throw new InvalidMoveException(
 			InvalidMoveException.Type.DESTINATION_NOT_FOUND);
 
 		return tiles[position.x][position.y];
 	}
 
-	private Edge[] getTileEdges(Tile tile) {
+	private Edge[] getTileEdges(Tile tile) throws InvalidMoveException {
 		int maxSize = EdgeType.values().length;
 		Edge[] edges = new Edge[maxSize];
 		int i = 0;
 		for (EdgeType type : EdgeType.values()) {
-			if (tileExistsAt(type.direction))
-				edges[i++] = new Edge(tile, type, getTileAt(position));
+			Position position = new Position(tile.position.add(type.direction));
+			if (tileExistsAt(position))
+				edges[i++] = new Edge(tile, type, tileAt(position));
 		}
 		int actualSize = i;
 		return Arrays.copyOf(edges, actualSize);
@@ -64,30 +66,27 @@ class Board {
 	// piece
 
 	public void removePiece(Piece piece) {
-		if (piece.position)
-			tiles[piece.position.x][piece.position.y].piece = null;
-		piece.position = null;
+		if (piece.tile!=null) piece.tile.removePiece();
 	}
 
 	public Tile placePiece(Piece piece, Tile tile) throws InvalidMoveException {
-		if (tile.piece!=null) throw InvalidMoveException(
+		if (tile.hasPiece()) throw new InvalidMoveException(
 			InvalidMoveException.Type.DESTINATION_OCCUPIED);
 
-		piece.position = position;
-		tile.piece = piece;
+		tile.setPiece(piece);
 
 		return tile;
 	}
 	public Tile placePiece(Piece piece, Position position) throws InvalidMoveException {
-		Tile tile = getTileAt(position);
+		Tile tile = tileAt(position);
 		return placePiece(piece, tile);
 	}
 
-	public Piece getPieceAt(Position position) throws InvalidMoveException {
-		return getTileAt(position).piece;
+	public Piece pieceAt(Position position) throws InvalidMoveException {
+		return tileAt(position).getPiece();
 	}
-	public Piece getPieceAt(String code) throws ChessException, InvalidMoveException {
-		return getPieceAt(new Position(code));
+	public Piece pieceAt(String code) throws ChessException {
+		return pieceAt(Position.fromString(code));
 	}
 
 

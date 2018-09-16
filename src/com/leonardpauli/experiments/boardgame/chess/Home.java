@@ -6,7 +6,7 @@ class Home {
 	private Position delta;
 	private Edge edgeForward;
 
-	Home(Position position, Position positionForward, Board board) {
+	Home(Position position, Position positionForward, Board board) throws ChessException {
 		setPositions(position, positionForward);
 		updateEdgeForward(board);
 	}
@@ -18,15 +18,15 @@ class Home {
 	void setPositions(Position position, Position positionForward) {
 		this.position = position;
 		this.positionForward = positionForward;
-		this.delta = positionForward.sub(position);
+		this.delta = new Position(positionForward.sub(position));
 	}
 
-	void updateEdgeForward(Board board) {
-		Tile homeTile = board.tileAt(home.position);
-		Tile forwardTile = board.tileAt(home.positionForward);
+	void updateEdgeForward(Board board) throws ChessException {
+		Tile homeTile = board.tileAt(position);
+		Tile forwardTile = board.tileAt(positionForward);
 		for (Edge edge : homeTile.getEdges()) {
 			if (edge.target.equals(forwardTile)) {
-				this.homeEdgeForward = edge;
+				this.edgeForward = edge;
 				return;
 			}
 		}
@@ -39,7 +39,7 @@ class Home {
 	public Edge getEdgeForward() { return edgeForward; }
 	public Tile getTile() { return edgeForward.source; }
 	
-	public int getAngleInTurns () {
+	public int getAngleInTurns () throws ChessException {
 		return getEdgeForward().type.getTurns(EdgeType.UP);
 	}
 

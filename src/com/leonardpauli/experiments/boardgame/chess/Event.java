@@ -1,5 +1,7 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import java.util.Date;
+
 class Event {
 	public Date start;
 	public Date end;
