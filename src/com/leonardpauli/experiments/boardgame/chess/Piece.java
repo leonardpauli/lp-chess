@@ -4,10 +4,14 @@ public class Piece {
 	PieceType type;
 	Tile tile;
 	Player owner;
+	private Tile homeTile;
 
 	Piece(PieceType type) {
 		this.type = type;
 	}
+
+	public bool isAtHome() { return tile==homeTile; }
+	public void setHome(Tile tile) { homeTile = tile; }
 
 	public Color getColor() { return owner.color; }
 	public String toChar() { return getColor()==Color.black
@@ -23,7 +27,7 @@ public enum PieceType {
 	ROOK ("Rook", 5, "♜", "♖", {STRAIGHT}),
 	KNIGHT ("Knight", 3, "♞", "♘", {LMOVE}),
 	BISHOP ("Bishop", 3, "♝", "♗", {DIAGONAL}),
-	PAWN ("Pawn", 1, "♟", "♙", {FORWARD_ONE, FORWARD_TWO_AT_START, ENPASSANT, PROMOTION});
+	PAWN ("Pawn", 1, "♟", "♙", {FORWARD_ONE, FORWARD_TWO_FROM_HOME, ENPASSANT, PROMOTION});
 
 	public static String title;
 	private int defaultValue = 0;

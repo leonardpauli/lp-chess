@@ -26,7 +26,7 @@ public enum MovementType {
 	STRAIGHT ("straight"),
 
 	FORWARD_ONE ("forward-one"),
-	FORWARD_TWO_AT_START ("forward-two-at-start"),
+	FORWARD_TWO_FROM_HOME ("forward-two-from-home"),
 
 	FORWARD ("forward"),
 

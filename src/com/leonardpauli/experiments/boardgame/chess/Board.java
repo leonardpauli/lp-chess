@@ -67,7 +67,7 @@ class Board {
 		piece.position = null;
 	}
 
-	public void placePiece(Piece piece, Position position) throws InvalidMoveException {
+	public Tile placePiece(Piece piece, Position position) throws InvalidMoveException {
 		Tile tile = getTileAt(position);
 
 		if (tile.piece!=null) throw InvalidMoveException(
@@ -75,6 +75,8 @@ class Board {
 
 		piece.position = position;
 		tile.piece = piece;
+
+		return tile;
 	}
 
 	public Piece getPieceAt(Position position) throws InvalidMoveException {
@@ -131,9 +133,9 @@ class Board {
 			opt.path = {forward};
 			addAvaliableMovementsTo(movements, opt);
 
-		} else if (type == FORWARD_TWO_AT_START) {
+		} else if (type == FORWARD_TWO_FROM_HOME) {
 
-			// TODO: if hasen't moved before
+			if (!piece.isAtHome()) return;
 
 			MovementDescription opt = new MovementDescription();
 			opt.source = piece.tile;
