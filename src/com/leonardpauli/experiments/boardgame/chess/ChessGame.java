@@ -73,31 +73,32 @@ public class ChessGame {
 		piece.owner = null;
 		board.removePiece(piece);
 	}
-	void addPieceToPlayer(Player player, int deltaY, PieceType type, Position pos) throws InvalidMoveException {
-		Position pawnPos = pos.add(0, deltaY);
-		Piece pawn = new Piece(PieceType.PAWN)
+	void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws InvalidMoveException {
+		int turns = player.home.getAngleInTurns();
+		EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
+		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns)
+
+		Tile tile = player.home.getTile().getRelative(path)[0]
+		Position pawnTile = tile.getRelative(player.home.getEdgeForward().type)[0];
+		
+		Piece pawn = new Piece(PAWN)
 		Piece piece = new Piece(type);
 
-		piece.setHome(board.placePiece(player.addPiece(piece), pos));
-		pawn.setHome(board.placePiece(player.addPiece(pawn), pawnPos));
+		piece.setHome(board.placePiece(player.addPiece(piece), tile));
+		pawn.setHome(board.placePiece(player.addPiece(pawn), pawnTile));
 	}
 	public void resetPieces(Player player) throws InvalidMoveException {
 		for (Piece p : player.pieces)
 			removePiece(p);
 
-		Position h = player.home.position;
-		int queenDeltaFromKing = player.home.delta.y;
-		int q = queenDeltaFromKing;
-		Position qp = h.add(1*q, 0);
-
-		addPieceToPlayer(player, q, PieceType.ROOK, h.add(-3*q, 0));
-		addPieceToPlayer(player, q, PieceType.KNIGHT, h.add(-2*q, 0));
-		addPieceToPlayer(player, q, PieceType.BISHOP, h.add(-1*q, 0));
-		addPieceToPlayer(player, q, PieceType.KING, h);
-		addPieceToPlayer(player, q, PieceType.QUEEN, qp);
-		addPieceToPlayer(player, q, PieceType.BISHOP, qp.add(1*q, 0));
-		addPieceToPlayer(player, q, PieceType.KNIGHT, qp.add(2*q, 0));
-		addPieceToPlayer(player, q, PieceType.ROOK, qp.add(3*q, 0));
+		addPieceToPlayer(player, ROOK, "<<<");
+		addPieceToPlayer(player, KNIGHT, "<<");
+		addPieceToPlayer(player, BISHOP, "<");
+		addPieceToPlayer(player, KING, "");
+		addPieceToPlayer(player, QUEEN, ">");
+		addPieceToPlayer(player, BISHOP, ">>");
+		addPieceToPlayer(player, KNIGHT, ">>>");
+		addPieceToPlayer(player, ROOK, ">>>>");
 	}
 
 	public void resetPieces() {

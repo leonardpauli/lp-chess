@@ -67,9 +67,7 @@ class Board {
 		piece.position = null;
 	}
 
-	public Tile placePiece(Piece piece, Position position) throws InvalidMoveException {
-		Tile tile = getTileAt(position);
-
+	public Tile placePiece(Piece piece, Tile tile) throws InvalidMoveException {
 		if (tile.piece!=null) throw InvalidMoveException(
 			InvalidMoveException.Type.DESTINATION_OCCUPIED);
 
@@ -77,6 +75,10 @@ class Board {
 		tile.piece = piece;
 
 		return tile;
+	}
+	public Tile placePiece(Piece piece, Position position) throws InvalidMoveException {
+		Tile tile = getTileAt(position);
+		return placePiece(piece, tile);
 	}
 
 	public Piece getPieceAt(Position position) throws InvalidMoveException {
