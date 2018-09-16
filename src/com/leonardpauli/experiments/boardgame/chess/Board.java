@@ -93,6 +93,6 @@ class Board {
 
 	// utils
 
-	public String toString(Style style) { return Printer.boardToString(this, style); }
+	public String toString(Printer.Style style) { return Printer.boardToString(this, style); }
 	public String toString() { return toString(Printer.Style.PRETTY); }
 }

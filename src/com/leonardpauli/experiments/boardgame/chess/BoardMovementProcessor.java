@@ -9,6 +9,10 @@ class BoardMovementProcessor {
 
 	// public
 
+	// TODO: all "available" methods could probably be static
+	// 	and doen't need the reference to Board
+	// 	(because navigation through edges)
+
 	public List<Movement> getAvailable(Piece piece) {
 		List<Movement> movements = new ArrayList<Movement>();
 		for (MovementType type : piece.type.movementTypes) {

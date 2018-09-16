@@ -8,7 +8,7 @@ public class ChessGame {
 	Player[] players;
 	Board board;
 	List<Round> rounds = new ArrayList<Round>();
-	State state = State.Default;
+	State state = State.DEFAULT;
 
 	static int movesPerPlayerAndRound = 1;
 	static int playersCount = 2;
@@ -115,7 +115,7 @@ public class ChessGame {
 		if (move.player != getCurrentPlayer())
 			throw InvalidMoveException("not that players turn");
 
-		// TODO if state != State.Default ...
+		// TODO if state != State.DEFAULT ...
 	}
 	public void playMove(Move move) throws InvalidMoveException {
 		validateMove(move);

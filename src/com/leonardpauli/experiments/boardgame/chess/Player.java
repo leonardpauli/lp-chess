@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 
 class Player {
-	String name;
+	public String name;
 	Color color;
 
 	public Home home;
