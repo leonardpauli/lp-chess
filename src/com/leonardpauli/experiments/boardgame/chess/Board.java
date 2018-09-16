@@ -87,42 +87,71 @@ class Board {
 
 	// movement
 
-	private void getAvaliableMovementsAppended(
-		MovementType type, Piece piece, List<Movement> movements) {
+	private class MovementDescription {
+		public Tile source;
+		public EdgeType[] path;
+		public bool skipOccupiedInBetween = false;
+	}
+	private void addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt,
+		Tile lastTile, int segmentIndex) {
+
+		EdgeType[] segments = opt.path;
+		EdgeType segmentType = segments[segmentIndex];
+		Edge[] edges = lastTile.getEdges(segmentType);
+
+		for (Edge edge : edges) {
+
+			bool isAtDestination = segmentIndex == segmentTypes.length-1;
+			bool isInBetween = !isAtDestination;
+			bool skipOccupiedCheck = !isAtDestination && (isInBetween && opt.skipOccupiedInBetween);
+			if (!skipOccupiedCheck && edge.target.isOccupiedBy(player)) continue;
+
+			if (!isAtDestination) {
+				addAvaliableMovementsTo(movements, opt, edge.target, segmentIndex+1);
+				continue;
+			}
+
+			Edge fullEdge = new Edge(opt.source, edge.target);
+			Movement movement = new Movement(type, fullEdge);
+			movements.add(movement);
+		}
+	}
+	private void addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt) {
+		return addAvaliableMovementsTo(movements, opt, opt.source, 0);
+	}
+
+	private void addAvaliableMovementsTo(List<Movement> movements, MovementType type, Piece piece) {
 		Edge forwardEdge = piece.owner.getHomeEdgeForward();
 		EdgeType forward = forwardEdge.type;
 		Player player = piece.owner;
 
 		if (type == FORWARD_ONE) {
-			EdgeType[] path = [forward];
-			bool skipOccupiedInBetween = false;
-
-			Edge[] branches = piece.tile.getEdges(forwardEdge.type);
-			for (Edge edge : branches) {
-				bool isInBetween = false;
-				bool skipOccupiedCkeck = isInBetween && skipOccupiedInBetween;
-				if (!skipOccupiedCkeck && edge.target.isOccupiedBy(player)) continue;
-
-				// TODO
-
-				Movement movement = new Movement(type, edge);
-				movements.add(movement);
-			}
+			MovementDescription opt = new MovementDescription();
+			opt.source = piece.tile;
+			opt.path = [forward];
+			addAvaliableMovementsTo(movements, opt);
 
 		} else if (type == FORWARD_TWO_AT_START) {
 
-			// TODO
+			// TODO: if hasen't moved before
 
-			EdgeType[] path = [forward, forward];
-			bool skipOccupiedInBetween = false;
+			MovementDescription opt = new MovementDescription();
+			opt.source = piece.tile;
+			opt.path = [forward, forward];
+			addAvaliableMovementsTo(movements, opt);
 
-			Tile target = piece.tile.getEdge(forwardEdge.type).target.getEdge(forwardEdge.type).target;
-
-			Edge edge = new Edge(piece.tile, target);
-			if (edge.target.isOccupiedBy(player)) return;
-
-			Movement movement = new Movement(type, edge);
-			movements.add(movement);
+		} else if (type == ONE_STEP) {
+			MovementDescription opt = new MovementDescription();
+			opt.source = piece.tile;
+			opt.path = [EdgeType.UP]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.DOWN]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
+			opt.skipOccupiedInBetween = true
+			opt.path = [EdgeType.UP, EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.UP, EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.DOWN, EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = [EdgeType.DOWN, EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
 
 		} else {
 			// TODO
@@ -133,7 +162,7 @@ class Board {
 	public List<Movement> getAvailableMovements(Piece piece) {
 		List<Movement> movements = new ArrayList<Movement>();
 		for (MovementType type : piece.type.movementTypes) {
-			getAvaliableMovementsAppended(type, piece, movements);
+			addAvaliableMovementsTo(movements, type, piece);
 		}
 		return movements;
 	}
