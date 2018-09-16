@@ -25,15 +25,18 @@ see `rim/Chess.Simple.rim` for current MVP goal, then the rest of the files in `
 - shifted more and more to use edges instead of positions
 - began implementing the REPL; using the ChessGame engine
 - all code til this point was written in sublime text as plain text without any test compilations (~1000LOC)
+- resolved syntax issues (pretty few!)
+- resolved reference issues (gotta love intelliJ for this!)
+- test the REPL interface (MVP is working!)
+
+![16 sept 2018 MVP moves](rim/16sept2018-mvp-moves.png?raw=true "Proof of concept")
 
 plan:
+
 - finish implementation
 - add some tests
 - open project with intelliJ, run google linting
-- resolve syntax issues
-- resolve reference issues
 - run tests, from tiny to larger, while resolving logic issues
-- test the REPL interface
 - abort for now because I absolutely don't have time for this
 
 then:
