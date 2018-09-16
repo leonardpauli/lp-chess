@@ -28,10 +28,10 @@ public enum MovementType {
 	FORWARD_ONE ("forward-one"),
 	FORWARD_TWO_FROM_HOME ("forward-two-from-home"),
 
-	LMOVE ("l-move"),
-	CASTLING ("castling"),
-	ENPASSANT ("en-passant"),
-	PROMOTION ("promotion");
+	LMOVE ("l-move"), // eg. the horse
+	CASTLING ("castling"), // rokad? tower and king?
+	ENPASSANT ("en-passant"), // diagonal capturing move by pawn
+	PROMOTION ("promotion"); // pawn converting to other piece at other players home rank
 
 	public final String name;
 

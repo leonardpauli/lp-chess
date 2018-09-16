@@ -5,13 +5,6 @@ BoardGame
 	states is many State
 	State // to be extended
 
-	' Board.Tile.Edge:
-		movement.type{is Movement.Type or Empty} with origin{is in tiles}:
-			' returns:
-				- None if blocked/one directional
-				- same if unidirectional
-				- else conditional // (eg. pawn in chess cannot move backwards)
-
 	Piece.Type:
 		moves.possible.types is many Movement.Type
 		// moves.possible.types with state: ...
@@ -37,15 +30,9 @@ Chess is BoardGame
 	// Board.Tile.pieces.count.max is Int: 1
 	Round.Move.time.duration.max: 30s
 	Round.Move.Movement.Type
-		- "diagonal"
-		- "left"
-		- "right"
-		- "forward"
-		- "backwards"
-		- "l-move" // the horse
-		- "castling" // rokad? tower and king?
-		- "en-passant" // bonde tar snett
-		- "promotion" // bonde konverterar vid kanten
+		- "castling"
+		- "en-passant"
+		- "promotion"
 		- "action"
 			is Action // TODO: shouldn't movement be an action?
 
