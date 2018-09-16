@@ -61,7 +61,10 @@ public enum EdgeType {
 	}
 
 	public static EdgeType[] turnedPath(EdgeType[] path, int turns) {
-		
+		EdgeType[] result = new EdgeType[path.length];
+		for (int i = 0; i<path.length; i++)
+			result[i] = path[i].getTurned(turns)
+		return result;
 	}
 
 
