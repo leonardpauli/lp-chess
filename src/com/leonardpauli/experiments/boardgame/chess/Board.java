@@ -128,7 +128,7 @@ class Board {
 		if (type == FORWARD_ONE) {
 			MovementDescription opt = new MovementDescription();
 			opt.source = piece.tile;
-			opt.path = [forward];
+			opt.path = {forward};
 			addAvaliableMovementsTo(movements, opt);
 
 		} else if (type == FORWARD_TWO_AT_START) {
@@ -137,21 +137,21 @@ class Board {
 
 			MovementDescription opt = new MovementDescription();
 			opt.source = piece.tile;
-			opt.path = [forward, forward];
+			opt.path = {forward, forward};
 			addAvaliableMovementsTo(movements, opt);
 
 		} else if (type == ONE_STEP) {
 			MovementDescription opt = new MovementDescription();
 			opt.source = piece.tile;
-			opt.path = [EdgeType.UP]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.DOWN]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.UP}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.DOWN}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
 			opt.skipOccupiedInBetween = true
-			opt.path = [EdgeType.UP, EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.UP, EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.DOWN, EdgeType.LEFT]; addAvaliableMovementsTo(movements, opt);
-			opt.path = [EdgeType.DOWN, EdgeType.RIGHT]; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.UP, EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.UP, EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.DOWN, EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
+			opt.path = {EdgeType.DOWN, EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
 
 		} else {
 			// TODO

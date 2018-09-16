@@ -18,12 +18,12 @@ public class Piece {
 }
 
 public enum PieceType {
-	KING ("King", 20, "♚", "♔", [ONE_STEP, CASTLING]),
-	QUEEN ("Queen", 9, "♛", "♕", [STRAIGHT, DIAGONAL]),
-	ROOK ("Rook", 5, "♜", "♖", [STRAIGHT]),
-	KNIGHT ("Knight", 3, "♞", "♘", [LMOVE]),
-	BISHOP ("Bishop", 3, "♝", "♗", [DIAGONAL]),
-	PAWN ("Pawn", 1, "♟", "♙", [FORWARD_ONE, FORWARD_TWO_AT_START, ENPASSANT, PROMOTION]);
+	KING ("King", 20, "♚", "♔", {ONE_STEP, CASTLING}),
+	QUEEN ("Queen", 9, "♛", "♕", {STRAIGHT, DIAGONAL}),
+	ROOK ("Rook", 5, "♜", "♖", {STRAIGHT}),
+	KNIGHT ("Knight", 3, "♞", "♘", {LMOVE}),
+	BISHOP ("Bishop", 3, "♝", "♗", {DIAGONAL}),
+	PAWN ("Pawn", 1, "♟", "♙", {FORWARD_ONE, FORWARD_TWO_AT_START, ENPASSANT, PROMOTION});
 
 	public static String title;
 	private int defaultValue = 0;
