@@ -157,6 +157,19 @@ class Board {
 			opt.path = {EdgeType.DOWN, EdgeType.LEFT}; addAvaliableMovementsTo(movements, opt);
 			opt.path = {EdgeType.DOWN, EdgeType.RIGHT}; addAvaliableMovementsTo(movements, opt);
 
+		} else if (type == LMOVE) {
+			MovementDescription opt = new MovementDescription();
+			opt.source = piece.tile;
+			opt.skipOccupiedInBetween = true
+
+			EdgeType[] pathIdeal = {EdgeType.UP, EdgeType.UP, EdgeType.LEFT};
+			EdgeType[] pathIdealMirrored = {EdgeType.UP, EdgeType.UP, EdgeType.RIGHT};
+
+			for (int turns = 0; i<4; i++) {
+				opt.path = EdgeType.turnedPath(pathIdeal, turns); addAvaliableMovementsTo(movements, opt);
+				opt.path = EdgeType.turnedPath(pathIdealMirrored, turns); addAvaliableMovementsTo(movements, opt);
+			}
+
 		} else {
 			// TODO
 			throw new ChessException("not implemented");
