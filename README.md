@@ -63,6 +63,8 @@ Furthermore, a square board should not be assumed, rather: *board games* usually
 For instance, if tile graph is dynamically generated based on the number of players, no futher change would be needed in order to make the chess board go from square (2p), to hexagonal (3p), to 10-sided (5p). All rules would still apply (if defined in terms of movements between nodes/tiles instead of between predefined coordinates.). How to nicely visualize a 10-sided board is a different problem, but the underlying engine would just as well support a 4D version if wanted.
 
 
+![three player chess board, twisted pentagon](rim/three-player-chess.png?raw=true "Three Player Chess")
+
 ---
 
 Copyright © Leonard Pauli, sept 2018
