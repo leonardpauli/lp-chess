@@ -95,13 +95,35 @@ class Board {
 		public Tile source;
 		public EdgeType[] path;
 		public bool skipOccupiedInBetween = false;
+		public bool repeatable = false;
+
+		public static MovementDescription[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece) {
+			int directions = 4;
+			EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
+			for (int turns = 0; turns<directions; turns++) {
+				paths[turns] = EdgeType.turnedPath(pathIdeal, turns);
+			}
+
+			MovementDescription[] opts = new MovementDescription[paths.length]
+			for (int i = 0; i<paths.length; i++) {
+				MovementDescription opt = new MovementDescription();
+				opt.source = piece.tile;
+				opt.repeatable = true;
+				opt.path = paths[i];
+				opts[i] = opt;
+			}
+
+			return opts;
+		}
 	}
-	private void addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt,
+	private int addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt,
 		Tile lastTile, int segmentIndex) {
 
 		EdgeType[] segments = opt.path;
 		EdgeType segmentType = segments[segmentIndex];
 		Edge[] edges = lastTile.getEdges(segmentType);
+
+		int addedCount = 0;
 
 		for (Edge edge : edges) {
 
@@ -111,16 +133,19 @@ class Board {
 			if (!skipOccupiedCheck && edge.target.isOccupiedBy(player)) continue;
 
 			if (!isAtDestination) {
-				addAvaliableMovementsTo(movements, opt, edge.target, segmentIndex+1);
+				addedCount += addAvaliableMovementsTo(movements, opt, edge.target, segmentIndex+1);
 				continue;
 			}
 
 			Edge fullEdge = new Edge(opt.source, edge.target);
 			Movement movement = new Movement(type, fullEdge);
 			movements.add(movement);
+			addedCount++;
 		}
+
+		return addedCount;
 	}
-	private void addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt) {
+	private int addAvaliableMovementsTo(List<Movement> movements, MovementDescription opt) {
 		return addAvaliableMovementsTo(movements, opt, opt.source, 0);
 	}
 
@@ -160,18 +185,28 @@ class Board {
 		} else if (type == LMOVE) {
 			MovementDescription opt = new MovementDescription();
 			opt.source = piece.tile;
-			opt.skipOccupiedInBetween = true
+			opt.skipOccupiedInBetween = true;
 
 			EdgeType[] pathIdeal = {EdgeType.UP, EdgeType.UP, EdgeType.LEFT};
 			EdgeType[] pathIdealMirrored = {EdgeType.UP, EdgeType.UP, EdgeType.RIGHT};
 
-			for (int turns = 0; i<4; i++) {
+			for (int turns = 0; turns<4; turns++) {
 				opt.path = EdgeType.turnedPath(pathIdeal, turns); addAvaliableMovementsTo(movements, opt);
 				opt.path = EdgeType.turnedPath(pathIdealMirrored, turns); addAvaliableMovementsTo(movements, opt);
 			}
 
+		} else if (type == STRAIGHT) {
+			for (MovementDescription opt : MovementDescription
+				.withMultiDirectionalRepeatablePath({EdgeType.UP}, piece))
+				addAvaliableMovementsTo(movements, opt);
+
+		} else if (type == DIAGONAL) {
+			for (MovementDescription opt : MovementDescription
+				.withMultiDirectionalRepeatablePath({EdgeType.UP, EdgeType.LEFT}, piece))
+				addAvaliableMovementsTo(movements, opt);
+
 		} else {
-			// TODO
+			// TODO: CASTLING, ENPASSANT, PROMOTION
 			throw new ChessException("not implemented");
 		}
 	}

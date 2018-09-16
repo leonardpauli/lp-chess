@@ -28,8 +28,6 @@ public enum MovementType {
 	FORWARD_ONE ("forward-one"),
 	FORWARD_TWO_FROM_HOME ("forward-two-from-home"),
 
-	FORWARD ("forward"),
-
 	LMOVE ("l-move"),
 	CASTLING ("castling"),
 	ENPASSANT ("en-passant"),
