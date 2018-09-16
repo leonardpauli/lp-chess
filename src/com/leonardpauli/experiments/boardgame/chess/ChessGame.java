@@ -48,11 +48,13 @@ public class ChessGame {
 	void givePlayersHome() {
 		players[0].setHome(new Home(
 			new Position(board.size.x/2, 0),
-			new Position(board.size.x/2, 1)
+			new Position(board.size.x/2, 1),
+			board
 		));
 		players[1].setHome(new Home(
 			new Position(board.size.x/2+1, board.size.y-1-0),
-			new Position(board.size.x/2+1, board.size.y-1-1)
+			new Position(board.size.x/2+1, board.size.y-1-1),
+			board
 		));
 	}
 
