@@ -71,7 +71,6 @@ public class Player {
 		Player p = (Player) o;
 		return p.name.equals(name) && p.color.getName().equals(color.getName());
 	}
-	public boolean equals(Player o) {return equals((Object) o); }
 
 	@Override
 	public int hashCode() {

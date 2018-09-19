@@ -126,7 +126,7 @@ public class ChessGame {
 
 	public void validateMove(Move move) throws InvalidMoveException {
 		// TODO
-		if (move.player.equals((getCurrentPlayer())))
+		if (!move.player.equals(getCurrentPlayer()))
 			throw new InvalidMoveException("not that players turn");
 
 		// TODO if state != State.DEFAULT ...
