@@ -1,9 +1,14 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.actor.PieceType;
+import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.game.State;
+
 import java.util.List;
 import java.util.ArrayList;
-
-import static com.leonardpauli.experiments.boardgame.chess.PieceType.*;
 
 
 public class ChessGame {
@@ -47,7 +52,7 @@ public class ChessGame {
 		return players[turnNrSafe];
 	}
 
-	private void givePlayersHome() throws ChessException {
+	private void givePlayersHome() throws GameException {
 		players[0].home = new Home(
 			new Position(board.size.x/2-1, 0),
 			new Position(board.size.x/2-1, 1),
@@ -75,7 +80,7 @@ public class ChessGame {
 		piece.owner = null;
 		board.removePiece(piece);
 	}
-	private void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws ChessException {
+	private void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws GameException {
 		int turns = player.home.getAngleInTurns();
 		EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
 		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
@@ -84,27 +89,27 @@ public class ChessGame {
 		EdgeType forward = player.home.getEdgeForward().type;
 		Tile pawnTile = tile.getRelative(forward)[0];
 
-		Piece pawn = new Piece(PAWN);
+		Piece pawn = new Piece(PieceType.PAWN);
 		Piece piece = new Piece(type);
 
 		piece.setHome(board.placePiece(player.addPiece(piece), tile));
 		pawn.setHome(board.placePiece(player.addPiece(pawn), pawnTile));
 	}
-	private void resetPieces(Player player) throws ChessException {
+	private void resetPieces(Player player) throws GameException {
 		for (Piece p : player.pieces)
 			removePiece(p);
 
-		addPieceToPlayer(player, ROOK, "<<<");
-		addPieceToPlayer(player, KNIGHT, "<<");
-		addPieceToPlayer(player, BISHOP, "<");
-		addPieceToPlayer(player, KING, "");
-		addPieceToPlayer(player, QUEEN, ">");
-		addPieceToPlayer(player, BISHOP, ">>");
-		addPieceToPlayer(player, KNIGHT, ">>>");
-		addPieceToPlayer(player, ROOK, ">>>>");
+		addPieceToPlayer(player, PieceType.ROOK, "<<<");
+		addPieceToPlayer(player, PieceType.KNIGHT, "<<");
+		addPieceToPlayer(player, PieceType.BISHOP, "<");
+		addPieceToPlayer(player, PieceType.KING, "");
+		addPieceToPlayer(player, PieceType.QUEEN, ">");
+		addPieceToPlayer(player, PieceType.BISHOP, ">>");
+		addPieceToPlayer(player, PieceType.KNIGHT, ">>>");
+		addPieceToPlayer(player, PieceType.ROOK, ">>>>");
 	}
 
-	private void resetPieces() throws ChessException {
+	private void resetPieces() throws GameException {
 		for (Player player : players)
 			resetPieces(player);
 	}

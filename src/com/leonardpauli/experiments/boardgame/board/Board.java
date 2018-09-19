@@ -1,5 +1,11 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board;
 
+
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.util.Size;
 
 import java.util.Arrays;
 
@@ -85,7 +91,7 @@ class Board {
 	public Piece pieceAt(Position position) throws InvalidMoveException {
 		return tileAt(position).getPiece();
 	}
-	public Piece pieceAt(String code) throws ChessException {
+	public Piece pieceAt(String code) throws GameException {
 		return pieceAt(Position.fromString(code));
 	}
 

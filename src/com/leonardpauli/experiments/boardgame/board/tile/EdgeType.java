@@ -1,4 +1,7 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.tile;
+
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.util.Point;
 
 public enum EdgeType {
 	LEFT ('<', new int[]{-1, 0}, "left"),
@@ -29,21 +32,21 @@ public enum EdgeType {
 	}
 
 	public boolean canBeTurned() { return turned != null; }
-	public EdgeType getTurned(int times) throws ChessException {
+	public EdgeType getTurned(int times) throws GameException {
 		EdgeType type = this;
 		for (int i = 0; i<times; i++) {
 			if (!type.canBeTurned())
-				throw new ChessException("edge can't be turned");
+				throw new GameException("edge can't be turned");
 			type = type.turned;
 		}
 		return type;
 	}
-	public EdgeType getTurned() throws ChessException { return getTurned(1); }
-	public int getTurns(EdgeType toType) throws ChessException {
+	public EdgeType getTurned() throws GameException { return getTurned(1); }
+	public int getTurns(EdgeType toType) throws GameException {
 		return toType==this? 0: 1 + this.getTurned().getTurns(toType);
 	}
 
-	public static EdgeType[] turnedPath(EdgeType[] path, int turns) throws ChessException {
+	public static EdgeType[] turnedPath(EdgeType[] path, int turns) throws GameException {
 		EdgeType[] result = new EdgeType[path.length];
 		for (int i = 0; i<path.length; i++)
 			result[i] = path[i].getTurned(turns);
@@ -53,12 +56,12 @@ public enum EdgeType {
 
 	// string
 
-	public static EdgeType fromCode(char code) throws ChessException {
+	public static EdgeType fromCode(char code) throws GameException {
 		for (EdgeType t : EdgeType.values())
 			if (t.code == code) return t;
-		throw new ChessException("enum not found");
+		throw new GameException("enum not found");
 	}
-	public static EdgeType[] getPath(String code) throws ChessException {
+	public static EdgeType[] getPath(String code) throws GameException {
 		EdgeType[] path = new EdgeType[code.length()];
 		int i = 0;
 		for (char ch : code.toCharArray())

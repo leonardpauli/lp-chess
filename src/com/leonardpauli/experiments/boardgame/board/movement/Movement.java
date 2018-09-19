@@ -1,5 +1,8 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.movement;
 
+
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
 
 public class Movement {
 	MovementType type;

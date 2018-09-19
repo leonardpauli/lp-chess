@@ -1,6 +1,8 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.movement;
 
-public class InvalidMoveException extends ChessException {
+import com.leonardpauli.experiments.boardgame.game.GameException;
+
+public class InvalidMoveException extends GameException {
 
 	public enum Type {
 		DESTINATION_OCCUPIED ("destination tile occupied"),

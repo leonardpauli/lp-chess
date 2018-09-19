@@ -1,4 +1,4 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.movement;
 
 public enum MovementType {
 	ONE_STEP ("one-step"),

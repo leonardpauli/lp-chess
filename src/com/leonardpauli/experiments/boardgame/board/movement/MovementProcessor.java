@@ -1,16 +1,25 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.movement;
+
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.Player;
+import com.leonardpauli.experiments.boardgame.board.Board;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
+import com.leonardpauli.experiments.boardgame.game.GameException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.leonardpauli.experiments.boardgame.chess.EdgeType.*;
-import static com.leonardpauli.experiments.boardgame.chess.MovementType.*;
+import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
+import static com.leonardpauli.experiments.boardgame.board.movement.MovementType.*;
 
-class BoardMovementProcessor {
+class MovementProcessor {
 
 	private Board board;
 
-	BoardMovementProcessor(Board board) {this.board = board;}
+	MovementProcessor(Board board) {this.board = board;}
 
 
 	// public
@@ -19,7 +28,7 @@ class BoardMovementProcessor {
 	// 	and doesn't need the reference to Board
 	// 	(because navigation through edges)
 
-	public List<Movement> getAvailable(Piece piece) throws ChessException {
+	public List<Movement> getAvailable(Piece piece) throws GameException {
 		List<Movement> movements = new ArrayList<Movement>();
 		for (MovementType type : piece.type.movementTypes) {
 			addAvailableTo(movements, type, piece);
@@ -27,7 +36,7 @@ class BoardMovementProcessor {
 		return movements;
 	}
 
-	public List<Movement> getAvailable(Piece piece, Position destination) throws ChessException {
+	public List<Movement> getAvailable(Piece piece, Position destination) throws GameException {
 		List<Movement> movements = getAvailable(piece);
 		movements.removeIf(movement -> !movement.edge.target.position.equals(destination));
 		return movements;
@@ -43,7 +52,7 @@ class BoardMovementProcessor {
 		boolean repeatable = false;
 		MovementType type;
 
-		static Options[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece, MovementType type) throws ChessException {
+		static Options[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece, MovementType type) throws GameException {
 			int directions = 4;
 			EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
 			for (int turns = 0; turns<directions; turns++) {
@@ -97,7 +106,7 @@ class BoardMovementProcessor {
 		return addAvailableTo(movements, opt, opt.source, 0);
 	}
 
-	private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece) throws ChessException {
+	private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece) throws GameException {
 		Edge forwardEdge = piece.owner.home.getEdgeForward();
 		EdgeType forward = forwardEdge.type;
 
@@ -168,7 +177,7 @@ class BoardMovementProcessor {
 			// TODO
 
 		} else {
-			throw new ChessException("MovementType movements not implemented for type: "+type);
+			throw new GameException("MovementType movements not implemented for type: "+type);
 		}
 	}
 

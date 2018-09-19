@@ -1,4 +1,4 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.tile;
 
 class Edge {
 	Tile source;

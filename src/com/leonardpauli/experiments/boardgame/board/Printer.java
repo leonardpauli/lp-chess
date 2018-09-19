@@ -1,4 +1,7 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board;
+
+import com.leonardpauli.experiments.boardgame.Tile;
+import com.leonardpauli.experiments.boardgame.board.Board;
 
 public class Printer {
 	public enum Style { PLAIN, PRETTY, PRETTY_WITH_NUMBERS };

@@ -1,4 +1,4 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.util;
 
 class Color {
 	public static final Color black = new Color("black");

@@ -1,4 +1,9 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.tile;
+
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.Player;
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.util.Color;
 
 import java.util.Arrays;
 
@@ -77,17 +82,17 @@ class Tile {
 		int i = 0; for (Edge edge : edges) tiles[i++] = edge.target;
 		return tiles;
 	}
-	public Tile getFirstRelative(EdgeType[] path) throws ChessException {
+	public Tile getFirstRelative(EdgeType[] path) throws GameException {
 		Tile tile = this;
 		for (EdgeType segment : path) {
 			Tile[] tiles = tile.getRelative(segment);
-			if (tiles.length==0) throw new ChessException("path is broken");
+			if (tiles.length==0) throw new GameException("path is broken");
 			tile = tiles[0];
 		}
 		return tile;
 	}
-	public Tile[] getRelative(EdgeType[] path) throws ChessException {
-		throw new ChessException("not implemented");
+	public Tile[] getRelative(EdgeType[] path) throws GameException {
+		throw new GameException("not implemented");
 	}
 
 

@@ -1,12 +1,15 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.board.tile;
+
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.util.Point;
 
 class Position extends Point {
 	
 	Position(int x, int y) {super(x, y);}
 	Position(Point p) {super(p.x, p.y);}
 
-	public static Position fromString(String code) throws ChessException {
-		if (code.length() != 2) throw new ChessException(
+	public static Position fromString(String code) throws GameException {
+		if (code.length() != 2) throw new GameException(
 						"code.length has to be 2, was "+Integer.toString(code.length()));
 		int x = ((int)code.toUpperCase().charAt(0)) - 65;
 		int y = Integer.parseInt(code.substring(1,2))-1;

@@ -1,4 +1,4 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.game;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,11 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.board.Printer;
+import com.leonardpauli.experiments.boardgame.board.movement.Movement;
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.game.State;
+
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,7 +21,7 @@ public class Main {
 		}
 	}
 
-	private static void doTurn(ChessGame game, Scanner scanner) throws ChessException {
+	private static void doTurn(ChessGame game, Scanner scanner) throws GameException {
 		String command;
 
 		Piece firstMovable = game.getCurrentPlayer().getFirstMovablePiece(game.board);
@@ -53,14 +59,14 @@ public class Main {
 
 		ChessGame game = new ChessGame();
 
-		while (game.getState()==State.DEFAULT) {
+		while (game.getState()== State.DEFAULT) {
 
 			System.out.println("\n");
 			System.out.println(game.board.toString(Printer.Style.PRETTY_WITH_NUMBERS));
 
 			try {
 				doTurn(game, scanner);
-			} catch (ChessException e) {
+			} catch (GameException e) {
 				System.out.println("Try again! ("+e.getMessage()+")");
 				throw e;
 			}

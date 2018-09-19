@@ -1,4 +1,11 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.actor;
+
+import com.leonardpauli.experiments.boardgame.board.Board;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
+import com.leonardpauli.experiments.boardgame.game.GameException;
 
 class Home {
 	private Position position;
@@ -6,7 +13,7 @@ class Home {
 	private Position delta;
 	private Edge edgeForward;
 
-	Home(Position position, Position positionForward, Board board) throws ChessException {
+	Home(Position position, Position positionForward, Board board) throws GameException {
 		setPositions(position, positionForward);
 		updateEdgeForward(board);
 	}
@@ -21,7 +28,7 @@ class Home {
 		this.delta = new Position(positionForward.sub(position));
 	}
 
-	void updateEdgeForward(Board board) throws ChessException {
+	void updateEdgeForward(Board board) throws GameException {
 		Tile homeTile = board.tileAt(position);
 		Tile forwardTile = board.tileAt(positionForward);
 		for (Edge edge : homeTile.getEdges()) {
@@ -30,7 +37,7 @@ class Home {
 				return;
 			}
 		}
-		throw new ChessException("Player.setHome: edge from homeTile to forwardTile not found");
+		throw new GameException("Player.setHome: edge from homeTile to forwardTile not found");
 	}
 
 
@@ -39,7 +46,7 @@ class Home {
 	public Edge getEdgeForward() { return edgeForward; }
 	public Tile getTile() { return edgeForward.source; }
 	
-	public int getAngleInTurns () throws ChessException {
+	public int getAngleInTurns () throws GameException {
 		return getEdgeForward().type.getTurns(EdgeType.UP);
 	}
 

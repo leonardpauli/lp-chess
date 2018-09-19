@@ -1,6 +1,7 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.actor;
 
-import static com.leonardpauli.experiments.boardgame.chess.MovementType.*;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
+import com.leonardpauli.experiments.boardgame.util.Color;
 
 public class Piece {
 	PieceType type;

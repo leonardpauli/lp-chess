@@ -1,4 +1,9 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.game;
+
+import com.leonardpauli.experiments.boardgame.Event;
+import com.leonardpauli.experiments.boardgame.board.movement.Movement;
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.Player;
 
 class Move {
 	public Player player;

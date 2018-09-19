@@ -1,6 +1,10 @@
-package com.leonardpauli.experiments.boardgame.chess;
+package com.leonardpauli.experiments.boardgame.actor;
 
-import java.lang.reflect.Array;
+import com.leonardpauli.experiments.boardgame.board.Board;
+import com.leonardpauli.experiments.boardgame.board.movement.Movement;
+import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.util.Color;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
@@ -46,12 +50,12 @@ class Player {
 		return Arrays.copyOf(alivePieces, i);
 	}
 
-	public Piece getFirstMovablePiece(Board board) throws ChessException {
+	public Piece getFirstMovablePiece(Board board) throws GameException {
 		for (Piece piece : getAlivePieces()) {
 			List<Movement> movements = board.movement.getAvailable(piece);
 			if (movements.size()>0) return piece;
 		}
-		throw new ChessException("no movable pieces for that player");
+		throw new GameException("no movable pieces for that player");
 	}
 
 }
