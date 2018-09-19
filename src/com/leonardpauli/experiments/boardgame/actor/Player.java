@@ -10,71 +10,68 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 
-
 public class Player {
-	public String name;
-	Color color;
+  public String name;
+  Color color;
 
-	public Home home;
-	boolean alive = true;
-	public List<Piece> pieces = new ArrayList<Piece>();
+  public Home home;
+  boolean alive = true;
+  public List<Piece> pieces = new ArrayList<Piece>();
 
-	public Player(String name, Color color) {
-		this.name = name; this.color = color;
-	}
-	public Player(int ordinal) {
-		if (ordinal==0) {
-			color = Color.white;
-			name = "White";
-		} else if (ordinal==1) {
-			color = Color.black;
-			name = "Black";
-		} else {
-			color = Color.fromHSL( ordinal / 10f, 0.5f, 0.5f);
-			name = "Player " + Integer.toString(1 + ordinal);
-		}
-	}
+  public Player(String name, Color color) {
+    this.name = name;
+    this.color = color;
+  }
 
+  public Player(int ordinal) {
+    if (ordinal == 0) {
+      color = Color.white;
+      name = "White";
+    } else if (ordinal == 1) {
+      color = Color.black;
+      name = "Black";
+    } else {
+      color = Color.fromHSL(ordinal / 10f, 0.5f, 0.5f);
+      name = "Player " + Integer.toString(1 + ordinal);
+    }
+  }
 
-	// piece
+  // piece
 
-	public Piece addPiece(Piece piece) {
-		pieces.add(piece);
-		piece.owner = this;
-		return piece;
-	}
+  public Piece addPiece(Piece piece) {
+    pieces.add(piece);
+    piece.owner = this;
+    return piece;
+  }
 
-	public Piece[] getAlivePieces() {
-		Piece[] alivePieces = new Piece[pieces.size()];
-		int i = 0;
-		for (Piece piece : pieces) if (piece.isAlive()) alivePieces[i++] = piece;
-		return Arrays.copyOf(alivePieces, i);
-	}
+  public Piece[] getAlivePieces() {
+    Piece[] alivePieces = new Piece[pieces.size()];
+    int i = 0;
+    for (Piece piece : pieces) if (piece.isAlive()) alivePieces[i++] = piece;
+    return Arrays.copyOf(alivePieces, i);
+  }
 
-	public Piece getFirstMovablePiece(Board board) throws GameException {
-		for (Piece piece : getAlivePieces()) {
-			List<Movement> movements = board.movement.getAvailable(piece);
-			if (movements.size()>0) return piece;
-		}
-		throw new GameException("no movable pieces for that player");
-	}
+  public Piece getFirstMovablePiece(Board board) throws GameException {
+    for (Piece piece : getAlivePieces()) {
+      List<Movement> movements = board.movement.getAvailable(piece);
+      if (movements.size() > 0) return piece;
+    }
+    throw new GameException("no movable pieces for that player");
+  }
 
+  // equals
+  // TODO: use better id
 
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) return true;
+    if (!(o instanceof Player)) return false;
+    Player p = (Player) o;
+    return p.name.equals(name) && p.color.getName().equals(color.getName());
+  }
 
-	// equals
-	// TODO: use better id
-
-	@Override
-	public boolean equals(Object o) {
-		if (o == this) return true;
-		if (!(o instanceof Player)) return false;
-		Player p = (Player) o;
-		return p.name.equals(name) && p.color.getName().equals(color.getName());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, color.getName());
-	}
-
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, color.getName());
+  }
 }

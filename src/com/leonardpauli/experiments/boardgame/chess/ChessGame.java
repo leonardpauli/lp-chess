@@ -17,151 +17,144 @@ import com.leonardpauli.experiments.boardgame.game.State;
 import java.util.List;
 import java.util.ArrayList;
 
-
 public class ChessGame {
-	private Player[] players;
-	Board board;
-	private List<Round> rounds = new ArrayList<Round>();
-	private State state = State.DEFAULT;
+  private Player[] players;
+  Board board;
+  private List<Round> rounds = new ArrayList<Round>();
+  private State state = State.DEFAULT;
 
-	private static int movesPerPlayerAndRound = 1;
-	private static int playersCount = 2;
+  private static int movesPerPlayerAndRound = 1;
+  private static int playersCount = 2;
 
+  public ChessGame() throws Exception {
+    createPlayers();
+    board = new Board();
+    givePlayersHome();
+    resetPieces();
+    rounds.add(new Round());
+  }
 
-	public ChessGame() throws Exception {
-		createPlayers();
-		board = new Board();
-		givePlayersHome();
-		resetPieces();
-		rounds.add(new Round());
-	}
+  // round
 
+  public Round currentRound() {
+    return rounds.get(rounds.size() - 1);
+  }
 
-	// round
+  // player
 
-	public Round currentRound() {
-		return rounds.get(rounds.size()-1);
-	}
+  private void createPlayers() {
+    players = new Player[ChessGame.playersCount];
+    for (int i = 0; i < players.length; i++) players[i] = new Player(i);
+  }
 
+  public Player getCurrentPlayer() {
+    Round round = currentRound();
+    int turnNr = round.moves.size() / ChessGame.movesPerPlayerAndRound;
+    int turnNrSafe = turnNr % players.length;
+    return players[turnNrSafe];
+  }
 
-	// player
+  private void givePlayersHome() throws GameException {
+    players[0].home =
+        new Home(
+            new Position(board.size.x / 2 - 1, 0), new Position(board.size.x / 2 - 1, 1), board);
+    players[1].home =
+        new Home(
+            new Position(board.size.x / 2 - 1 + 1, board.size.y - 1),
+            new Position(board.size.x / 2 - 1 + 1, board.size.y - 1 - 1),
+            board);
+  }
 
-	private void createPlayers() {
-		players = new Player[ChessGame.playersCount];
-		for (int i = 0; i<players.length; i++)
-			players[i] = new Player(i);
-	}
+  // piece
 
-	public Player getCurrentPlayer() {
-		Round round = currentRound();
-		int turnNr = round.moves.size() / ChessGame.movesPerPlayerAndRound;
-		int turnNrSafe = turnNr % players.length;
-		return players[turnNrSafe];
-	}
+  public List<Piece> getPieces() {
+    List<Piece> pieces = new ArrayList<Piece>();
+    for (Player p : players) pieces.addAll(p.pieces);
+    return pieces;
+  }
 
-	private void givePlayersHome() throws GameException {
-		players[0].home = new Home(
-			new Position(board.size.x/2-1, 0),
-			new Position(board.size.x/2-1, 1),
-			board
-		);
-		players[1].home = new Home(
-			new Position(board.size.x/2-1+1, board.size.y-1),
-			new Position(board.size.x/2-1+1, board.size.y-1-1),
-			board
-		);
-	}
+  private void removePiece(Piece piece) {
+    piece.owner.pieces.remove(piece);
+    piece.owner = null;
+    board.removePiece(piece);
+  }
 
+  private void addPieceToPlayer(Player player, PieceType type, String pathFromHome)
+      throws GameException {
+    int turns = player.home.getAngleInTurns();
+    EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
+    EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
 
-	// piece
+    Tile tile = player.home.getTile().getFirstRelative(path);
+    EdgeType forward = player.home.getEdgeForward().type;
+    Tile pawnTile = tile.getRelative(forward)[0];
 
-	public List<Piece> getPieces() {
-		List<Piece> pieces = new ArrayList<Piece>();
-		for (Player p : players)
-			pieces.addAll(p.pieces);
-		return pieces;
-	}
+    Piece pawn = new Piece(PieceType.PAWN);
+    Piece piece = new Piece(type);
 
-	private void removePiece(Piece piece) {
-		piece.owner.pieces.remove(piece);
-		piece.owner = null;
-		board.removePiece(piece);
-	}
-	private void addPieceToPlayer(Player player, PieceType type, String pathFromHome) throws GameException {
-		int turns = player.home.getAngleInTurns();
-		EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
-		EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
+    piece.setHome(board.placePiece(player.addPiece(piece), tile));
+    pawn.setHome(board.placePiece(player.addPiece(pawn), pawnTile));
+  }
 
-		Tile tile = player.home.getTile().getFirstRelative(path);
-		EdgeType forward = player.home.getEdgeForward().type;
-		Tile pawnTile = tile.getRelative(forward)[0];
+  private void resetPieces(Player player) throws GameException {
+    for (Piece p : player.pieces) removePiece(p);
 
-		Piece pawn = new Piece(PieceType.PAWN);
-		Piece piece = new Piece(type);
+    addPieceToPlayer(player, PieceType.ROOK, "<<<");
+    addPieceToPlayer(player, PieceType.KNIGHT, "<<");
+    addPieceToPlayer(player, PieceType.BISHOP, "<");
+    addPieceToPlayer(player, PieceType.KING, "");
+    addPieceToPlayer(player, PieceType.QUEEN, ">");
+    addPieceToPlayer(player, PieceType.BISHOP, ">>");
+    addPieceToPlayer(player, PieceType.KNIGHT, ">>>");
+    addPieceToPlayer(player, PieceType.ROOK, ">>>>");
+  }
 
-		piece.setHome(board.placePiece(player.addPiece(piece), tile));
-		pawn.setHome(board.placePiece(player.addPiece(pawn), pawnTile));
-	}
-	private void resetPieces(Player player) throws GameException {
-		for (Piece p : player.pieces)
-			removePiece(p);
+  private void resetPieces() throws GameException {
+    for (Player player : players) resetPieces(player);
+  }
 
-		addPieceToPlayer(player, PieceType.ROOK, "<<<");
-		addPieceToPlayer(player, PieceType.KNIGHT, "<<");
-		addPieceToPlayer(player, PieceType.BISHOP, "<");
-		addPieceToPlayer(player, PieceType.KING, "");
-		addPieceToPlayer(player, PieceType.QUEEN, ">");
-		addPieceToPlayer(player, PieceType.BISHOP, ">>");
-		addPieceToPlayer(player, PieceType.KNIGHT, ">>>");
-		addPieceToPlayer(player, PieceType.ROOK, ">>>>");
-	}
+  // move
 
-	private void resetPieces() throws GameException {
-		for (Player player : players)
-			resetPieces(player);
-	}
+  public void validateMove(Move move) throws InvalidMoveException {
+    // TODO
+    if (!move.player.equals(getCurrentPlayer()))
+      throw new InvalidMoveException("not that players turn");
 
+    // TODO if state != State.DEFAULT ...
+  }
 
-	// move
+  public void playMove(Move move) throws InvalidMoveException {
+    validateMove(move);
 
-	public void validateMove(Move move) throws InvalidMoveException {
-		// TODO
-		if (!move.player.equals(getCurrentPlayer()))
-			throw new InvalidMoveException("not that players turn");
+    Round round = currentRound();
+    round.addMove(move);
 
-		// TODO if state != State.DEFAULT ...
-	}
-	public void playMove(Move move) throws InvalidMoveException {
-		validateMove(move);
+    Tile target = move.movement.edge.target;
+    boolean shouldCapture = target.hasPiece();
+    if (shouldCapture) {
+      move.movement.setCapturedPiece(target.getPiece());
+      target.getPiece().tile.removePiece();
+    }
 
-		Round round = currentRound();
-		round.addMove(move);
+    target.setPiece(move.piece);
 
-		Tile target = move.movement.edge.target;
-		boolean shouldCapture = target.hasPiece();
-		if (shouldCapture) {
-			move.movement.setCapturedPiece(target.getPiece());
-			target.getPiece().tile.removePiece();
-		}
+    // TODO: check times, etc
 
-		target.setPiece(move.piece);
-		
-		// TODO: check times, etc
+    refreshState();
 
-		refreshState();
+    if (round.moves.size() == ChessGame.movesPerPlayerAndRound * players.length) {
+      rounds.add(new Round());
+    }
+  }
 
-		if (round.moves.size() == ChessGame.movesPerPlayerAndRound * players.length) {
-			rounds.add(new Round());
-		}
-	}
+  // state
 
+  private void refreshState() {
+    // TODO: check if check mate, etc
+    // state = ...
+  }
 
-	// state
-
-	private void refreshState() {
-		// TODO: check if check mate, etc
-		// state = ...
-	}
-
-	public State getState() { return state; }
+  public State getState() {
+    return state;
+  }
 }

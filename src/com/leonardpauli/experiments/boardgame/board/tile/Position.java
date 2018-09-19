@@ -5,18 +5,31 @@ import com.leonardpauli.experiments.boardgame.util.Point;
 
 public class Position extends Point {
 
-	public Position(int x, int y) {super(x, y);}
-	public Position(Point p) {super(p.x, p.y);}
+  public Position(int x, int y) {
+    super(x, y);
+  }
 
-	public static Position fromString(String code) throws GameException {
-		if (code.length() != 2) throw new GameException(
-						"code.length has to be 2, was "+Integer.toString(code.length()));
-		int x = ((int)code.toUpperCase().charAt(0)) - 65;
-		int y = Integer.parseInt(code.substring(1,2))-1;
-		return new Position(x, y);
-	}
+  public Position(Point p) {
+    super(p.x, p.y);
+  }
 
-	public String toString() { return colString() + rowString(); }
-	public String colString() { return Character.toString((char) (x + 65)); }
-	public String rowString() { return Integer.toString(y+1); }
+  public static Position fromString(String code) throws GameException {
+    if (code.length() != 2)
+      throw new GameException("code.length has to be 2, was " + Integer.toString(code.length()));
+    int x = ((int) code.toUpperCase().charAt(0)) - 65;
+    int y = Integer.parseInt(code.substring(1, 2)) - 1;
+    return new Position(x, y);
+  }
+
+  public String toString() {
+    return colString() + rowString();
+  }
+
+  public String colString() {
+    return Character.toString((char) (x + 65));
+  }
+
+  public String rowString() {
+    return Integer.toString(y + 1);
+  }
 }

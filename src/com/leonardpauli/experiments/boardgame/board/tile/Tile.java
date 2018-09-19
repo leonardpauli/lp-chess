@@ -8,97 +8,118 @@ import com.leonardpauli.experiments.boardgame.util.Color;
 import java.util.Arrays;
 
 public class Tile {
-	public final Position position;
-	private final Color color;
-	
-	private Piece piece;
-	private Edge[][] edgeMap;
-	private Edge[] edges;
+  public final Position position;
+  private final Color color;
 
-	// eg. = 2 for a game variant with 3 kingdoms
-	private static final int maxNrEdgesOfSameType = 1;
+  private Piece piece;
+  private Edge[][] edgeMap;
+  private Edge[] edges;
 
-	public Tile(Position position) {
-		this.position = position;
-		this.color = position.x%2==position.y%2? Color.black: Color.white;
-	}
+  // eg. = 2 for a game variant with 3 kingdoms
+  private static final int maxNrEdgesOfSameType = 1;
 
+  public Tile(Position position) {
+    this.position = position;
+    this.color = position.x % 2 == position.y % 2 ? Color.black : Color.white;
+  }
 
-	// piece
+  // piece
 
-	public void removePiece() { this.piece.tile = null; this.piece = null; }
-	public void setPiece(Piece piece) {
-		if (hasPiece()) removePiece();
-		if (piece.tile!=null) piece.tile.removePiece();
-		this.piece = piece;
-		piece.tile = this;
-	}
-	public Piece getPiece() { return piece; }
-	public boolean hasPiece() { return piece!=null; }
-	public boolean isOccupiedBy(Player player) {
-		return hasPiece() && getPiece().owner.equals(player);
-	}
+  public void removePiece() {
+    this.piece.tile = null;
+    this.piece = null;
+  }
 
+  public void setPiece(Piece piece) {
+    if (hasPiece()) removePiece();
+    if (piece.tile != null) piece.tile.removePiece();
+    this.piece = piece;
+    piece.tile = this;
+  }
 
-	// edges
+  public Piece getPiece() {
+    return piece;
+  }
 
-	public Edge[] getEdges() { return edges; }
-	public Edge[] getEdges(EdgeType type) {
-		return edgeMap[type.ordinal()];
-	}
+  public boolean hasPiece() {
+    return piece != null;
+  }
 
-	public void setEdges(Edge[] edges) {
-		int edgeTypeCount = EdgeType.values().length;
-		Edge[][] map = new Edge[edgeTypeCount][];
-		int[] mapSizes = new int[edgeTypeCount];
+  public boolean isOccupiedBy(Player player) {
+    return hasPiece() && getPiece().owner.equals(player);
+  }
 
-		for (EdgeType t : EdgeType.values()) {
-			int typeNr = t.ordinal();
-			int maxSize = Tile.maxNrEdgesOfSameType;
-			map[typeNr] = new Edge[maxSize];
-		}
-		for (Edge e : edges) {
-			int typeNr = e.type.ordinal();
-			map[typeNr][mapSizes[typeNr]++] = e;
-		}
+  // edges
 
-		Edge[][] mapFinal = new Edge[edgeTypeCount][];
-		for (EdgeType t : EdgeType.values()) {
-			int typeNr = t.ordinal();
-			int actualSize = mapSizes[typeNr];
-			mapFinal[typeNr] = Arrays.copyOf(map[typeNr], actualSize);
-		}
+  public Edge[] getEdges() {
+    return edges;
+  }
 
-		edgeMap = mapFinal;
-		this.edges = edges;
-	}
+  public Edge[] getEdges(EdgeType type) {
+    return edgeMap[type.ordinal()];
+  }
 
+  public void setEdges(Edge[] edges) {
+    int edgeTypeCount = EdgeType.values().length;
+    Edge[][] map = new Edge[edgeTypeCount][];
+    int[] mapSizes = new int[edgeTypeCount];
 
-	// path
+    for (EdgeType t : EdgeType.values()) {
+      int typeNr = t.ordinal();
+      int maxSize = Tile.maxNrEdgesOfSameType;
+      map[typeNr] = new Edge[maxSize];
+    }
+    for (Edge e : edges) {
+      int typeNr = e.type.ordinal();
+      map[typeNr][mapSizes[typeNr]++] = e;
+    }
 
-	public Tile[] getRelative(EdgeType pathSegment) {
-		Edge[] edges = getEdges(pathSegment);
-		Tile[] tiles = new Tile[edges.length];
-		int i = 0; for (Edge edge : edges) tiles[i++] = edge.target;
-		return tiles;
-	}
-	public Tile getFirstRelative(EdgeType[] path) throws GameException {
-		Tile tile = this;
-		for (EdgeType segment : path) {
-			Tile[] tiles = tile.getRelative(segment);
-			if (tiles.length==0) throw new GameException("path is broken");
-			tile = tiles[0];
-		}
-		return tile;
-	}
-	public Tile[] getRelative(EdgeType[] path) throws GameException {
-		throw new GameException("not implemented");
-	}
+    Edge[][] mapFinal = new Edge[edgeTypeCount][];
+    for (EdgeType t : EdgeType.values()) {
+      int typeNr = t.ordinal();
+      int actualSize = mapSizes[typeNr];
+      mapFinal[typeNr] = Arrays.copyOf(map[typeNr], actualSize);
+    }
 
+    edgeMap = mapFinal;
+    this.edges = edges;
+  }
 
-	// string
+  // path
 
-	String toCharPlain() { return color == Color.black? " ": "."; }
-	public String toChar() { return piece==null? toCharPlain(): piece.toChar(); }
-	public String toCharPretty() { return piece==null? toCharPlain(): piece.toCharPretty(); }
+  public Tile[] getRelative(EdgeType pathSegment) {
+    Edge[] edges = getEdges(pathSegment);
+    Tile[] tiles = new Tile[edges.length];
+    int i = 0;
+    for (Edge edge : edges) tiles[i++] = edge.target;
+    return tiles;
+  }
+
+  public Tile getFirstRelative(EdgeType[] path) throws GameException {
+    Tile tile = this;
+    for (EdgeType segment : path) {
+      Tile[] tiles = tile.getRelative(segment);
+      if (tiles.length == 0) throw new GameException("path is broken");
+      tile = tiles[0];
+    }
+    return tile;
+  }
+
+  public Tile[] getRelative(EdgeType[] path) throws GameException {
+    throw new GameException("not implemented");
+  }
+
+  // string
+
+  String toCharPlain() {
+    return color == Color.black ? " " : ".";
+  }
+
+  public String toChar() {
+    return piece == null ? toCharPlain() : piece.toChar();
+  }
+
+  public String toCharPretty() {
+    return piece == null ? toCharPlain() : piece.toCharPretty();
+  }
 }

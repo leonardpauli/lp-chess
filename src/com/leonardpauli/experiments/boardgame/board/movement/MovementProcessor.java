@@ -13,168 +13,181 @@ import static com.leonardpauli.experiments.boardgame.board.movement.MovementType
 
 public class MovementProcessor {
 
-	private Board board;
+  private Board board;
 
-	public MovementProcessor(Board board) {this.board = board;}
+  public MovementProcessor(Board board) {
+    this.board = board;
+  }
 
+  // public
 
-	// public
+  // TODO: all "available" methods could probably be static
+  // 	and doesn't need the reference to Board
+  // 	(because navigation through edges)
 
-	// TODO: all "available" methods could probably be static
-	// 	and doesn't need the reference to Board
-	// 	(because navigation through edges)
+  public List<Movement> getAvailable(Piece piece) throws GameException {
+    List<Movement> movements = new ArrayList<Movement>();
+    for (MovementType type : piece.type.movementTypes) {
+      addAvailableTo(movements, type, piece);
+    }
+    return movements;
+  }
 
-	public List<Movement> getAvailable(Piece piece) throws GameException {
-		List<Movement> movements = new ArrayList<Movement>();
-		for (MovementType type : piece.type.movementTypes) {
-			addAvailableTo(movements, type, piece);
-		}
-		return movements;
-	}
+  public List<Movement> getAvailable(Piece piece, Position destination) throws GameException {
+    List<Movement> movements = getAvailable(piece);
+    movements.removeIf(movement -> !movement.edge.target.position.equals(destination));
+    return movements;
+  }
 
-	public List<Movement> getAvailable(Piece piece, Position destination) throws GameException {
-		List<Movement> movements = getAvailable(piece);
-		movements.removeIf(movement -> !movement.edge.target.position.equals(destination));
-		return movements;
-	}
+  // private
 
+  private static class Options {
+    Tile source;
+    EdgeType[] path;
+    boolean skipOccupiedInBetween = false;
+    boolean repeatable = false;
+    MovementType type;
 
-	// private
+    static Options[] withMultiDirectionalRepeatablePath(
+        EdgeType[] pathIdeal, Piece piece, MovementType type) throws GameException {
+      int directions = 4;
+      EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
+      for (int turns = 0; turns < directions; turns++) {
+        paths[turns] = EdgeType.turnedPath(pathIdeal, turns);
+      }
 
-	private static class Options {
-		Tile source;
-		EdgeType[] path;
-		boolean skipOccupiedInBetween = false;
-		boolean repeatable = false;
-		MovementType type;
+      Options[] opts = new Options[paths.length];
+      for (int i = 0; i < paths.length; i++) {
+        Options opt = new Options();
+        opt.source = piece.tile;
+        opt.repeatable = true;
+        opt.path = paths[i];
+        opt.type = type;
+        opts[i] = opt;
+      }
 
-		static Options[] withMultiDirectionalRepeatablePath(EdgeType[] pathIdeal, Piece piece, MovementType type) throws GameException {
-			int directions = 4;
-			EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
-			for (int turns = 0; turns<directions; turns++) {
-				paths[turns] = EdgeType.turnedPath(pathIdeal, turns);
-			}
+      return opts;
+    }
+  }
 
-			Options[] opts = new Options[paths.length];
-			for (int i = 0; i<paths.length; i++) {
-				Options opt = new Options();
-				opt.source = piece.tile;
-				opt.repeatable = true;
-				opt.path = paths[i];
-				opt.type = type;
-				opts[i] = opt;
-			}
+  private int addAvailableTo(
+      List<Movement> movements, Options opt, Tile lastTile, int segmentIndex) {
+    Player player = opt.source.getPiece().owner;
 
-			return opts;
-		}
-	}
-	private int addAvailableTo(List<Movement> movements, Options opt,
-		Tile lastTile, int segmentIndex) {
-		Player player = opt.source.getPiece().owner;
+    EdgeType[] segments = opt.path;
+    EdgeType segmentType = segments[segmentIndex];
+    Edge[] edges = lastTile.getEdges(segmentType);
 
-		EdgeType[] segments = opt.path;
-		EdgeType segmentType = segments[segmentIndex];
-		Edge[] edges = lastTile.getEdges(segmentType);
+    int addedCount = 0;
 
-		int addedCount = 0;
+    for (Edge edge : edges) {
 
-		for (Edge edge : edges) {
+      boolean isAtDestination = segmentIndex == segments.length - 1;
+      boolean isInBetween = !isAtDestination;
+      boolean skipOccupiedCheck = !isAtDestination && (isInBetween && opt.skipOccupiedInBetween);
+      if (!skipOccupiedCheck && edge.target.isOccupiedBy(player)) continue;
 
-			boolean isAtDestination = segmentIndex == segments.length-1;
-			boolean isInBetween = !isAtDestination;
-			boolean skipOccupiedCheck = !isAtDestination && (isInBetween && opt.skipOccupiedInBetween);
-			if (!skipOccupiedCheck && edge.target.isOccupiedBy(player)) continue;
+      if (!isAtDestination) {
+        addedCount += addAvailableTo(movements, opt, edge.target, segmentIndex + 1);
+        continue;
+      }
 
-			if (!isAtDestination) {
-				addedCount += addAvailableTo(movements, opt, edge.target, segmentIndex+1);
-				continue;
-			}
+      Edge fullEdge = new Edge(opt.source, edge.target);
+      Movement movement = new Movement(opt.type, fullEdge);
+      movements.add(movement);
+      addedCount++;
+    }
 
-			Edge fullEdge = new Edge(opt.source, edge.target);
-			Movement movement = new Movement(opt.type, fullEdge);
-			movements.add(movement);
-			addedCount++;
-		}
+    return addedCount;
+  }
 
-		return addedCount;
-	}
-	private int addAvailableTo(List<Movement> movements, Options opt) {
-		return addAvailableTo(movements, opt, opt.source, 0);
-	}
+  private int addAvailableTo(List<Movement> movements, Options opt) {
+    return addAvailableTo(movements, opt, opt.source, 0);
+  }
 
-	private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece) throws GameException {
-		Edge forwardEdge = piece.owner.home.getEdgeForward();
-		EdgeType forward = forwardEdge.type;
+  private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece)
+      throws GameException {
+    Edge forwardEdge = piece.owner.home.getEdgeForward();
+    EdgeType forward = forwardEdge.type;
 
-		if (type == FORWARD_ONE) {
-			Options opt = new Options();
-			opt.type = FORWARD_ONE;
-			opt.source = piece.tile;
-			opt.path = new EdgeType[]{forward};
-			addAvailableTo(movements, opt);
+    if (type == FORWARD_ONE) {
+      Options opt = new Options();
+      opt.type = FORWARD_ONE;
+      opt.source = piece.tile;
+      opt.path = new EdgeType[] {forward};
+      addAvailableTo(movements, opt);
 
-		} else if (type == FORWARD_TWO_FROM_HOME) {
+    } else if (type == FORWARD_TWO_FROM_HOME) {
 
-			if (!piece.isAtHome()) return;
+      if (!piece.isAtHome()) return;
 
-			Options opt = new Options();
-			opt.type = FORWARD_TWO_FROM_HOME;
-			opt.source = piece.tile;
-			opt.path = new EdgeType[]{forward, forward};
-			addAvailableTo(movements, opt);
+      Options opt = new Options();
+      opt.type = FORWARD_TWO_FROM_HOME;
+      opt.source = piece.tile;
+      opt.path = new EdgeType[] {forward, forward};
+      addAvailableTo(movements, opt);
 
-		} else if (type == ONE_STEP) {
-			Options opt = new Options();
-			opt.type = ONE_STEP;
-			opt.source = piece.tile;
+    } else if (type == ONE_STEP) {
+      Options opt = new Options();
+      opt.type = ONE_STEP;
+      opt.source = piece.tile;
 
-			opt.path = new EdgeType[]{UP}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{DOWN}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{LEFT}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{RIGHT}; addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {UP};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {DOWN};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {LEFT};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {RIGHT};
+      addAvailableTo(movements, opt);
 
-			opt.skipOccupiedInBetween = true;
-			opt.path = new EdgeType[]{UP, LEFT}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{UP, RIGHT}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{DOWN, LEFT}; addAvailableTo(movements, opt);
-			opt.path = new EdgeType[]{DOWN, RIGHT}; addAvailableTo(movements, opt);
+      opt.skipOccupiedInBetween = true;
+      opt.path = new EdgeType[] {UP, LEFT};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {UP, RIGHT};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {DOWN, LEFT};
+      addAvailableTo(movements, opt);
+      opt.path = new EdgeType[] {DOWN, RIGHT};
+      addAvailableTo(movements, opt);
 
-		} else if (type == LMOVE) {
-			Options opt = new Options();
-			opt.type = LMOVE;
-			opt.source = piece.tile;
-			opt.skipOccupiedInBetween = true;
+    } else if (type == LMOVE) {
+      Options opt = new Options();
+      opt.type = LMOVE;
+      opt.source = piece.tile;
+      opt.skipOccupiedInBetween = true;
 
-			EdgeType[] pathIdeal = {UP, UP, LEFT};
-			EdgeType[] pathIdealMirrored = {UP, UP, RIGHT};
+      EdgeType[] pathIdeal = {UP, UP, LEFT};
+      EdgeType[] pathIdealMirrored = {UP, UP, RIGHT};
 
-			for (int turns = 0; turns<4; turns++) {
-				opt.path = EdgeType.turnedPath(pathIdeal, turns); addAvailableTo(movements, opt);
-				opt.path = EdgeType.turnedPath(pathIdealMirrored, turns); addAvailableTo(movements, opt);
-			}
+      for (int turns = 0; turns < 4; turns++) {
+        opt.path = EdgeType.turnedPath(pathIdeal, turns);
+        addAvailableTo(movements, opt);
+        opt.path = EdgeType.turnedPath(pathIdealMirrored, turns);
+        addAvailableTo(movements, opt);
+      }
 
-		} else if (type == STRAIGHT) {
-			for (Options opt : Options
-				.withMultiDirectionalRepeatablePath(new EdgeType[]{UP}, piece, STRAIGHT))
-				addAvailableTo(movements, opt);
+    } else if (type == STRAIGHT) {
+      for (Options opt :
+          Options.withMultiDirectionalRepeatablePath(new EdgeType[] {UP}, piece, STRAIGHT))
+        addAvailableTo(movements, opt);
 
-		} else if (type == DIAGONAL) {
-			for (Options opt : Options
-				.withMultiDirectionalRepeatablePath(new EdgeType[]{UP, LEFT}, piece, DIAGONAL))
-				addAvailableTo(movements, opt);
+    } else if (type == DIAGONAL) {
+      for (Options opt :
+          Options.withMultiDirectionalRepeatablePath(new EdgeType[] {UP, LEFT}, piece, DIAGONAL))
+        addAvailableTo(movements, opt);
 
-		} else if (type == CASTLING) {
-			// TODO
+    } else if (type == CASTLING) {
+      // TODO
 
-		} else if (type == ENPASSANT) {
-			// TODO
+    } else if (type == ENPASSANT) {
+      // TODO
 
-		} else if (type == PROMOTION) {
-			// TODO
+    } else if (type == PROMOTION) {
+      // TODO
 
-		} else {
-			throw new GameException("MovementType movements not implemented for type: "+type);
-		}
-	}
-
+    } else {
+      throw new GameException("MovementType movements not implemented for type: " + type);
+    }
+  }
 }

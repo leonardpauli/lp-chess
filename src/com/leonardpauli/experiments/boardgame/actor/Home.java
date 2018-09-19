@@ -5,49 +5,60 @@ import com.leonardpauli.experiments.boardgame.board.tile.*;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 
 public class Home {
-	private Position position;
-	private Position positionForward;
-	private Position delta;
-	private Edge edgeForward;
+  private Position position;
+  private Position positionForward;
+  private Position delta;
+  private Edge edgeForward;
 
-	public Home(Position position, Position positionForward, Board board) throws GameException {
-		setPositions(position, positionForward);
-		updateEdgeForward(board);
-	}
-	public Home(Edge edgeForward) {
-		this.edgeForward = edgeForward;
-		setPositions(edgeForward.source.position, edgeForward.target.position);
-	}
+  public Home(Position position, Position positionForward, Board board) throws GameException {
+    setPositions(position, positionForward);
+    updateEdgeForward(board);
+  }
 
-	void setPositions(Position position, Position positionForward) {
-		this.position = position;
-		this.positionForward = positionForward;
-		this.delta = new Position(positionForward.sub(position));
-	}
+  public Home(Edge edgeForward) {
+    this.edgeForward = edgeForward;
+    setPositions(edgeForward.source.position, edgeForward.target.position);
+  }
 
-	void updateEdgeForward(Board board) throws GameException {
-		Tile homeTile = board.tileAt(position);
-		Tile forwardTile = board.tileAt(positionForward);
-		for (Edge edge : homeTile.getEdges()) {
-			if (edge.target.equals(forwardTile)) {
-				this.edgeForward = edge;
-				return;
-			}
-		}
-		throw new GameException("Player.setHome: edge from homeTile to forwardTile not found");
-	}
+  void setPositions(Position position, Position positionForward) {
+    this.position = position;
+    this.positionForward = positionForward;
+    this.delta = new Position(positionForward.sub(position));
+  }
 
+  void updateEdgeForward(Board board) throws GameException {
+    Tile homeTile = board.tileAt(position);
+    Tile forwardTile = board.tileAt(positionForward);
+    for (Edge edge : homeTile.getEdges()) {
+      if (edge.target.equals(forwardTile)) {
+        this.edgeForward = edge;
+        return;
+      }
+    }
+    throw new GameException("Player.setHome: edge from homeTile to forwardTile not found");
+  }
 
-	public Position getPosition () { return this.position; }
-	public Position getDelta () { return this.delta; }
-	public Edge getEdgeForward() { return edgeForward; }
-	public Tile getTile() { return edgeForward.source; }
-	
-	public int getAngleInTurns () throws GameException {
-		return getEdgeForward().type.getTurns(EdgeType.UP);
-	}
+  public Position getPosition() {
+    return this.position;
+  }
 
-	public int getRank(Position pos) {
-		return delta.y * (pos.y - position.y);
-	}
+  public Position getDelta() {
+    return this.delta;
+  }
+
+  public Edge getEdgeForward() {
+    return edgeForward;
+  }
+
+  public Tile getTile() {
+    return edgeForward.source;
+  }
+
+  public int getAngleInTurns() throws GameException {
+    return getEdgeForward().type.getTurns(EdgeType.UP);
+  }
+
+  public int getRank(Position pos) {
+    return delta.y * (pos.y - position.y);
+  }
 }

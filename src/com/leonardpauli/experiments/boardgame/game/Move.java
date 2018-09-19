@@ -6,20 +6,20 @@ import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.util.Event;
 
 public class Move {
-	public Player player;
-	public Event event;
-	public Movement movement;
-	public Piece piece;
+  public Player player;
+  public Event event;
+  public Movement movement;
+  public Piece piece;
 
-	public Move(Player player, Piece piece, Movement movement) {
-		this.player = player;
-		this.event = new Event();
-		this.piece = piece;
-		this.movement = movement;
-	}
+  public Move(Player player, Piece piece, Movement movement) {
+    this.player = player;
+    this.event = new Event();
+    this.piece = piece;
+    this.movement = movement;
+  }
 
-	public Move getReverseMove() {
-		// TODO: for undo
-		return null;
-	}
+  public Move getReverseMove() {
+    // TODO: for undo
+    return null;
+  }
 }
