@@ -6,17 +6,17 @@ import com.leonardpauli.experiments.boardgame.board.tile.Edge;
 
 public class Movement {
 	MovementType type;
-	Edge edge;
+	public Edge edge;
 
 	Piece capturedPiece;
 	int value;
 
-	Movement(MovementType type, Edge edge) {
+	public Movement(MovementType type, Edge edge) {
 		this.type = type;
 		this.edge = edge;
 	}
 
-	void setCapturedPiece(Piece piece) {
+	public void setCapturedPiece(Piece piece) {
 		this.capturedPiece = piece;
 		this.value = piece.type.getValue();
 	}

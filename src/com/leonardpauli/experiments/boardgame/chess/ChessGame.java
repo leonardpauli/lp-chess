@@ -1,10 +1,17 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
+import com.leonardpauli.experiments.boardgame.actor.Home;
 import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.actor.PieceType;
+import com.leonardpauli.experiments.boardgame.actor.Player;
+import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.game.Move;
+import com.leonardpauli.experiments.boardgame.game.Round;
 import com.leonardpauli.experiments.boardgame.game.State;
 
 import java.util.List;
@@ -119,7 +126,7 @@ public class ChessGame {
 
 	public void validateMove(Move move) throws InvalidMoveException {
 		// TODO
-		if (move.player != getCurrentPlayer())
+		if (move.player.equals((getCurrentPlayer())))
 			throw new InvalidMoveException("not that players turn");
 
 		// TODO if state != State.DEFAULT ...

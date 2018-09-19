@@ -4,12 +4,12 @@ import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.util.Color;
 
 public class Piece {
-	PieceType type;
-	Tile tile;
-	Player owner;
+	public PieceType type;
+	public Tile tile;
+	public Player owner;
 	private Tile homeTile;
 
-	Piece(PieceType type) {
+	public Piece(PieceType type) {
 		this.type = type;
 	}
 

@@ -3,19 +3,23 @@ package com.leonardpauli.experiments.boardgame.board;
 
 import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
+import com.leonardpauli.experiments.boardgame.board.movement.MovementProcessor;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
 import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Size;
 
 import java.util.Arrays;
 
-class Board {
+public class Board {
 	public Tile[][] tiles;
 	public final Size size = new Size(8, 8);
-	public final BoardMovementProcessor movement;
+	public final MovementProcessor movement;
 
-	Board() throws Exception {
-		movement = new BoardMovementProcessor(this);
+	public Board() throws Exception {
+		movement = new MovementProcessor(this);
 		setupTiles();
 		setupTileEdges();
 	}

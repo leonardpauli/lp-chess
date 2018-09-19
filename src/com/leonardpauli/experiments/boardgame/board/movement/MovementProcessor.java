@@ -1,12 +1,8 @@
 package com.leonardpauli.experiments.boardgame.board.movement;
 
-import com.leonardpauli.experiments.boardgame.actor.Piece;
-import com.leonardpauli.experiments.boardgame.Player;
+import com.leonardpauli.experiments.boardgame.actor.*;
 import com.leonardpauli.experiments.boardgame.board.Board;
-import com.leonardpauli.experiments.boardgame.board.tile.Edge;
-import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
-import com.leonardpauli.experiments.boardgame.board.tile.Position;
-import com.leonardpauli.experiments.boardgame.board.tile.Tile;
+import com.leonardpauli.experiments.boardgame.board.tile.*;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 
 import java.util.ArrayList;
@@ -15,11 +11,11 @@ import java.util.List;
 import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
 import static com.leonardpauli.experiments.boardgame.board.movement.MovementType.*;
 
-class MovementProcessor {
+public class MovementProcessor {
 
 	private Board board;
 
-	MovementProcessor(Board board) {this.board = board;}
+	public MovementProcessor(Board board) {this.board = board;}
 
 
 	// public

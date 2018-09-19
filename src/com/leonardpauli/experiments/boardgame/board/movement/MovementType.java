@@ -16,7 +16,7 @@ public enum MovementType {
 
 	public final String name;
 
-	private MovementType(String name) {
+	MovementType(String name) {
 		this.name = name;
 	}
 }

@@ -3,10 +3,10 @@ package com.leonardpauli.experiments.boardgame.board.tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Point;
 
-class Position extends Point {
-	
-	Position(int x, int y) {super(x, y);}
-	Position(Point p) {super(p.x, p.y);}
+public class Position extends Point {
+
+	public Position(int x, int y) {super(x, y);}
+	public Position(Point p) {super(p.x, p.y);}
 
 	public static Position fromString(String code) throws GameException {
 		if (code.length() != 2) throw new GameException(

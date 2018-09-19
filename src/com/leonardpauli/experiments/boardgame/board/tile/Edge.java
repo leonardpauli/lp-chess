@@ -1,16 +1,16 @@
 package com.leonardpauli.experiments.boardgame.board.tile;
 
-class Edge {
-	Tile source;
-	EdgeType type;
-	Tile target;
+public class Edge {
+	public Tile source;
+	public EdgeType type;
+	public Tile target;
 	
-	Edge(Tile source, EdgeType type, Tile target) {
+	public Edge(Tile source, EdgeType type, Tile target) {
 		this.source = source;
 		this.type = type;
 		this.target = target;
 	}
-	Edge(Tile source, Tile target) {
+	public Edge(Tile source, Tile target) {
 		this.source = source;
 		this.type = EdgeType.ANY;
 		this.target = target;

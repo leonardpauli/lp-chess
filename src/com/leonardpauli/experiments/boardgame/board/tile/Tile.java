@@ -1,13 +1,13 @@
 package com.leonardpauli.experiments.boardgame.board.tile;
 
 import com.leonardpauli.experiments.boardgame.actor.Piece;
-import com.leonardpauli.experiments.boardgame.Player;
+import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Color;
 
 import java.util.Arrays;
 
-class Tile {
+public class Tile {
 	public final Position position;
 	private final Color color;
 	
@@ -18,7 +18,7 @@ class Tile {
 	// eg. = 2 for a game variant with 3 kingdoms
 	private static final int maxNrEdgesOfSameType = 1;
 
-	Tile(Position position) {
+	public Tile(Position position) {
 		this.position = position;
 		this.color = position.x%2==position.y%2? Color.black: Color.white;
 	}
@@ -26,8 +26,8 @@ class Tile {
 
 	// piece
 
-	void removePiece() { this.piece.tile = null; this.piece = null; }
-	void setPiece(Piece piece) {
+	public void removePiece() { this.piece.tile = null; this.piece = null; }
+	public void setPiece(Piece piece) {
 		if (hasPiece()) removePiece();
 		if (piece.tile!=null) piece.tile.removePiece();
 		this.piece = piece;
@@ -47,7 +47,7 @@ class Tile {
 		return edgeMap[type.ordinal()];
 	}
 
-	void setEdges(Edge[] edges) {
+	public void setEdges(Edge[] edges) {
 		int edgeTypeCount = EdgeType.values().length;
 		Edge[][] map = new Edge[edgeTypeCount][];
 		int[] mapSizes = new int[edgeTypeCount];

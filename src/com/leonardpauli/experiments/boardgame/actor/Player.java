@@ -8,20 +8,21 @@ import com.leonardpauli.experiments.boardgame.util.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
-class Player {
+public class Player {
 	public String name;
 	Color color;
 
 	public Home home;
 	boolean alive = true;
-	List<Piece> pieces = new ArrayList<Piece>();
+	public List<Piece> pieces = new ArrayList<Piece>();
 
-	Player(String name, Color color) {
+	public Player(String name, Color color) {
 		this.name = name; this.color = color;
 	}
-	Player(int ordinal) {
+	public Player(int ordinal) {
 		if (ordinal==0) {
 			color = Color.white;
 			name = "White";
@@ -56,6 +57,25 @@ class Player {
 			if (movements.size()>0) return piece;
 		}
 		throw new GameException("no movable pieces for that player");
+	}
+
+
+
+	// equals
+	// TODO: use better id
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) return true;
+		if (!(o instanceof Player)) return false;
+		Player p = (Player) o;
+		return p.name.equals(name) && p.color.getName().equals(color.getName());
+	}
+	public boolean equals(Player o) {return equals((Object) o); }
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, color.getName());
 	}
 
 }

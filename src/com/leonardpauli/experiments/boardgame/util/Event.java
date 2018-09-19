@@ -2,12 +2,12 @@ package com.leonardpauli.experiments.boardgame.util;
 
 import java.util.Date;
 
-class Event {
+public class Event {
 	public Date start;
 	public Date end;
 
 	Event(Date start) { this.start = start; }
-	Event() { this.start = new Date(); }
+	public Event() { this.start = new Date(); }
 
 	public void setEnd(Date date) { this.end = date; }
 

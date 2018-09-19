@@ -18,11 +18,11 @@ public class InvalidMoveException extends GameException {
 
 	public Type type;
 
-	InvalidMoveException(Type type) {
+	public InvalidMoveException(Type type) {
 		super("Invalid move; "+type.toString());
 		this.type = type;
 	}
-	InvalidMoveException(String msg) {
+	public InvalidMoveException(String msg) {
 		super("Invalid move; "+msg);
 		this.type = Type.OTHER;
 	}

@@ -1,11 +1,11 @@
 package com.leonardpauli.experiments.boardgame.util;
 
-class Color {
+public class Color {
 	public static final Color black = new Color("black");
 	public static final Color white = new Color("white");
 
 	private String name;
-	Color(String name) { this.name = name; }
+	public Color(String name) { this.name = name; }
 
 	public String getName() { return name; };
 
