@@ -47,8 +47,13 @@ public enum EdgeType {
     return getTurned(1);
   }
 
+  public int getTurns(EdgeType toType, int limit) throws GameException {
+    if (limit == 0) throw new GameException("no turns found within limit");
+    return toType == this ? 0 : 1 + this.getTurned().getTurns(toType, limit - 1);
+  }
+
   public int getTurns(EdgeType toType) throws GameException {
-    return toType == this ? 0 : 1 + this.getTurned().getTurns(toType);
+    return toType == this ? 0 : 1 + this.getTurned().getTurns(toType, 10);
   }
 
   public static EdgeType[] turnedPath(EdgeType[] path, int turns) throws GameException {

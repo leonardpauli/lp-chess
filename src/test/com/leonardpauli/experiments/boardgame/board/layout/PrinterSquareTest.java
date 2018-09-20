@@ -1,6 +1,6 @@
-package com.leonardpauli.experiments.boardgame.board;
+package com.leonardpauli.experiments.boardgame.board.layout;
 
-import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
+import com.leonardpauli.experiments.boardgame.board.Board;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

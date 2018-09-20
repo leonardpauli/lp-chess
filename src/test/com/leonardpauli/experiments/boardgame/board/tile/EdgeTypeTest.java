@@ -1,62 +1,72 @@
 package com.leonardpauli.experiments.boardgame.board.tile;
 
+import com.leonardpauli.experiments.boardgame.game.GameException;
 import org.junit.jupiter.api.Test;
+
+import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 class EdgeTypeTest {
 
   @Test
   void canBeTurned() {
-    // RIGHT, LEFT, TOP, BOTTOM
-    // not ANY
+    assertTrue(RIGHT.canBeTurned());
+    assertTrue(LEFT.canBeTurned());
+    assertTrue(UP.canBeTurned());
+    assertTrue(DOWN.canBeTurned());
+    assertFalse(ANY.canBeTurned());
   }
 
   @Test
-  void getTurnedOnce() {
-    // RIGHT -> TOP
-    // RIGHT.getTurned() == RIGHT.getTurned(1)
+  void getTurnedOnce() throws GameException {
+    assertEquals(UP, RIGHT.getTurned());
+    assertEquals(RIGHT.getTurned(1), RIGHT.getTurned());
   }
 
   @Test
-  void getTurned() {
-    // 0 == 4
-    // 1 == 5
-    // ANY throws
+  void getTurned() throws GameException {
+    assertEquals(UP.getTurned(0), UP.getTurned(4));
+    assertEquals(UP.getTurned(1), UP.getTurned(5));
+    assertEquals(UP.getTurned(1), LEFT);
+    assertThrows(GameException.class, ANY::getTurned);
   }
 
   @Test
-  void getTurns() {
-    // RIGHT RIGHT == 0
-    // RIGHT DOWN == 3
-    // DOWN RIGHT == 3
-    // RIGHT UP == 1
-    // RIGHT ANY throws
+  void getTurns() throws GameException {
+    assertEquals(0, RIGHT.getTurns(RIGHT));
+    assertEquals(3, RIGHT.getTurns(DOWN));
+    assertEquals(1, DOWN.getTurns(RIGHT));
+    assertEquals(1, RIGHT.getTurns(UP));
+    assertThrows(GameException.class, () -> RIGHT.getTurns(ANY));
+    assertThrows(GameException.class, () -> ANY.getTurns(RIGHT));
   }
 
   @Test
-  void turnedPath() {
-    // "", 0 == ""
-    // "^", 0 == "^"
-    // "^", 1 == "<"
-    // "^", 5 == "<"
-    // "^^>v<", 1 == "<<^>v"
+  void turnedPath() throws GameException {
+    assertEquals(EdgeType.getPath("").length, 0);
+    assertArrayEquals(EdgeType.getPath(""), EdgeType.turnedPath(new EdgeType[] {}, 0));
+    assertArrayEquals(EdgeType.getPath("^"), EdgeType.turnedPath(new EdgeType[] {UP}, 0));
+    assertArrayEquals(EdgeType.getPath("<"), EdgeType.turnedPath(new EdgeType[] {UP}, 1));
+    assertArrayEquals(EdgeType.getPath("<"), EdgeType.turnedPath(new EdgeType[] {UP}, 5));
+    assertArrayEquals(EdgeType.getPath("<<^>v"), EdgeType.turnedPath(EdgeType.getPath("^^>v<"), 1));
   }
 
   @Test
-  void fromCode() {
-    // "^" == [UP]
-    // "x" throws
-    // "" == []
+  void fromCode() throws GameException {
+    assertEquals(UP, EdgeType.fromCode('^'));
+    assertThrows(GameException.class, () -> EdgeType.fromCode('x'));
   }
 
   @Test
-  void getPath() {
-    // [UP, LEFT, RIGHT, DOWN, DOWN] == "^<>vv"
-    // [] == ""
+  void getPath() throws GameException {
+    assertArrayEquals(new EdgeType[] {UP, LEFT, RIGHT, DOWN, DOWN}, EdgeType.getPath("^<>vv"));
+    assertArrayEquals(new EdgeType[] {}, EdgeType.getPath(""));
   }
 
   @Test
   void stringFromPath() {
-    // []
-    // [UP, LEFT, RIGHT, DOWN, DOWN, ANY] == "^<>vv."
+    assertEquals("", EdgeType.stringFromPath(new EdgeType[] {}));
+    assertEquals(
+        "^<>vv.", EdgeType.stringFromPath(new EdgeType[] {UP, LEFT, RIGHT, DOWN, DOWN, ANY}));
   }
 }
