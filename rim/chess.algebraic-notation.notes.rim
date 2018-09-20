@@ -1,0 +1,120 @@
+# chess.algebraic-notation.notes
+' created by Leonard Pauli, 20 sep 2018
+	sources: Wikipedia etc
+
+chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, minimal{alias: "abbreviated"} is Boolean: false}
+	piece.letter: or:
+		- "" if Pawn // Pawns: absence of uppercase letter
+		- "N" if Knight
+		- else: piece.name.0 as uppercase
+
+	file is game{repeat, separator: new-line{repeat}}
+
+	game:
+		- tags{optional} is tag{repeat}
+		- (white-space or comment){repeat, optional}
+		- rounds is round{repeat, separator{optional}: white-space{repeat}}
+
+	tag:
+		- "["
+		- key
+			any{except: white-space}
+		- white-space{repeat}
+		- value:
+			- "\""
+			- any{except: "\""} or "\\\"" or "\\\\"
+			- "\""
+		- "]"
+		- comment{optional}
+
+	comment: or:
+		- eol-comment:
+			- ";"
+			- any{except: "\n"}
+		- block-comment:
+			- "{"
+			- any{except: "}"}
+			- "}"
+
+	round:
+		- roundnr is (nr, ".", "space"{optional}){optional}
+		- move.0 // implicit white
+		- move-separator is white-space
+		- move.1 // implicit black
+		- comment{optional}
+
+	capture: move is capture and not minimal
+
+	if pawn capture and minimal and unambiguous:
+		- origin.position.x.letter
+		- target.position.x.letter
+	if promotion:
+		e8Q or e8=Q or e8(Q)
+	if castling:
+		0-0 (for kingside castling) and 0-0-0 (queenside castling).
+		 PGN requires the uppercase letter O (O-O and O-O-O).
+	move:
+		- or:
+			- is Pawn: origin.position.x.letter if capture else ""
+			- else: piece.iconLetter if figurine else piece.letter
+		- origin.position.x.letter{optional}
+		- origin.position.y{optional}
+		- "x", ":", or "" if capture
+		- destination.position
+		- order.any:
+			- "", "", or ":" if capture
+			- "e.p." if move was EN_PASSANT
+		- ("dbl ch", or "++" (rarely)) if state becomes check{dubble}
+		- "dis ch" if state becomes check{discovered} // (non standard) (if check indirectly because move of other piece)
+		- ("+", "†", or "ch") if state becomes check
+		- annotation
+	if check mate:
+		- "#", "mate", "++", "‡", "≠", "X", "x", or "×"
+	on game over:
+		- "1–0" if White won
+		- "0–1" if Black won
+		- "½–½" if draw
+
+
+annotation: move{optional} + state{optional}
+	// source: https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
+	move:
+		- "!": "an excellent move"
+		- "!!": "a particularly good—and usually surprising—move"
+		- "?": "a bad move; a mistake"
+		- "??": "a blunder"
+		- "!?": "an interesting move that may not be best"
+		- "?!": "a dubious move or move that may turn out to be bad"
+		- "⌓": "a better move than the one played"
+		- "□": "the only reasonable move, or the only move available"
+		- "TN" or "N": "a theoretical novelty"
+	state:
+		- "=": "equal chances for both players"
+		- "+/=" or "⩲": "White has a slight plus"
+		- "=/+" or "⩱": "Black has a slight plus"
+		- "+/−" or "±": "White has a clear plus"
+		- "−/+" or "∓": "Black has a clear plus"
+		- "+−": "White has a winning advantage"
+		- "−+": "Black has a winning advantage"
+		- "∞": "unclear whether either side has an advantage"
+		- "=/∞": "whoever is down in material has compensation for it"
+
+chess.algebraic-notation.figurine
+	use icons instead of letters for pieces
+
+
+
+portable-game-notation{alias: "PGN"}
+	// https://www.pgnmentor.com/files.html
+
+example:
+	// 1. e4 e5 2. Qh5?! Nc6 3. Bc4 Nf6?? 4. Qxf7# 1–0
+	// http://www.chessgames.com/perl/chessgame?gid=1011478
+	"1.e4d62.d4Nf63.Nc3g64.Be3Bg75.Qd2c66.f3b57.Nge2Nbd78.Bh6Bxh69.Qxh6Bb710.a3e511.O-O-OQe712.Kb1a613.Nc1O-O-O14.Nb3exd415.Rxd4c516.Rd1Nb617.g3Kb818.Na5Ba819.Bh3d520.Qf4+Ka721.Rhe1d422.Nd5Nbxd523.exd5Qd624.Rxd4cxd425.Re7+Kb626.Qxd4+Kxa527.b4+Ka428.Qc3Qxd529.Ra7Bb730.Rxb7Qc431.Qxf6Kxa332.Qxa6+Kxb433.c3+Kxc334.Qa1+Kd235.Qb2+Kd136.Bf1Rd237.Rd7Rxd738.Bxc4bxc439.Qxh8Rd340.Qa8c341.Qa4+Ke142.f4f543.Kc1Rd244.Qa71-0
+	FEN: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1
+
+
+' other:
+	en passant is different!
+		capture of opponents pawn in turn directly after it made a dubble forward move, by moving own pawn one diagonal step to the tile it passed
+	move not allowed if creates check for own player
