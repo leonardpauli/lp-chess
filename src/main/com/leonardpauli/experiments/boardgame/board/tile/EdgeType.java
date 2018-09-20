@@ -15,7 +15,7 @@ public enum EdgeType {
   public final String title;
   private EdgeType turned;
 
-  private EdgeType(char code, int[] dir, String title) {
+  EdgeType(char code, int[] dir, String title) {
     this.code = code;
     this.direction = new Point(dir[0], dir[1]);
     this.title = title;
