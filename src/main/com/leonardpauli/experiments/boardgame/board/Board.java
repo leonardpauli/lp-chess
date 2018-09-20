@@ -2,10 +2,12 @@ package com.leonardpauli.experiments.boardgame.board;
 
 import com.leonardpauli.experiments.boardgame.actor.Home;
 import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.layout.Layout;
 import com.leonardpauli.experiments.boardgame.board.layout.LayoutSquare;
 import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
+import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.board.movement.MovementProcessor;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
@@ -68,6 +70,12 @@ public class Board {
 
   public Piece pieceAt(String code) throws GameException {
     return pieceAt(Position.fromString(code));
+  }
+
+  // movement
+
+  public Movement getMovementForNotation(String notation, Player currentPlayer) {
+    return null;
   }
 
   // utils
