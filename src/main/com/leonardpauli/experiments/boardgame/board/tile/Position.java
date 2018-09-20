@@ -15,8 +15,9 @@ public class Position extends Point {
 
   public static Position fromString(String code) throws GameException {
     if (code.length() != 2)
-      throw new GameException("code.length has to be 2, was " + Integer.toString(code.length()));
+      throw new GameException("code.length has to be 2, was " + code.length());
     int x = ((int) code.toUpperCase().charAt(0)) - 65;
+    if (x < 0 || x > ((int) 'z') - 65) throw new GameException("code.x not in range, was " + x);
     int y = Integer.parseInt(code.substring(1, 2)) - 1;
     return new Position(x, y);
   }
