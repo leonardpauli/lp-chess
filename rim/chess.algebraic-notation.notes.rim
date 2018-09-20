@@ -2,6 +2,36 @@
 ' created by Leonard Pauli, 20 sep 2018
 	sources: Wikipedia etc
 
+' idea: build simple tokenizer + aster combined (or just regexes); result:
+	file.games:
+		- game:
+			tags:
+				- tag:
+					key
+					value
+					comment
+			rounds:
+				- round:
+					nr is Int
+					moves:
+						- move:
+							piece.type
+							.
+							from{col, row is Int or -1 if unknown}
+							to{col, row}
+							.
+							is enpassant
+							promotion is Empty or new piece type
+							castling is Empty, kingside or queenside
+							.
+							capture is Bool
+							.
+							annotation.move
+							annotation.state
+							comment
+					state: Empty/normal or draw or mate(white or black)
+
+
 chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, minimal{alias: "abbreviated"} is Boolean: false}
 	piece.letter: or:
 		- "" if Pawn // Pawns: absence of uppercase letter
