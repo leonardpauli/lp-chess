@@ -21,7 +21,7 @@ class BoardTest {
   void getMovementForNotation() throws Exception {
     Player player = new Player(0);
     Board board = new Board();
-    assertThrows(InvalidMoveException.class, ()-> board.getMovementForNotation("Qa2", player));
+    assertThrows(InvalidMoveException.class, () -> board.getMovementForNotation("Qa2", player));
   }
 
   @Test
