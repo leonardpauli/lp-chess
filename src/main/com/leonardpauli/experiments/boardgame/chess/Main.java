@@ -1,7 +1,7 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
 import com.leonardpauli.experiments.boardgame.actor.Piece;
-import com.leonardpauli.experiments.boardgame.board.Printer;
+import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.game.GameException;
@@ -67,7 +67,7 @@ public class Main {
     while (game.getState() == State.DEFAULT) {
 
       System.out.println("\n");
-      System.out.println(game.board.toString(Printer.Style.PRETTY_WITH_NUMBERS));
+      System.out.println(game.board.toString(PrinterSquare.Style.PRETTY_WITH_NUMBERS));
 
       try {
         doTurn(game, scanner);

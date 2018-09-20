@@ -7,15 +7,15 @@ import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
-import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.game.Move;
 import com.leonardpauli.experiments.boardgame.game.Round;
 import com.leonardpauli.experiments.boardgame.game.State;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ChessGame {
   private Player[] players;
@@ -54,15 +54,9 @@ public class ChessGame {
     return players[turnNrSafe];
   }
 
-  private void givePlayersHome() throws GameException {
-    players[0].home =
-        new Home(
-            new Position(board.size.x / 2 - 1, 0), new Position(board.size.x / 2 - 1, 1), board);
-    players[1].home =
-        new Home(
-            new Position(board.size.x / 2 - 1 + 1, board.size.y - 1),
-            new Position(board.size.x / 2 - 1 + 1, board.size.y - 1 - 1),
-            board);
+  private void givePlayersHome() {
+    Iterator<Home> homes = board.getPlayerHomes();
+    for (Player player : players) player.home = homes.next();
   }
 
   // piece

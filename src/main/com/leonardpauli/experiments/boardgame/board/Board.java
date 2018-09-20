@@ -1,75 +1,45 @@
 package com.leonardpauli.experiments.boardgame.board;
 
+import com.leonardpauli.experiments.boardgame.actor.Home;
 import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.board.layout.Layout;
+import com.leonardpauli.experiments.boardgame.board.layout.LayoutSquare;
+import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.movement.MovementProcessor;
-import com.leonardpauli.experiments.boardgame.board.tile.Edge;
-import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Size;
 
-import java.util.Arrays;
+import java.util.Iterator;
 
 public class Board {
   public Tile[][] tiles;
-  public final Size size = new Size(8, 8);
   public final MovementProcessor movement;
+  private final Layout layout;
 
   public Board() throws Exception {
+    layout = new LayoutSquare(new Size(8, 8));
     movement = new MovementProcessor(this);
-    setupTiles();
-    setupTileEdges();
+    layout.setupTiles(this);
+    layout.setupTileEdges(this);
+  }
+
+  // home
+
+  public Iterator<Home> getPlayerHomes() {
+    return layout.getPlayerHomes(this);
   }
 
   // tile
 
-  private void setupTiles() {
-    tiles = new Tile[size.x][size.y];
-    for (int x = 0; x < size.x; x++) {
-      for (int y = 0; y < size.y; y++) {
-        Position position = new Position(x, y);
-        tiles[x][y] = new Tile(position);
-      }
-    }
-  }
-
-  private void setupTileEdges() throws Exception {
-    for (int x = 0; x < size.x; x++) {
-      for (int y = 0; y < size.y; y++) {
-        Tile tile = tiles[x][y];
-        tile.setEdges(getTileEdges(tile));
-      }
-    }
-  }
-
   public boolean tileExistsAt(Position position) {
-    boolean inBounds =
-        0 <= position.x
-            && position.x < tiles.length
-            && 0 <= position.y
-            && position.y < tiles[position.x].length;
-    return inBounds;
+    return layout.tileExistsAt(this, position);
   }
 
   public Tile tileAt(Position position) throws InvalidMoveException {
-    if (!tileExistsAt(position))
-      throw new InvalidMoveException(InvalidMoveException.Type.DESTINATION_NOT_FOUND);
-
-    return tiles[position.x][position.y];
-  }
-
-  private Edge[] getTileEdges(Tile tile) throws InvalidMoveException {
-    int maxSize = EdgeType.values().length;
-    Edge[] edges = new Edge[maxSize];
-    int i = 0;
-    for (EdgeType type : EdgeType.values()) {
-      Position position = new Position(tile.position.add(type.direction));
-      if (tileExistsAt(position)) edges[i++] = new Edge(tile, type, tileAt(position));
-    }
-    int actualSize = i;
-    return Arrays.copyOf(edges, actualSize);
+    return layout.tileAt(this, position);
   }
 
   // piece
@@ -102,11 +72,11 @@ public class Board {
 
   // utils
 
-  public String toString(Printer.Style style) {
-    return Printer.boardToString(this, style);
+  public String toString(PrinterSquare.Style style) {
+    return layout.getPrinter().boardToString(this, style);
   }
 
   public String toString() {
-    return toString(Printer.Style.PRETTY);
+    return toString(PrinterSquare.Style.PRETTY);
   }
 }
