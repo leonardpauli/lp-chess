@@ -19,17 +19,17 @@ public class Tokenizer {
     if (buffer.length() - cutOffset < Tokenizer.bufferTargetSize) readMoreToBuffer();
 
     Token[] innerTokens = token.getInnerTokens();
-    String str = buffer.substring(cutOffset + offset);
 
     if (innerTokens.length == 0) {
-      return tokenizeInner(token, str, offset);
+      return tokenizeInner(token, offset);
     }
 
+    String str = buffer.substring(cutOffset + offset);
     TokenizeResult res = new TokenizeResult();
 
     // TODO: also implement allMatched / and-list?
     for (Token t : innerTokens) {
-      TokenizeResult innerTokenRes = tokenizeInner(t, str, offset);
+      TokenizeResult innerTokenRes = tokenizeInner(t, offset);
       if (!innerTokenRes.ok) continue;
 
       TokenizeResult outerTokenRes = token.handleInnerMatch(t, innerTokenRes, str);
@@ -42,11 +42,11 @@ public class Tokenizer {
     return res;
   }
 
-  private TokenizeResult tokenizeInner(Token t, String str, int offset)
-      throws TokenizerException, IOException {
+  private TokenizeResult tokenizeInner(Token t, int offset) throws TokenizerException, IOException {
     TokenizeResult innerTokenRes = null;
 
     while (innerTokenRes == null || innerTokenRes.needsMore) {
+      String str = buffer.substring(cutOffset + offset);
       innerTokenRes = t.getMatchResult(str);
       if (innerTokenRes.needsMore) {
         boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
@@ -65,7 +65,7 @@ public class Tokenizer {
     cutOffset += consumedChars;
   }
 
-  private void readMoreToBuffer() throws IOException {
+  private boolean readMoreToBuffer() throws IOException {
     // https://stackoverflow.com/questions/309424/how-to-read-convert-an-inputstream-into-a-string-in-java
     ByteArrayOutputStream result = new ByteArrayOutputStream();
     byte[] buffer = new byte[Tokenizer.bufferTargetSize];
@@ -76,5 +76,15 @@ public class Tokenizer {
     // TODO: instead of copying old string, reuse by shifting cutOffset
     // 	initialize string to bufferTargetSize*2 so no reallocation needed
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
+    cutOffset = 0;
+
+    boolean hasMore = false;
+    return hasMore;
+  }
+
+  // public void readRestToBuffer() throws IOException {}
+
+  public String getBuffer() {
+    return buffer;
   }
 }

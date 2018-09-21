@@ -1,6 +1,5 @@
 package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
 
-import com.leonardpauli.experiments.boardgame.util.Util;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -20,24 +19,25 @@ class TokenizerTest {
 
     MyComment comment = new MyComment();
     TokenizeResult res = tokenizer.tokenize(comment);
-    // System.out.println(res);
-    // System.out.println(Util.objectToString(comment));
     assertEquals(true, res.ok);
     assertEquals(12, res.consumedCount);
     assertEquals("a comment", comment.text);
+    tokenizer.increaseConsumedCount(res.consumedCount);
 
-    MyComment comment2 = new MyComment();
-    TokenizeResult res2 = tokenizer.tokenize(comment);
-    System.out.println(Util.objectToString(comment2));
-    assertEquals(true, res2.ok);
-    assertEquals(14, res2.consumedCount);
-    assertEquals("another one", comment2.text);
+    comment = new MyComment();
+    res = tokenizer.tokenize(comment);
+    assertEquals(true, res.ok);
+    assertEquals(14, res.consumedCount);
+    assertEquals("another one", comment.text);
+    tokenizer.increaseConsumedCount(res.consumedCount);
 
-    MyComment comment3 = new MyComment();
-    TokenizeResult res3 = tokenizer.tokenize(comment);
-    assertEquals(false, res3.ok);
-    assertEquals(0, res2.consumedCount);
-    assertEquals(null, comment3.text);
+    comment = new MyComment();
+    res = tokenizer.tokenize(comment);
+    assertEquals(false, res.ok);
+    assertEquals(0, res.consumedCount);
+    assertEquals(null, comment.text);
+
+    assertEquals("not a comment\n", tokenizer.getBuffer());
 
     // TODO: test needsMore by parsing comment with length > (buffer size, maxNeededStringSize)
   }
@@ -50,8 +50,9 @@ class TokenizerTest {
 
     MySyntax syntax = new MySyntax();
     TokenizeResult ok = tokenizer.tokenize(syntax);
-    System.out.println("was ok: " + ok);
-    System.out.println("syntax: " + syntax);
+
+    // TODO
+
   }
 }
 
