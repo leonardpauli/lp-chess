@@ -73,8 +73,3 @@ public class Tokenizer {
   }
 }
 
-class TokenizerException extends Exception {
-  public TokenizerException(String msg) {
-    super(msg);
-  }
-}
