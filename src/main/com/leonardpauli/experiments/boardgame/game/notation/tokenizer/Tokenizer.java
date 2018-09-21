@@ -19,26 +19,17 @@ public class Tokenizer {
     if (buffer.length() - cutOffset < Tokenizer.bufferTargetSize) readMoreToBuffer();
 
     Token[] innerTokens = token.getInnerTokens();
+    String str = buffer.substring(cutOffset + offset);
+
     if (innerTokens.length == 0) {
-      return new TokenizeResult(); // TODO: what?
+      return tokenizeInner(token, str, offset);
     }
 
-    String str = buffer.substring(cutOffset + offset);
     TokenizeResult res = new TokenizeResult();
 
     // TODO: also implement allMatched / and-list?
     for (Token t : innerTokens) {
-      TokenizeResult innerTokenRes = null;
-
-      while (innerTokenRes == null || innerTokenRes.needsMore) {
-        innerTokenRes = t.getMatchResult(str);
-        if (innerTokenRes.needsMore) {
-          boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
-          if (!withinOwnLimit) throw new TokenizerException("out of own limit for buffer size");
-          readMoreToBuffer();
-        }
-      }
-
+      TokenizeResult innerTokenRes = tokenizeInner(t, str, offset);
       if (!innerTokenRes.ok) continue;
 
       TokenizeResult outerTokenRes = token.handleInnerMatch(t, innerTokenRes, str);
@@ -49,6 +40,21 @@ public class Tokenizer {
     }
 
     return res;
+  }
+
+  private TokenizeResult tokenizeInner(Token t, String str, int offset)
+      throws TokenizerException, IOException {
+    TokenizeResult innerTokenRes = null;
+
+    while (innerTokenRes == null || innerTokenRes.needsMore) {
+      innerTokenRes = t.getMatchResult(str);
+      if (innerTokenRes.needsMore) {
+        boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
+        if (!withinOwnLimit) throw new TokenizerException("out of own limit for buffer size");
+        readMoreToBuffer();
+      }
+    }
+    return innerTokenRes;
   }
 
   public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
@@ -72,4 +78,3 @@ public class Tokenizer {
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
   }
 }
-

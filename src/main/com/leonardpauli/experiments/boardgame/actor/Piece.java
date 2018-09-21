@@ -2,6 +2,7 @@ package com.leonardpauli.experiments.boardgame.actor;
 
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.util.Color;
+import com.leonardpauli.experiments.boardgame.util.Util;
 
 public class Piece {
   public PieceType type;
@@ -40,8 +41,6 @@ public class Piece {
   }
 
   public String toString() {
-    String titleStr = tile != null ? tile.position.toString() : "null";
-    String ownerStr = owner != null ? owner.name : "null";
-    return String.format("Piece(%s){tile: %s, owner: %s}", type.title, titleStr, ownerStr);
+    return Util.objectToString(this);
   }
 }

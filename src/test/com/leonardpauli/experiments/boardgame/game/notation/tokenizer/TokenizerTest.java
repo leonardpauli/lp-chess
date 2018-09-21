@@ -1,11 +1,11 @@
 package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
 
+import com.leonardpauli.experiments.boardgame.util.Util;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,14 +20,17 @@ class TokenizerTest {
 
     MyComment comment = new MyComment();
     TokenizeResult res = tokenizer.tokenize(comment);
+    // System.out.println(res);
+    // System.out.println(Util.objectToString(comment));
     assertEquals(true, res.ok);
-    assertEquals(9, res.consumedCount);
+    assertEquals(12, res.consumedCount);
     assertEquals("a comment", comment.text);
 
     MyComment comment2 = new MyComment();
     TokenizeResult res2 = tokenizer.tokenize(comment);
+    System.out.println(Util.objectToString(comment2));
     assertEquals(true, res2.ok);
-    assertEquals(11, res2.consumedCount);
+    assertEquals(14, res2.consumedCount);
     assertEquals("another one", comment2.text);
 
     MyComment comment3 = new MyComment();
@@ -63,24 +66,6 @@ class MySyntax implements Token {
   public TokenizeResult handleInnerMatch(Token t, TokenizeResult res, String str) {
     comments.add(t);
     return res;
-  }
-}
-
-class MyComment implements Token {
-  public String text;
-
-  private static Pattern pattern = Pattern.compile(";[ \\t]*([^\\n]*)(\n?)", Pattern.MULTILINE);
-
-  @Override
-  public TokenizeResult getMatchResult(String str) {
-    Matcher matcher = pattern.matcher(str);
-    boolean found = matcher.find();
-    if (!found) return new TokenizeResult();
-    boolean ended = matcher.end(2) != matcher.start(2);
-    if (!ended) return new TokenizeResult(true);
-
-    text = str.substring(matcher.start(1), matcher.end(1));
-    return new TokenizeResult(matcher.end());
   }
 }
 

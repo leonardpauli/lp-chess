@@ -29,10 +29,6 @@ class Person {
 
   @Override
   public String toString() {
-    try {
-      return Util.objectToString(this);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    }
+    return Util.objectToString(this);
   }
 }
