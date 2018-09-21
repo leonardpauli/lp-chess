@@ -1,11 +1,11 @@
-package com.leonardpauli.experiments.boardgame.game.notation;
+package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-class Tokenizer {
+public class Tokenizer {
   private InputStream stream;
   private String buffer = "";
   private int cutOffset = 0;
@@ -15,7 +15,7 @@ class Tokenizer {
     this.stream = stream;
   }
 
-  public TokenizeResult tokenize(Token token, int offset) throws IOException {
+  public TokenizeResult tokenize(Token token, int offset) throws IOException, TokenizerException {
     if (buffer.length() - cutOffset < Tokenizer.bufferTargetSize) readMoreToBuffer();
 
     Token[] innerTokens = token.getInnerTokens();
@@ -28,13 +28,20 @@ class Tokenizer {
 
     // TODO: also implement allMatched / and-list?
     for (Token t : innerTokens) {
-      boolean matched = str.matches("^" + t.getTokenStartRegex());
-      if (!matched) continue;
+      TokenizeResult innerTokenRes = null;
 
-      TokenizeResult innerTokenRes = t.handleMatch(str);
+      while (innerTokenRes == null || innerTokenRes.needsMore) {
+        innerTokenRes = t.getMatchResult(str);
+        if (innerTokenRes.needsMore) {
+          boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
+          if (!withinOwnLimit) throw new TokenizerException("out of own limit for buffer size");
+          readMoreToBuffer();
+        }
+      }
+
       if (!innerTokenRes.ok) continue;
 
-      TokenizeResult outerTokenRes = token.handleInnerMatch(t, str);
+      TokenizeResult outerTokenRes = token.handleInnerMatch(t, innerTokenRes, str);
       if (!outerTokenRes.ok) continue;
 
       res = outerTokenRes;
@@ -44,7 +51,7 @@ class Tokenizer {
     return res;
   }
 
-  public TokenizeResult tokenize(Token token) throws IOException {
+  public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
     return tokenize(token, 0);
   }
 
@@ -63,5 +70,11 @@ class Tokenizer {
     // TODO: instead of copying old string, reuse by shifting cutOffset
     // 	initialize string to bufferTargetSize*2 so no reallocation needed
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
+  }
+}
+
+class TokenizerException extends Exception {
+  public TokenizerException(String msg) {
+    super(msg);
   }
 }

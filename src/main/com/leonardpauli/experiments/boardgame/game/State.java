@@ -16,7 +16,7 @@ public enum State {
     this.description = description;
   }
 
-  public isMate() {
-    return this==STALEMATE || this==CHECKMATE;
+  public boolean isMate() {
+    return this == STALEMATE || this == CHECKMATE;
   }
 }
