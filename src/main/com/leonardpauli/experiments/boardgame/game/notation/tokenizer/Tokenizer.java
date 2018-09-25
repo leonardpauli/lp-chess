@@ -29,7 +29,7 @@ public class Tokenizer {
 
     // TODO: also implement allMatched / and-list?
     for (Token t : innerTokens) {
-      TokenizeResult innerTokenRes = tokenizeInner(t, offset);
+      TokenizeResult innerTokenRes = tokenize(t, offset);
       if (!innerTokenRes.ok) continue;
 
       TokenizeResult outerTokenRes = token.handleInnerMatch(t, innerTokenRes, str);

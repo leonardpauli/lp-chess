@@ -1,3 +1,4 @@
 ; a comment
 ; another one
+{ block comment }
 not a comment

@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TokenizerTest {
 
@@ -26,18 +26,25 @@ class TokenizerTest {
 
     comment = new MyComment();
     res = tokenizer.tokenize(comment);
-    assertEquals(true, res.ok);
+    assertTrue(res.ok);
     assertEquals(14, res.consumedCount);
     assertEquals("another one", comment.text);
     tokenizer.increaseConsumedCount(res.consumedCount);
 
+    comment = new MyBlockComment();
+    res = tokenizer.tokenize(comment);
+    assertTrue(res.ok);
+    assertEquals(17, res.consumedCount);
+    assertEquals("block comment", comment.text);
+    tokenizer.increaseConsumedCount(res.consumedCount);
+
     comment = new MyComment();
     res = tokenizer.tokenize(comment);
-    assertEquals(false, res.ok);
+    assertFalse(res.ok);
     assertEquals(0, res.consumedCount);
-    assertEquals(null, comment.text);
+    assertNull(comment.text);
 
-    assertEquals("not a comment\n", tokenizer.getBuffer());
+    assertEquals("\nnot a comment\n", tokenizer.getBuffer());
 
     // TODO: test needsMore by parsing comment with length > (buffer size, maxNeededStringSize)
   }
@@ -49,10 +56,18 @@ class TokenizerTest {
     Tokenizer tokenizer = new Tokenizer(stream);
 
     MySyntax syntax = new MySyntax();
-    TokenizeResult ok = tokenizer.tokenize(syntax);
+    TokenizeResult res = null;
+    while ((res = tokenizer.tokenize(syntax)).ok) {
+      tokenizer.increaseConsumedCount(res.consumedCount);
+    }
 
-    // TODO
-
+    StringBuilder sb = new StringBuilder();
+    for (Token c : syntax.comments) sb.append(c.toString() + "\n");
+    assertEquals(
+        "MyComment{text: a comment}\n"
+            + "MyComment{text: another one}\n"
+            + "MyBlockComment{text: block comment}\n",
+        sb.toString());
   }
 }
 
@@ -60,7 +75,7 @@ class MySyntax implements Token {
   public ArrayList<Token> comments = new ArrayList<>();
 
   public Token[] getInnerTokens() {
-    return new Token[] {new MyComment(), new MyBlockComment()};
+    return new Token[] {new MyBlockComment(), new MyComment()};
   }
 
   @Override
@@ -71,5 +86,10 @@ class MySyntax implements Token {
 }
 
 class MyBlockComment extends MyComment {
-  private static Pattern pattern = Pattern.compile("\\{\\s*([^\\}]*)(\\}?)", Pattern.MULTILINE);
+  private static Pattern pattern = Pattern.compile("^\\{\\s*((?:\\s*[^\\}\\s]+)*)(\\s*\\}?)");
+
+  @Override
+  public TokenizeResult getMatchResult(String str) {
+    return getMatchResult(str, pattern);
+  }
 }
