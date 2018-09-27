@@ -34,7 +34,14 @@ class WrapperTokensTest {
 
   @TestFactory
   Stream<DynamicTest> wrapperTests() {
-    return syntax.sections.stream().map(TestsSyntax.Section::getTests).reduce(Stream::concat).get();
+    return syntax
+        .sections
+        .stream()
+        .filter(s -> !s.title.skip)
+        // .filter(s -> s.title.value.equals("ab")) // for debugging one
+        .map(TestsSyntax.Section::getTests)
+        .reduce(Stream::concat)
+        .get();
   }
 }
 
@@ -88,30 +95,31 @@ class TestsSyntax implements Token {
       return new TokenizeResult(consumed);
     }
 
+    static void testOne(TestSpecLine t, Title title) {
+      InputStream inp = new ByteArrayInputStream(t.value.getBytes());
+      Tokenizer tnr = new Tokenizer(inp);
+      TestRunnerToken token = new TestRunnerToken(title::getTokens);
+
+      TokenizeResult res = null;
+      try {
+        res = tnr.tokenize(token);
+      } catch (Exception e) {
+        assertEquals(null, e);
+      }
+      tnr.increaseConsumedCount(res.consumedCount);
+
+      assertEquals(t.expectedOk, res.ok, "ok");
+      if (t.isExpectingAboutRest()) assertEquals(t.expectedRest, tnr.getRest(), "rest");
+    }
+
     Stream<DynamicTest> getTests() {
       return testSpecLines
           .stream()
           .map(
               t ->
                   dynamicTest(
-                      "\"" + title.value + "\".\"" + t.value + "\"",
-                      () -> {
-                        InputStream inp = new ByteArrayInputStream(t.value.getBytes());
-                        Tokenizer tnr = new Tokenizer(inp);
-                        TestRunnerToken token = new TestRunnerToken(title::getTokens);
-
-                        TokenizeResult res = null;
-                        try {
-                          res = tnr.tokenize(token);
-                        } catch (Exception e) {
-                          assertEquals(null, e);
-                        }
-                        tnr.increaseConsumedCount(res.consumedCount);
-
-                        assertEquals(t.expectedOk, res.ok, "ok");
-                        if (t.isExpectingAboutRest())
-                          assertEquals(t.expectedRest, tnr.getBuffer(), "rest");
-                      }));
+                      title.value + ": " + t.value + (t.expectedOk ? "" : " (false)"),
+                      () -> testOne(t, title)));
     }
 
     static class TestRunnerToken implements Token {
@@ -143,19 +151,21 @@ class TestsSyntax implements Token {
     static class Title implements Token {
 
       String value;
+      boolean skip;
 
-      static Pattern pattern = Pattern.compile("\\n*# ?([^\\n]*)\\n");
+      static Pattern pattern = Pattern.compile("\\n*# ?(?<skip>skip )?(?<value>[^\\n]*)\\n");
 
       public TokenizeResult getMatchResult(String str) {
         Matcher matcher = pattern.matcher(str);
         if (!matcher.find()) return new TokenizeResult();
-        value = matcher.group(1);
+        value = matcher.group("value");
+        skip = matcher.group("skip") != null;
         return new TokenizeResult(matcher.end());
       }
 
       Token[] getTokens() {
         ArrayList<Token> orTokens = new ArrayList<>();
-        for (String s : value.split("|")) {
+        for (String s : value.split("\\|")) {
           ArrayList<Token> andTokens = new ArrayList<>();
           for (int i = 0; i < s.length(); i++) {
             String c = s.substring(i, i + 1);
@@ -196,6 +206,12 @@ class TestsSyntax implements Token {
         expectedOk =
             "true".equals(matcher.group("expected")); // TODO: error val for non boolean value
         expectedRest = matcher.group("rest");
+
+        expectedRest =
+            expectedRest == null && expectedOk
+                ? ""
+                : expectedRest; // always check rest for now if ok
+
         return new TokenizeResult(matcher.end());
       }
     }

@@ -56,7 +56,7 @@ class TokenizerTest {
     Tokenizer tokenizer = new Tokenizer(stream);
 
     MySyntax syntax = new MySyntax();
-    TokenizeResult res = null;
+    TokenizeResult res;
     while ((res = tokenizer.tokenize(syntax)).ok) {
       tokenizer.increaseConsumedCount(res.consumedCount);
     }

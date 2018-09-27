@@ -51,7 +51,7 @@ public class Tokenizer {
       if (innerTokenRes.needsMore) {
         boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
         if (!withinOwnLimit) throw new TokenizerException("out of own limit for buffer size");
-        readMoreToBuffer();
+        if (!readMoreToBuffer()) break;
       }
     }
     return innerTokenRes;
@@ -65,7 +65,10 @@ public class Tokenizer {
     cutOffset += consumedChars;
   }
 
+  private boolean hasMore = true;
+
   private boolean readMoreToBuffer() throws IOException {
+    if (!hasMore) return false;
     // https://stackoverflow.com/questions/309424/how-to-read-convert-an-inputstream-into-a-string-in-java
     ByteArrayOutputStream result = new ByteArrayOutputStream();
     byte[] buffer = new byte[Tokenizer.bufferTargetSize];
@@ -78,13 +81,17 @@ public class Tokenizer {
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
     cutOffset = 0;
 
-    boolean hasMore = false;
-    return hasMore;
+    hasMore = false;
+    return true;
   }
 
   // public void readRestToBuffer() throws IOException {}
 
   public String getBuffer() {
     return buffer;
+  }
+
+  public String getRest() {
+    return buffer.substring(cutOffset);
   }
 }

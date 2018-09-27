@@ -11,6 +11,10 @@ b false
 ab true
 ba false
 
+# b?
+b true
+a true rest a
+
 # ab?
 b false
 a true
@@ -32,7 +36,7 @@ a true
 aab true rest b
 aaa true
 
-# use case
+# skip use cases
 [nameAlone]
 [nameEmpty ""]
 [nameSimple "hello"]

@@ -17,8 +17,6 @@ public class OptionalToken implements Token {
   public TokenizeResult getMatchResult(Tokenizer tokenizer, int offset, String str)
       throws IOException, TokenizerException {
     TokenizeResult res = tokenizer.tokenize(token, offset);
-    if (res.needsMore) return res;
-    if (res.ok) return res;
-    return new TokenizeResult(0);
+    return res;
   }
 }

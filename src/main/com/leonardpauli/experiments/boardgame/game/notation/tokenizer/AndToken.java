@@ -19,7 +19,7 @@ public class AndToken implements Token {
     int consumed = 0;
     for (Token t : tokens) {
       TokenizeResult res = tokenizer.tokenize(t, offset + consumed);
-      if (!res.ok) return res;
+      if (!res.ok && !(t instanceof OptionalToken)) return res;
       consumed += res.consumedCount;
     }
     return new TokenizeResult(consumed);
