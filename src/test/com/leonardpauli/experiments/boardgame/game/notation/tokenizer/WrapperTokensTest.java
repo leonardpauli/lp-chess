@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class WrapperTokensTest {
@@ -29,7 +30,8 @@ class WrapperTokensTest {
 
   @Test
   void wrapperTestsParsed() {
-    assertEquals(6, syntax.sections.size());
+    assertTrue(5 < syntax.sections.size(), syntax.sections.size() + "");
+    assertTrue(20 > syntax.sections.size(), syntax.sections.size() + "");
   }
 
   @TestFactory

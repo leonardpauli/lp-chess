@@ -44,7 +44,7 @@ class TokenizerTest {
     assertEquals(0, res.consumedCount);
     assertNull(comment.text);
 
-    assertEquals("\nnot a comment\n", tokenizer.getBuffer());
+    assertEquals("\nnot a comment\n", tokenizer.getRest());
 
     // TODO: test needsMore by parsing comment with length > (buffer size, maxNeededStringSize)
   }
