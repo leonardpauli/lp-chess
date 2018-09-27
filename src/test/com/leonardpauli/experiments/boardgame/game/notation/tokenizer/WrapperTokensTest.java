@@ -167,9 +167,9 @@ class TestsSyntax implements Token {
         ArrayList<Token> orTokens = new ArrayList<>();
         for (String s : value.split("\\|")) {
           ArrayList<Token> andTokens = new ArrayList<>();
-          for (int i = 0; i < s.length(); i++) {
+          for (int i = 0; i < s.length(); i += 2) {
             String c = s.substring(i, i + 1);
-            String n = i < s.length() - 1 ? s.substring(i + 1, i + 2) : "";
+            String n = i + 1 < s.length() ? s.substring(i + 1, i + 2) : "";
             if (n.equals("*")) {
               andTokens.add(new OptionalToken(new RepeatToken(() -> new StringToken(c))));
             } else if (n.equals("+")) {
@@ -178,6 +178,7 @@ class TestsSyntax implements Token {
               andTokens.add(new OptionalToken((new StringToken(c))));
             } else {
               andTokens.add(new StringToken(c));
+              i--;
             }
           }
           orTokens.add(new AndToken(andTokens.toArray(new Token[] {})));
