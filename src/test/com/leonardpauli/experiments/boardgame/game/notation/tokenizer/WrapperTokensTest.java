@@ -95,17 +95,15 @@ class TestsSyntax implements Token {
       return new TokenizeResult(consumed);
     }
 
-    static void testOne(TestSpecLine t, Title title) {
+    static void testOne(TestSpecLine t, Title title) throws IOException, TokenizerException {
       InputStream inp = new ByteArrayInputStream(t.value.getBytes());
       Tokenizer tnr = new Tokenizer(inp);
       TestRunnerToken token = new TestRunnerToken(title::getTokens);
 
       TokenizeResult res = null;
-      try {
-        res = tnr.tokenize(token);
-      } catch (Exception e) {
-        assertEquals(null, e);
-      }
+
+      res = tnr.tokenize(token);
+
       tnr.increaseConsumedCount(res.consumedCount);
 
       assertEquals(t.expectedOk, res.ok, "ok");

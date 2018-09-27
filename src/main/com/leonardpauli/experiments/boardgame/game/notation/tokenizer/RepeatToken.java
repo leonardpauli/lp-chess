@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class RepeatToken implements Token {
-  private ArrayList<Token> tokens;
+  private ArrayList<Token> tokens = new ArrayList<>();
   private TokenGetter tokenGetter;
 
   public interface TokenGetter {
