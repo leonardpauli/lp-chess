@@ -1,27 +1,40 @@
 package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class WrapperTokensTest {
 
-  @Test
-  void tokenizeOuter() throws IOException, TokenizerException {
+  static TestsSyntax syntax;
 
+  @BeforeAll
+  static void parseTests() throws IOException, TokenizerException {
+    if (syntax != null) return;
     InputStream stream = TokenizerTest.class.getResourceAsStream("wrapper.custom-syntax");
-    TestsSyntax ts = new TestsSyntax(stream);
-    System.out.println(ts.sections.size());
+    syntax = new TestsSyntax(stream);
   }
-}
 
-class MyTokenWrapperDemoSyntax implements Token {
-  public Token[] getInnerTokens() {
-    return new Token[] {new MyBlockComment(), new MyComment()};
+  @Test
+  void wrapperTestsParsed() {
+    assertEquals(6, syntax.sections.size());
+  }
+
+  @TestFactory
+  Stream<DynamicTest> wrapperTests() {
+    return syntax.sections.stream().map(TestsSyntax.Section::getTests).reduce(Stream::concat).get();
   }
 }
 
@@ -53,7 +66,7 @@ class TestsSyntax implements Token {
   static class Section implements Token {
 
     Title title = new Title();
-    ArrayList<Test> tests = new ArrayList<>();
+    ArrayList<TestSpecLine> testSpecLines = new ArrayList<>();
 
     @Override
     public TokenizeResult getMatchResult(Tokenizer tokenizer, int offset, String str)
@@ -65,17 +78,70 @@ class TestsSyntax implements Token {
       consumed += res.consumedCount;
 
       while (true) {
-        Test t = new Test();
+        TestSpecLine t = new TestSpecLine();
         res = tokenizer.tokenize(t, offset + consumed);
         if (!res.ok) break;
         consumed += res.consumedCount;
-        tests.add(t);
+        testSpecLines.add(t);
       }
 
       return new TokenizeResult(consumed);
     }
 
+    Stream<DynamicTest> getTests() {
+      return testSpecLines
+          .stream()
+          .map(
+              t ->
+                  dynamicTest(
+                      "\"" + title.value + "\".\"" + t.value + "\"",
+                      () -> {
+                        InputStream inp = new ByteArrayInputStream(t.value.getBytes());
+                        Tokenizer tnr = new Tokenizer(inp);
+                        TestRunnerToken token = new TestRunnerToken(title::getTokens);
+
+                        TokenizeResult res = null;
+                        try {
+                          res = tnr.tokenize(token);
+                        } catch (Exception e) {
+                          assertEquals(null, e);
+                        }
+                        tnr.increaseConsumedCount(res.consumedCount);
+
+                        assertEquals(t.expectedOk, res.ok, "ok");
+                        if (t.isExpectingAboutRest())
+                          assertEquals(t.expectedRest, tnr.getBuffer(), "rest");
+                      }));
+    }
+
+    static class TestRunnerToken implements Token {
+
+      Token resToken;
+
+      interface InnerTokensGetter {
+        Token[] getInnerTokens();
+      }
+
+      private InnerTokensGetter tokensGetter;
+
+      TestRunnerToken(InnerTokensGetter tokensGetter) {
+        this.tokensGetter = tokensGetter;
+      }
+
+      @Override
+      public Token[] getInnerTokens() {
+        return tokensGetter.getInnerTokens();
+      }
+
+      @Override
+      public TokenizeResult handleInnerMatch(Token t, TokenizeResult res, String str) {
+        resToken = t;
+        return res;
+      }
+    }
+
     static class Title implements Token {
+
       String value;
 
       static Pattern pattern = Pattern.compile("\\n*# ?([^\\n]*)\\n");
@@ -86,9 +152,31 @@ class TestsSyntax implements Token {
         value = matcher.group(1);
         return new TokenizeResult(matcher.end());
       }
+
+      Token[] getTokens() {
+        ArrayList<Token> orTokens = new ArrayList<>();
+        for (String s : value.split("|")) {
+          ArrayList<Token> andTokens = new ArrayList<>();
+          for (int i = 0; i < s.length(); i++) {
+            String c = s.substring(i, i + 1);
+            String n = i < s.length() - 1 ? s.substring(i + 1, i + 2) : "";
+            if (n.equals("*")) {
+              andTokens.add(new OptionalToken(new RepeatToken(() -> new StringToken(c))));
+            } else if (n.equals("+")) {
+              andTokens.add((new RepeatToken(() -> new StringToken(c))));
+            } else if (n.equals("?")) {
+              andTokens.add(new OptionalToken((new StringToken(c))));
+            } else {
+              andTokens.add(new StringToken(c));
+            }
+          }
+          orTokens.add(new AndToken(andTokens.toArray(new Token[] {})));
+        }
+        return orTokens.toArray(new Token[] {});
+      }
     }
 
-    static class Test implements Token {
+    static class TestSpecLine implements Token {
       String value;
       boolean expectedOk;
       String expectedRest;
@@ -99,7 +187,7 @@ class TestsSyntax implements Token {
 
       static Pattern pattern =
           Pattern.compile(
-              "^(?!\\n|#)(?<value>[^\\s]+)( (?<expected>[^\\s]+)( (?<rest>rest [^\\n]+))?)?(\\n|$)");
+              "^(?!\\n|#)(?<value>[^\\s]+)( (?<expected>[^\\s]+)( rest (?<rest>[^\\n]+))?)?(\\n|$)");
 
       public TokenizeResult getMatchResult(String str) {
         Matcher matcher = pattern.matcher(str);
