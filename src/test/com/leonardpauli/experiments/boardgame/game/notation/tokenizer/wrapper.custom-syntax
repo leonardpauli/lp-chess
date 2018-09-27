@@ -1,0 +1,40 @@
+# a|b
+a true
+b true
+ab true rest b
+ba true rest a
+ca false
+
+# ab
+a false
+b false
+ab true
+ba false
+
+# ab?
+b false
+a true
+ab true
+
+# ab?c?d
+b false
+a false
+ab false
+ad true
+abd true
+acd true
+abcd true
+acbd false
+
+# a+
+b false
+a true
+aab true rest b
+aaa true
+
+# use case
+[nameAlone]
+[nameEmpty ""]
+[nameSimple "hello"]
+[nameEscaped "hello \"there\\here\"! :]"]
+[nameEscapedOrder "an escaped: \\\" (quote)"]

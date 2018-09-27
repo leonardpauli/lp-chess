@@ -47,7 +47,7 @@ public class Tokenizer {
 
     while (innerTokenRes == null || innerTokenRes.needsMore) {
       String str = buffer.substring(cutOffset + offset);
-      innerTokenRes = t.getMatchResult(str);
+      innerTokenRes = t.getMatchResult(this, offset, str);
       if (innerTokenRes.needsMore) {
         boolean withinOwnLimit = buffer.length() - offset < innerTokenRes.maxNeededStringSize;
         if (!withinOwnLimit) throw new TokenizerException("out of own limit for buffer size");
