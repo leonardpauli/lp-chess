@@ -7,10 +7,6 @@ public class RepeatToken implements Token {
   private ArrayList<Token> tokens = new ArrayList<>();
   private TokenGetter tokenGetter;
 
-  public interface TokenGetter {
-    Token getNewToken();
-  }
-
   public RepeatToken(TokenGetter tokenGetter) {
     this.tokenGetter = tokenGetter;
   }
