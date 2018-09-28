@@ -2,6 +2,7 @@ package com.leonardpauli.experiments.boardgame.game.notation;
 
 import com.leonardpauli.experiments.boardgame.game.State;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.*;
+import com.leonardpauli.experiments.boardgame.util.Util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,6 +18,7 @@ public class Round implements Token {
       new AndToken(
           new Token[] {
             new OptionalToken(new Ordinal()),
+            new OptionalToken(new Whitespace()),
             new OrToken(new Token[] {new StatusToken(), new RepeatToken(() -> new Move())})
           })
     };
@@ -27,7 +29,8 @@ public class Round implements Token {
     AndToken a = (AndToken) at;
     for (Token ai : a.getTokens()) {
       if (ai instanceof OptionalToken) {
-        ordinal = (Ordinal) ((OptionalToken) ai).getToken();
+        Token ot = ((OptionalToken) ai).getToken();
+        if (ot instanceof Ordinal) ordinal = (Ordinal) ot;
       } else if (ai instanceof OrToken) {
         Token oi = ((OrToken) ai).getMatchedToken();
         if (oi instanceof StatusToken) status = (StatusToken) oi;
@@ -39,8 +42,8 @@ public class Round implements Token {
     return res;
   }
 
-  static class Ordinal implements Token {
-    int nr;
+  public static class Ordinal implements Token {
+    public int nr;
 
     private static Pattern pattern = Pattern.compile("^(?<nr>\\d+)\\.");
 
@@ -51,12 +54,19 @@ public class Round implements Token {
       nr = Integer.valueOf(m.group("nr"));
       return new TokenizeResult(m.end());
     }
+
+    @Override
+    public String toString() {
+      return Util.objectToString(this);
+    }
   }
 
   static class StatusToken implements Token {
     State state;
     String text;
     private boolean matingPlayerIsWhite = true;
+
+    // TODO: followed by Comment.Part
 
     private static Pattern pattern =
         Pattern.compile("^((?<draw>1/2-1/2)|(?<black>0-1)|(?<white>1-0))");
@@ -77,5 +87,15 @@ public class Round implements Token {
     public boolean didWhiteCauseMate() {
       return matingPlayerIsWhite && (state == State.CHECKMATE);
     }
+
+    @Override
+    public String toString() {
+      return Util.objectToString(this);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return Util.objectToString(this);
   }
 }

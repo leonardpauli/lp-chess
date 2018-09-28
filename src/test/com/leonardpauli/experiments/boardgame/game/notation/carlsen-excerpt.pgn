@@ -1,7 +1,7 @@
-; excerpt from https://www.pgnmentor.com/files.html, Carlsen.pgn
+; modified excerpt from https://www.pgnmentor.com/files.html, Carlsen.pgn
 ; downloaded 20 sept 2018
 
-[Event "Troll Masters"]
+[Event "Troll Masters"]; comment about tag
 [Site "Gausdal NOR"]
 [Date "2001.01.05"]
 [Round "1"]

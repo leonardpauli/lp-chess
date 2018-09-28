@@ -76,10 +76,16 @@ public class Comment implements Token {
     @Override
     public TokenizeResult handleInnerMatch(Token at, TokenizeResult res, String str) {
       AndToken a = (AndToken) at;
-      for (Token t : a.getTokens()) {
+      for (Token ot : a.getTokens()) {
+        Token t = ((OptionalToken) ot).getToken();
         if (t instanceof Comment) comment = (Comment) t;
       }
       return res;
     }
+  }
+
+  @Override
+  public String toString() {
+    return Util.objectToString(this);
   }
 }

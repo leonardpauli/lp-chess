@@ -4,6 +4,7 @@ import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.AndToken;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.OptionalToken;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+import com.leonardpauli.experiments.boardgame.util.Util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +14,7 @@ public class Tag implements Token {
   public String value;
 
   static Pattern pattern =
-      Pattern.compile("^\\[(?<key>[^\\s\\]]+)? ?(\"(?<value>[^\"\\\\]|\\\\[\\\\\"])\")\\]");
+      Pattern.compile("^\\[(?<key>[^\\s\\]]+)( \"(?<value>([^\"\\\\]|\\\\[\\\\\"])*)\")?\\]");
 
   @Override
   public TokenizeResult getMatchResult(String str) {
@@ -21,12 +22,19 @@ public class Tag implements Token {
     if (!m.find()) return new TokenizeResult();
     key = m.group("key");
     value = m.group("value");
+
+    // TODO: if (hasValue()) clean up escaped chars in value
+
     return new TokenizeResult(m.end());
   }
 
+  public boolean hasValue() {
+    return value != null;
+  }
+
   public static class Section implements Token {
-    Tag tag;
-    Comment comment;
+    public Tag tag;
+    public Comment comment;
 
     public Token[] getInnerTokens() {
       return new Token[] {
@@ -49,5 +57,15 @@ public class Tag implements Token {
       }
       return res;
     }
+
+    @Override
+    public String toString() {
+      return Util.objectToString(this);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return Util.objectToString(this);
   }
 }

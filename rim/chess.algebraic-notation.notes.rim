@@ -75,12 +75,16 @@ chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, mini
 
 	capture: move is capture and not minimal
 
+	// (?<castling>[0O](-[0O])+)|(?<promotion>(?<promotionFrom>[a-z]+\d+)(|=|\()(?<promotionTarget>[A-Z])(|\)))
+
 	if pawn capture and minimal and unambiguous:
 		- origin.position.x.letter
 		- target.position.x.letter
 	if promotion:
 		e8Q or e8=Q or e8(Q)
+		// (?<promotionFrom>[a-z]+\d+)(|=|\()(?<promotionTarget>[A-Z])(|\))
 	if castling:
+		// (?<castling>[0O](-[0O])+)
 		0-0 (for kingside castling) and 0-0-0 (queenside castling).
 		 PGN requires the uppercase letter O (O-O and O-O-O).
 	move:
