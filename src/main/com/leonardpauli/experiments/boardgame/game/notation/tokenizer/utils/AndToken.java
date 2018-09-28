@@ -1,4 +1,9 @@
-package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
+package com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils;
+
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Tokenizer;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizerException;
 
 import java.io.IOException;
 

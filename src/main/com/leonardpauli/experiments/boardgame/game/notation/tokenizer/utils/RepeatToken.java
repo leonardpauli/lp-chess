@@ -1,4 +1,6 @@
-package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
+package com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils;
+
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.*;
 
 import java.io.IOException;
 import java.util.ArrayList;

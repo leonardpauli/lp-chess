@@ -1,7 +1,9 @@
 package com.leonardpauli.experiments.boardgame.game.notation;
 
 import com.leonardpauli.experiments.boardgame.game.State;
-import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.*;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.*;
 import com.leonardpauli.experiments.boardgame.util.Util;
 
 import java.util.regex.Matcher;

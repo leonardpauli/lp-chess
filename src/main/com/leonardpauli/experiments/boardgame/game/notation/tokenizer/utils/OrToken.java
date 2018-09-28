@@ -1,4 +1,7 @@
-package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
+package com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils;
+
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
 
 public class OrToken implements Token {
 

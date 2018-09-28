@@ -1,5 +1,9 @@
-package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
+package com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils;
 
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Tokenizer;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizerException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
@@ -24,7 +28,7 @@ class WrapperTokensTest {
   @BeforeAll
   static void parseTests() throws IOException, TokenizerException {
     if (syntax != null) return;
-    InputStream stream = TokenizerTest.class.getResourceAsStream("wrapper.custom-syntax");
+    InputStream stream = WrapperTokensTest.class.getResourceAsStream("wrapper.custom-syntax");
     syntax = new TestsSyntax(stream);
   }
 
