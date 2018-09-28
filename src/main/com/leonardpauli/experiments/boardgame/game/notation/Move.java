@@ -2,8 +2,13 @@ package com.leonardpauli.experiments.boardgame.game.notation;
 
 import com.leonardpauli.experiments.boardgame.actor.PieceType;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
 
-public class Move {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Move implements Token {
   public PieceType pieceType = PieceType.PAWN;
 
   // TODO: NaN or better way to signal unknown (partial in any of x/y)
@@ -22,5 +27,16 @@ public class Move {
 
   public boolean hasComment() {
     return comment != null;
+  }
+
+  String text;
+  private static Pattern pattern = Pattern.compile("^([^\\d\\n])+");
+
+  @Override
+  public TokenizeResult getMatchResult(String str) {
+    Matcher m = pattern.matcher(str);
+    if (!m.find()) return new TokenizeResult();
+    text = m.group();
+    return new TokenizeResult(m.end());
   }
 }

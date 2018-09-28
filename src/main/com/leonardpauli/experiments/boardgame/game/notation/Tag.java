@@ -13,7 +13,7 @@ public class Tag implements Token {
   public String value;
 
   static Pattern pattern =
-      Pattern.compile("^\\[(?<key>[^\\s]+)? ?(\"(?<value>[^\"\\\\]|\\\\[\\\\\"])\")\\]");
+      Pattern.compile("^\\[(?<key>[^\\s\\]]+)? ?(\"(?<value>[^\"\\\\]|\\\\[\\\\\"])\")\\]");
 
   @Override
   public TokenizeResult getMatchResult(String str) {
