@@ -33,10 +33,27 @@
 
 
 chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, minimal{alias: "abbreviated"} is Boolean: false}
+	' as regex:
+		// PatternToken, PositionToken, PieceType
+			// PositionToken: ([a-z]*)(\d*)
+			// PieceType: "["+PieceType.getAssociatedChars()+"]?"
+		// pawnCaptureFromFile: // (?<pawnCaptureFromFile>[a-z])(?<pawnCaptureToFile>[a-z])
+		// castling = new PatternToken("[0O](-[0O])+")
+		// promotion = new PatternToken("(?<promotionFrom>[a-z]+\d+)(|=|\()(?<promotionTarget>[A-Z])(|\))")
+		// capture = new PatternToken("(<capture>x|:|)")
+		// ep = new PatternToken(":?(?<enpassant1>e\.p\.):?")
+		// check = new PatternToken("(?<default>\+|†|ch)|(?<double>dbl ch|\+\+)|(?<discovered>dis ch)")
+		// checkmate = new PatternToken("(?<checkmate>#|mate|++|‡|≠|X|x|×)")
+		// Annotation: Repeat{max 2}(Move|State) // Tokens
+		// GameOver: // gameover(?<white>0|1|1/2|½)-(?<black>0|1|1/2|½)
+		// moveinner: PieceType, PositionToken, capture?, PositionToken, ep?, 
+		// ((castling|promotion|moveinner), check?, checkmate?, Annotation?, GameOver?)
+
 	piece.letter: or:
 		- "" if Pawn // Pawns: absence of uppercase letter
 		- "N" if Knight
 		- else: piece.name.0 as uppercase
+		// PieceType.fromChar, PieceType.getAssociatedChars()? (empty string matches pawn)
 
 	file is game{repeat, separator: new-line{repeat}}
 
@@ -75,24 +92,19 @@ chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, mini
 
 	capture: move is capture and not minimal
 
-	// (?<castling>[0O](-[0O])+)|(?<promotion>(?<promotionFrom>[a-z]+\d+)(|=|\()(?<promotionTarget>[A-Z])(|\)))
-
 	if pawn capture and minimal and unambiguous:
 		- origin.position.x.letter
 		- target.position.x.letter
 	if promotion:
 		e8Q or e8=Q or e8(Q)
-		// (?<promotionFrom>[a-z]+\d+)(|=|\()(?<promotionTarget>[A-Z])(|\))
 	if castling:
-		// (?<castling>[0O](-[0O])+)
 		0-0 (for kingside castling) and 0-0-0 (queenside castling).
 		 PGN requires the uppercase letter O (O-O and O-O-O).
 	move:
 		- or:
 			- is Pawn: origin.position.x.letter if capture else ""
 			- else: piece.iconLetter if figurine else piece.letter
-		- origin.position.x.letter{optional}
-		- origin.position.y{optional}
+		- origin.position
 		- "x", ":", or "" if capture
 		- destination.position
 		- order.any:
@@ -107,11 +119,12 @@ chess.algebraic-notation.standard{alias: "SAN", figurine is Boolean: false, mini
 	on game over:
 		- "1–0" if White won
 		- "0–1" if Black won
-		- "½–½" if draw
+		- "½–½" or "1/2–1/2" if draw
 
 
 annotation: move{optional} + state{optional}
 	// source: https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
+	// token; using custom str matcher, for each value
 	move:
 		- "!": "an excellent move"
 		- "!!": "a particularly good—and usually surprising—move"

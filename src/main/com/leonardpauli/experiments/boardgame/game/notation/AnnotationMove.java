@@ -1,5 +1,13 @@
 package com.leonardpauli.experiments.boardgame.game.notation;
 
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+import static java.lang.Integer.max;
+
 public enum AnnotationMove {
   // descriptions originally from wikipedia
   NONE("", "no annotation"),
@@ -35,5 +43,47 @@ public enum AnnotationMove {
 
   public boolean hasCodeAlternative() {
     return codeAlternative != null;
+  }
+
+  public int getCodeCompareValue() {
+    return max(code.length(), hasCodeAlternative() ? codeAlternative.length() : 0);
+  }
+
+  public static class Syntax implements Token {
+    private static AnnotationMove[] sorted;
+
+    static {
+      sorted = AnnotationMove.values();
+      Arrays.sort(sorted, Comparator.comparing(AnnotationMove::getCodeCompareValue));
+      reverseArr(sorted);
+    }
+
+    static <T> void reverseArr(T[] xs) {
+      for (int s = 0, e = xs.length - 1; s < e; s++, e--) {
+        T tmp = xs[s];
+        xs[s] = xs[e];
+        xs[e] = tmp;
+      }
+    }
+
+    AnnotationMove annotation;
+
+    @Override
+    public TokenizeResult getMatchResult(String str) {
+      int l = 0;
+      for (AnnotationMove m : sorted) {
+        if (str.startsWith(m.code)) {
+          l = m.code.length();
+        } else if (m.hasCodeAlternative() && str.startsWith(m.getCodeAlternative())) {
+          l = m.getCodeAlternative().length();
+        } else {
+          continue;
+        }
+        annotation = m;
+        break;
+      }
+      if (l == 0) return new TokenizeResult();
+      return new TokenizeResult(0);
+    }
   }
 }

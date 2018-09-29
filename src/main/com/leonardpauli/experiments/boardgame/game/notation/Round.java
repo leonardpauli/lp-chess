@@ -94,6 +94,44 @@ public class Round implements Token {
     public String toString() {
       return Util.objectToString(this);
     }
+
+    public static class GameOver extends PatternToken {
+      private static Pattern p = Pattern.compile("^(?<white>0|1|1/2|½)-(?<black>0|1|1/2|½)");
+
+      enum Score {
+        LOST("0"),
+        DRAW("1/2", "½"),
+        WON("1");
+
+        public final String code;
+        public final String alt;
+
+        Score(String code, String alt) {
+          this.code = code;
+          this.alt = alt;
+        }
+
+        Score(String code) {
+          this.code = code;
+          this.alt = null;
+        }
+
+        public static Score fromCodeUnsafe(String code) {
+          for (Score t : Score.values()) {
+            if (code.equals(t.code) || code.equals(t.alt)) return t;
+          }
+          return null;
+        }
+      }
+
+      public Score[] scores = new Score[] {Score.DRAW, Score.DRAW};
+
+      @Override
+      public void handleMatch() throws Exception {
+        scores[0] = Score.fromCodeUnsafe(matcher.group("white"));
+        scores[1] = Score.fromCodeUnsafe(matcher.group("black"));
+      }
+    }
   }
 
   @Override

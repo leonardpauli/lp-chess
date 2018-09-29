@@ -27,6 +27,10 @@ public class Comment implements Token {
     return res;
   }
 
+  public boolean hasComment() {
+    return comment != null;
+  }
+
   public static class LineComment implements Token {
     public String text;
 
