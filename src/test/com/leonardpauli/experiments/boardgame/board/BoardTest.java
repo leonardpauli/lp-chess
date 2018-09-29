@@ -52,6 +52,7 @@ class BoardTest {
     p.setHome(board.placePiece(p, Position.fromString("d4")));
 
     as = board.getMovementsForNotation("Qc", p2);
+    board.setTileMarksFromAvailableMovements(as.toArray(new Movement[] {}));
     assertArrayEquals(
         new MovementType[] {
           MovementType.DIAGONAL, MovementType.DIAGONAL, MovementType.DIAGONAL, MovementType.DIAGONAL

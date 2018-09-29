@@ -1,9 +1,7 @@
 package com.leonardpauli.experiments.boardgame.chess;
 
-import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
-import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.game.Move;
 import com.leonardpauli.experiments.boardgame.game.State;
@@ -26,48 +24,39 @@ public class Main {
   private static void doTurn(ChessGame game, Scanner scanner) throws GameException {
     String command;
 
-    Piece firstMovable = game.getCurrentPlayer().getFirstMovablePiece(game.board);
-    System.out.print(
-        game.getCurrentPlayer().name
-            + "'s turn. Enter source tile (eg. "
-            + firstMovable.tile.position.toString()
-            + "): ");
+    List<Movement> ms = game.getCurrentPlayer().getAvailableMovements(game.board);
+    while (true) {
+      game.board.setTileMarksFromAvailableMovements(ms.toArray(new Movement[] {}));
+      System.out.println(game.board.toString(PrinterSquare.Style.PRETTY_WITH_NUMBERS));
 
-    command = scanner.next();
-    Position source = Position.fromString(command);
-    Piece piece = game.board.pieceAt(source);
-    // System.out.println(piece);
+      if (ms.size() == 0) throw new GameException("no movements available!");
 
-    List<Movement> movements = game.board.movement.getAvailable(piece);
-    if (movements.size() == 0) {
-      System.out.println("Not movable, try another one");
-      return;
+      System.out.print(game.getCurrentPlayer().name + "'s turn. Enter move: ");
+      command = scanner.next();
+
+      ms = game.board.getMovementsForNotation(command, game.getCurrentPlayer());
+      if (ms.size() == 0) {
+        System.out.println("Not available, try another one");
+        ms = game.getCurrentPlayer().getAvailableMovements(game.board);
+      } else if (ms.size() > 1) {
+        System.out.println("Ambiguous, try a bit more specific");
+      } else break;
     }
 
-    String egTargetPos = movements.get(0).edge.target.position.toString();
-    System.out.print("Enter target tile (eg. " + egTargetPos + "): ");
-    command = scanner.next();
-    Position target = Position.fromString(command);
-
-    List<Movement> movementsFinal = game.board.movement.getAvailable(piece, target);
-    if (movementsFinal.size() == 0) {
-      System.out.println("Not movable there, try again");
-      return;
-    }
-
-    Movement movement = movementsFinal.get(0);
-    game.playMove(new Move(game.getCurrentPlayer(), piece, movement));
+    Movement movement = ms.get(0);
+    game.playMove(new Move(game.getCurrentPlayer(), movement.edge.source.getPiece(), movement));
   }
 
   private static void startInteractiveREPL(Scanner scanner) throws Exception {
     System.out.println("Welcome to Chess!");
+    System.out.println(
+        "Moves are written in standard chess notation, eg. Kb1a3, Kh, or just a3 should do, see wikipedia :)");
 
     ChessGame game = new ChessGame();
 
     while (game.getState() == State.DEFAULT) {
 
       System.out.println("\n");
-      System.out.println(game.board.toString(PrinterSquare.Style.PRETTY_WITH_NUMBERS));
 
       try {
         doTurn(game, scanner);

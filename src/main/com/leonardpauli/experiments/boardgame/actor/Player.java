@@ -5,9 +5,9 @@ import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Color;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class Player {
@@ -51,12 +51,17 @@ public class Player {
     return Arrays.copyOf(alivePieces, i);
   }
 
-  public Piece getFirstMovablePiece(Board board) throws GameException {
+  public List<Movement> getAvailableMovements(Board board) {
+    List<Movement> allMovements = new ArrayList<>();
     for (Piece piece : getAlivePieces()) {
-      List<Movement> movements = board.movement.getAvailable(piece);
-      if (movements.size() > 0) return piece;
+      try {
+        List<Movement> movements = board.movement.getAvailable(piece);
+        allMovements.addAll(movements);
+      } catch (GameException e) {
+        e.printStackTrace();
+      }
     }
-    throw new GameException("no movable pieces for that player");
+    return allMovements;
   }
 
   // equals

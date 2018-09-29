@@ -16,15 +16,17 @@ import com.leonardpauli.experiments.boardgame.game.notation.Move;
 import com.leonardpauli.experiments.boardgame.util.Size;
 import com.leonardpauli.experiments.boardgame.util.Util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Board {
   public Tile[][] tiles;
   public final MovementProcessor movement;
   private final Layout layout;
+  private HashMap<Tile, Marker> tileMarks = new HashMap<>();
+
+  public static enum Marker {
+    AVAILABLE;
+  }
 
   public Board() throws Exception {
     layout = new LayoutSquare(new Size(8, 8));
@@ -115,6 +117,23 @@ public class Board {
     }
 
     return movements;
+  }
+
+  // marks
+
+  public void setTileMarksFromAvailableMovements(Movement[] movements) {
+    clearTileMarks();
+    for (Movement m : movements) {
+      tileMarks.put(m.edge.target, Marker.AVAILABLE);
+    }
+  }
+
+  public void clearTileMarks() {
+    tileMarks.clear();
+  }
+
+  public Optional<Marker> getMarkerForTile(Tile tile) {
+    return tileMarks.containsKey(tile) ? Optional.of(tileMarks.get(tile)) : Optional.empty();
   }
 
   // utils

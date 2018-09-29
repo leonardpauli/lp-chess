@@ -4,6 +4,8 @@ import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.util.Size;
 
+import java.util.Optional;
+
 public class PrinterSquare implements Printer {
   LayoutSquare layout;
 
@@ -26,9 +28,13 @@ public class PrinterSquare implements Printer {
 
       for (int x = 0; x < size.x; x++) {
         Tile tile = board.tiles[x][y];
-        if (pretty) sb.append(" ");
-        sb.append(pretty ? tile.toCharPretty() : tile.toChar());
-        if (pretty) sb.append(" ");
+        Optional<Board.Marker> marker = board.getMarkerForTile(tile);
+        boolean mark = marker.isPresent();
+
+        if (pretty) sb.append(mark ? "⟨" : " ");
+        if (!pretty && mark && !tile.hasPiece()) sb.append("O");
+        else sb.append(pretty ? tile.toCharPretty() : tile.toChar());
+        if (pretty) sb.append(mark ? "⟩" : " ");
       }
 
       if (pretty) sb.append("│");

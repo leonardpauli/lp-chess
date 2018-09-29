@@ -115,6 +115,11 @@ public class MovementProcessor {
 
       Edge fullEdge = new Edge(opt.source, edge.target);
       Movement movement = new Movement(opt.type, fullEdge);
+
+      if (edge.target.hasPiece()) {
+        movement.setCapturedPiece(edge.target.getPiece());
+      }
+
       movements.add(movement);
       addedCount++;
 
