@@ -4,6 +4,7 @@ import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
 import com.leonardpauli.experiments.boardgame.util.Point;
+import com.leonardpauli.experiments.boardgame.util.Util;
 
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
@@ -39,8 +40,8 @@ public class Position extends Point {
   }
 
   public static class Optional implements Token {
-    OptionalInt x;
-    OptionalInt y;
+    public OptionalInt x;
+    public OptionalInt y;
 
     private boolean matchEmpty = true;
 
@@ -64,6 +65,10 @@ public class Position extends Point {
 
     public boolean hasY() {
       return y.isPresent();
+    }
+
+    public boolean isEmpty() {
+      return !hasX() && !hasY();
     }
 
     public int getX(int defaultValue) {
@@ -90,15 +95,28 @@ public class Position extends Point {
       y = OptionalInt.empty();
     }
 
+    public void empty() {
+      emptyY();
+      emptyX();
+    }
+
     public Position getPosition(int defaultX, int defaultY) {
       return new Position(getX(defaultX), getY(defaultY));
     }
 
-    static Pattern pattern = Pattern.compile("^([a-z]*)(\\d*)");
+    static Pattern pattern = Pattern.compile("^([a-z]*)(\\d*(?!\\d*\\.))");
 
-    public Matcher setFromString(String code) {
+    public void setFrom(Position.Optional op) {
+      this.x = op.x;
+      this.y = op.y;
+    }
+
+    public Matcher setFrom(String code) {
       Matcher m = pattern.matcher(code);
-      m.find();
+      if (!m.find()) {
+        empty();
+        return m;
+      }
 
       if (m.group(1).length() > 0) {
         int x = 0;
@@ -106,7 +124,7 @@ public class Position extends Point {
         setX(x);
       } else emptyX();
 
-      if (m.group(2).length() > 0) setY(Integer.parseInt(m.group(2)));
+      if (m.group(2).length() > 0) setY(Integer.parseInt(m.group(2)) - 1);
       else emptyY();
 
       return m;
@@ -114,15 +132,20 @@ public class Position extends Point {
 
     public static Position.Optional fromString(String code) {
       Optional p = new Optional();
-      p.setFromString(code);
+      p.setFrom(code);
       return p;
     }
 
     @Override
     public TokenizeResult getMatchResult(String str) {
-      Matcher m = setFromString(str);
-      if (!matchEmpty && !hasX() && !hasY()) return new TokenizeResult();
+      Matcher m = setFrom(str);
+      if (!matchEmpty && isEmpty()) return new TokenizeResult();
       return new TokenizeResult(m.end());
+    }
+
+    @Override
+    public String toString() {
+      return Util.objectToString(this);
     }
   }
 }

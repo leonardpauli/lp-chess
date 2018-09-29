@@ -10,11 +10,32 @@ import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.OrTo
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.PatternToken;
 import com.leonardpauli.experiments.boardgame.util.Util;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class Move implements Token {
+  public static class Config {
+    public Position.Optional origin = new Position.Optional();
+    public Position.Optional target = new Position.Optional();
+    public Optional<PieceType> type = Optional.empty();
+    public boolean isPromotion = false;
+    public boolean isCastling = false;
+    public boolean isCheckmate = false;
+    public boolean isCheck = false;
+    public boolean isCapture = false;
+    public AnnotationMove moveNote = AnnotationMove.NONE;
+    public AnnotationState stateNote = AnnotationState.NONE;
+    public Optional<Comment> comment = Optional.empty();
+
+    @Override
+    public String toString() {
+      return Util.objectToString(this);
+    }
+  }
+
   public Inner inner;
   public Comment comment;
+  public String text;
 
   public Token[] getInnerTokens() {
     return new Token[] {
@@ -35,6 +56,7 @@ public class Move implements Token {
         comment = ct.comment;
       }
     }
+    text = str.substring(0, res.consumedCount);
     return res;
   }
 
@@ -50,10 +72,6 @@ public class Move implements Token {
   private static Pattern simplePattern = Pattern.compile("^([^\\d\\n\\[]|\\d+(?!\\.|\\d))+");
 
   public static class Inner implements Token {
-    public PieceType pieceType = null;
-
-    public Position.Optional source = new Position.Optional();
-    public Position.Optional target = new Position.Optional();
 
     @Override
     public Token[] getInnerTokens() {
@@ -77,33 +95,91 @@ public class Move implements Token {
     private Promotion promotion;
     private PawnCaptureSimple pawnCaptureSimple;
     private MoveNormal moveNormal;
-    
+
     private Check check;
     private boolean isCheckmate = false;
 
     public AnnotationMove annotationMove = AnnotationMove.NONE;
     public AnnotationState annotationState = AnnotationState.NONE;
-    
+
+    public Position.Optional getOrigin() {
+      if (promotion != null) return promotion.origin;
+      if (pawnCaptureSimple != null) return pawnCaptureSimple.origin;
+      if (moveNormal != null) return moveNormal.origin;
+      return new Position.Optional();
+    }
+
+    public Position.Optional getTarget() {
+      if (promotion != null) return promotion.origin;
+      if (pawnCaptureSimple != null) return pawnCaptureSimple.target;
+      if (moveNormal != null) return moveNormal.target;
+      return new Position.Optional();
+    }
+
+    public Optional<PieceType> getType() {
+      if (castling != null) return Optional.of(PieceType.KING);
+      if (promotion != null) return Optional.of(promotion.newType);
+      if (pawnCaptureSimple != null) return Optional.of(PieceType.PAWN);
+      if (moveNormal != null) return moveNormal.type;
+      return Optional.empty();
+    }
+
+    public boolean isPromotion() {
+      return promotion != null;
+    }
+
+    public boolean isCastling() {
+      return castling != null;
+    }
+
+    public boolean isCheckmate() {
+      return isCheckmate;
+    }
+
+    public boolean isCheck() {
+      return check != null;
+    }
+
+    public boolean isCapture() {
+      return pawnCaptureSimple != null ? true : moveNormal != null ? moveNormal.isCapture : false;
+    }
+
+    public Config getConfig() {
+      Config c = new Config();
+      c.origin = getOrigin();
+      c.target = getTarget();
+      c.type = getType();
+      c.isPromotion = isPromotion();
+      c.isCastling = isCastling();
+      c.isCheckmate = isCheckmate;
+      c.isCheck = isCheck();
+      c.isCapture = isCapture();
+      c.moveNote = annotationMove;
+      c.stateNote = annotationState;
+      c.comment = Optional.empty();
+      return c;
+    }
 
     @Override
     public TokenizeResult handleInnerMatch(Token at, TokenizeResult res, String str) {
       for (Token t : ((AndToken) at).getTokens()) {
         if (t instanceof OrToken) {
           Token ot = ((OrToken) t).getMatchedToken();
-          
+
           if (ot instanceof Castling) castling = (Castling) ot;
-          else if (ot instanceof Promotion) promotion= (Promotion) ot;
+          else if (ot instanceof Promotion) promotion = (Promotion) ot;
           else if (ot instanceof PawnCaptureSimple) pawnCaptureSimple = (PawnCaptureSimple) ot;
           else if (ot instanceof MoveNormal) moveNormal = (MoveNormal) ot;
-          
+
         } else if (t instanceof OptionalToken) {
           Token ot = ((OptionalToken) t).getToken();
 
           if (ot instanceof Check) check = (Check) ot;
           else if (ot instanceof PatternToken) isCheckmate = true;
-          else if (ot instanceof AnnotationMove.Syntax) annotationMove = ((AnnotationMove.Syntax) ot).annotation;
-          else if (ot instanceof AnnotationState.Syntax) annotationState = ((AnnotationState.Syntax) ot).annotation;
-          
+          else if (ot instanceof AnnotationMove.Syntax)
+            annotationMove = ((AnnotationMove.Syntax) ot).annotation;
+          else if (ot instanceof AnnotationState.Syntax)
+            annotationState = ((AnnotationState.Syntax) ot).annotation;
         }
       }
       return res;
@@ -161,12 +237,12 @@ public class Move implements Token {
     Position.Optional origin = new Position.Optional();
     Position.Optional target = new Position.Optional();
 
-    static Pattern pattern = Pattern.compile("^([a-z])([a-z])");
+    static Pattern pattern = Pattern.compile("^([a-w])([a-w])");
 
     @Override
     public void handleMatch() {
-      origin.setFromString(matcher.group(1));
-      target.setFromString(matcher.group(2));
+      origin.setFrom(matcher.group(1));
+      target.setFrom(matcher.group(2));
     }
 
     @Override
@@ -194,9 +270,9 @@ public class Move implements Token {
   }
 
   public static class MoveNormal implements Token {
-    public PieceType type;
-    public Position.Optional origin;
-    public Position.Optional target;
+    public Optional<PieceType> type = Optional.empty();
+    public Position.Optional origin = new Position.Optional();
+    public Position.Optional target = new Position.Optional();
     public boolean isCapture = false;
     public boolean isEnPassant = false;
 
@@ -206,7 +282,8 @@ public class Move implements Token {
         new AndToken(
             new Token[] {
               new PieceType.Token(true),
-              new Position.Optional(true),
+              new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
+              new Position.Optional(false),
               new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
               new Position.Optional(true),
               new OptionalToken(
@@ -217,12 +294,14 @@ public class Move implements Token {
 
     @Override
     public TokenizeResult handleInnerMatch(Token at, TokenizeResult res, String str) {
+      if (res.consumedCount < 2) return new TokenizeResult();
+
       for (Token t : ((AndToken) at).getTokens()) {
         if (t instanceof Position.Optional) {
-          if (origin == null) origin = (Position.Optional) t;
+          if (origin.isEmpty()) origin = (Position.Optional) t;
           else target = (Position.Optional) t;
         } else if (t instanceof PieceType.Token) {
-          type = ((PieceType.Token) t).type;
+          type = Optional.of(((PieceType.Token) t).type);
         } else if (t instanceof OptionalToken) {
           PatternToken pt = (PatternToken) ((OptionalToken) t).getToken();
           if ("capture".equals(pt.patternName)) {
@@ -232,8 +311,11 @@ public class Move implements Token {
           }
         }
       }
+      if (!origin.isEmpty() && target.isEmpty()) {
+        target.setFrom(origin);
+        origin.empty();
+      }
       return res;
     }
   }
-  
 }

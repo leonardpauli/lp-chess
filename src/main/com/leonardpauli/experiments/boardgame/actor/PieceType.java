@@ -107,7 +107,7 @@ public enum PieceType {
     public TokenizeResult getMatchResult(String str) {
       if (str.length() > 0) {
         for (String x : PieceType.getAssociatedChars()) {
-          if (str.startsWith(x)) {
+          if (str.startsWith(x) && (x.length() > 0 || matchEmpty)) {
             type = PieceType.fromCharUnsafe(x);
             return new TokenizeResult(x.length());
           }

@@ -21,7 +21,7 @@ public class Round implements Token {
           new Token[] {
             new OptionalToken(new Ordinal()),
             new OptionalToken(new Whitespace()),
-            new OrToken(new Token[] {new StatusToken(), new RepeatToken(() -> new Move())})
+            new RepeatToken(() -> new OrToken(new Token[] {new Move(), new StatusToken()}))
           })
     };
   }
@@ -33,11 +33,16 @@ public class Round implements Token {
       if (ai instanceof OptionalToken) {
         Token ot = ((OptionalToken) ai).getToken();
         if (ot instanceof Ordinal) ordinal = (Ordinal) ot;
-      } else if (ai instanceof OrToken) {
-        Token oi = ((OrToken) ai).getMatchedToken();
-        if (oi instanceof StatusToken) status = (StatusToken) oi;
-        else if (oi instanceof RepeatToken) {
-          moves = ((RepeatToken) oi).getTokens().toArray(new Move[] {});
+      } else if (ai instanceof RepeatToken) {
+        for (Token rt : ((RepeatToken) ai).getTokens()) {
+          Token ot = ((OrToken) rt).getMatchedToken();
+          if (ot instanceof StatusToken) status = (StatusToken) ot;
+          else if (ot instanceof Move) {
+            Move[] m2 = new Move[(moves == null ? 0 : moves.length) + 1];
+            if (moves != null) System.arraycopy(moves, 0, m2, 0, moves.length);
+            m2[moves == null ? 0 : moves.length] = ((Move) ot);
+            moves = m2;
+          }
         }
       }
     }
