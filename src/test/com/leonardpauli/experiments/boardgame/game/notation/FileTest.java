@@ -39,7 +39,7 @@ class FileTest {
     assertEquals(23, f.games.get(0).rounds.size());
     assertEquals(1, f.games.get(0).rounds.get(0).ordinal.nr);
     assertEquals(2, f.games.get(0).rounds.get(0).moves.length);
-    Move.Config c = f.games.get(0).rounds.get(0).moves[1].inner.getConfig();
+    Move.Config c = f.games.get(0).rounds.get(0).moves[1].getConfig();
     assertEquals(PieceType.KNIGHT, c.type.get());
     assertTrue(c.origin.isEmpty());
     assertEquals("F6", c.target.getPosition(0, 0).toString());

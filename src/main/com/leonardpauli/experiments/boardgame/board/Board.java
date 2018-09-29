@@ -12,9 +12,14 @@ import com.leonardpauli.experiments.boardgame.board.movement.MovementProcessor;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
+import com.leonardpauli.experiments.boardgame.game.notation.Move;
 import com.leonardpauli.experiments.boardgame.util.Size;
+import com.leonardpauli.experiments.boardgame.util.Util;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 public class Board {
   public Tile[][] tiles;
@@ -74,8 +79,42 @@ public class Board {
 
   // movement
 
-  public Movement getMovementForNotation(String notation, Player currentPlayer) {
-    return null;
+  public Optional<Movement> getMovementForNotation(String notation, Player currentPlayer) {
+    List<Movement> movements = getMovementsForNotation(notation, currentPlayer);
+    if (movements.size() == 0) return Optional.empty();
+    if (movements.size() > 1)
+      System.out.println("getMovementForNotation got many; " + Util.objectToString(movements));
+    return Optional.of(movements.get(0));
+  }
+
+  public List<Movement> getMovementsForNotation(String notation, Player currentPlayer) {
+    List<Movement> movements = new ArrayList<>();
+    Optional<Move> move = Move.fromString(notation);
+    if (!move.isPresent()) return movements;
+    Move.Config c = move.get().getConfig();
+
+    for (int x = c.origin.x.orElse(0); x <= c.origin.x.orElse(tiles.length - 1); x++) {
+      for (int y = c.origin.y.orElse(0); y <= c.origin.y.orElse(tiles.length - 1); y++) {
+        Tile t = tiles[x][y];
+        if (!t.hasPiece()) continue;
+        if (!t.getPiece().owner.equals(currentPlayer)) continue;
+        if (c.type.isPresent() && t.getPiece().type != c.type.get()) continue;
+        try {
+          List<Movement> ms = movement.getAvailable(t.getPiece());
+          if (!c.target.isEmpty())
+            ms.removeIf(
+                m ->
+                    (c.target.hasX() && m.edge.target.position.x != c.target.getX(0))
+                        || (c.target.hasY() && m.edge.target.position.y != c.target.getY(0)));
+          movements.addAll(ms);
+        } catch (GameException e) {
+          e.printStackTrace();
+          continue;
+        }
+      }
+    }
+
+    return movements;
   }
 
   // utils

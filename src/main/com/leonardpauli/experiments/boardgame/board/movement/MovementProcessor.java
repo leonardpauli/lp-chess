@@ -1,15 +1,19 @@
 package com.leonardpauli.experiments.boardgame.board.movement;
 
-import com.leonardpauli.experiments.boardgame.actor.*;
+import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.Board;
-import com.leonardpauli.experiments.boardgame.board.tile.*;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
 import static com.leonardpauli.experiments.boardgame.board.movement.MovementType.*;
+import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
 
 public class MovementProcessor {
 
@@ -45,11 +49,12 @@ public class MovementProcessor {
     Tile source;
     EdgeType[] path;
     boolean skipOccupiedInBetween = false;
-    boolean repeatable = false;
+    int repetitionsMax = 0;
     MovementType type;
 
     static Options[] withMultiDirectionalRepeatablePath(
-        EdgeType[] pathIdeal, Piece piece, MovementType type) throws GameException {
+        EdgeType[] pathIdeal, Piece piece, MovementType type, int repetitionsMax)
+        throws GameException {
       int directions = 4;
       EdgeType[][] paths = new EdgeType[directions][pathIdeal.length];
       for (int turns = 0; turns < directions; turns++) {
@@ -60,13 +65,29 @@ public class MovementProcessor {
       for (int i = 0; i < paths.length; i++) {
         Options opt = new Options();
         opt.source = piece.tile;
-        opt.repeatable = true;
+        opt.repetitionsMax = repetitionsMax;
         opt.path = paths[i];
         opt.type = type;
         opts[i] = opt;
       }
 
       return opts;
+    }
+
+    static Options[] withMultiDirectionalRepeatablePath(
+        EdgeType[] pathIdeal, Piece piece, MovementType type) throws GameException {
+      return withMultiDirectionalRepeatablePath(pathIdeal, piece, type, 8);
+    }
+
+    @Override
+    protected Options clone() {
+      Options o = new Options();
+      o.source = source;
+      o.path = path;
+      o.skipOccupiedInBetween = skipOccupiedInBetween;
+      o.repetitionsMax = repetitionsMax;
+      o.type = type;
+      return o;
     }
   }
 
@@ -96,6 +117,13 @@ public class MovementProcessor {
       Movement movement = new Movement(opt.type, fullEdge);
       movements.add(movement);
       addedCount++;
+
+      boolean isLastSegment = segmentIndex == segments.length - 1;
+      if (isLastSegment && opt.repetitionsMax > 1) {
+        Options o = opt.clone();
+        o.repetitionsMax--;
+        addedCount += addAvailableTo(movements, o, edge.target, 0);
+      }
     }
 
     return addedCount;

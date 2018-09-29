@@ -4,7 +4,7 @@ import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.board.tile.Edge;
 
 public class Movement {
-  MovementType type;
+  public MovementType type;
   public Edge edge;
 
   Piece capturedPiece;

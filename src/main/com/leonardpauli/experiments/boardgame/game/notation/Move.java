@@ -4,12 +4,16 @@ import com.leonardpauli.experiments.boardgame.actor.PieceType;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Tokenizer;
+import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizerException;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.AndToken;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.OptionalToken;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.OrToken;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.utils.PatternToken;
 import com.leonardpauli.experiments.boardgame.util.Util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -33,9 +37,30 @@ public class Move implements Token {
     }
   }
 
-  public Inner inner;
-  public Comment comment;
+  public Move() {}
+
+  public static Optional<Move> fromString(String code) {
+    Move m = new Move();
+    Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream(code.getBytes()));
+    try {
+      if (!tokenizer.tokenize(m).ok) return Optional.empty();
+    } catch (TokenizerException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    return Optional.of(m);
+  }
+
+  private Inner inner;
+  private Comment comment;
   public String text;
+
+  public Config getConfig() {
+    Config c = inner.getConfig();
+    c.comment = comment != null ? Optional.of(comment) : Optional.empty();
+    return c;
+  }
 
   public Token[] getInnerTokens() {
     return new Token[] {
@@ -60,16 +85,10 @@ public class Move implements Token {
     return res;
   }
 
-  public boolean hasComment() {
-    return comment != null && comment.hasComment();
-  }
-
   @Override
   public String toString() {
     return Util.objectToString(this);
   }
-
-  private static Pattern simplePattern = Pattern.compile("^([^\\d\\n\\[]|\\d+(?!\\.|\\d))+");
 
   public static class Inner implements Token {
 
@@ -99,8 +118,8 @@ public class Move implements Token {
     private Check check;
     private boolean isCheckmate = false;
 
-    public AnnotationMove annotationMove = AnnotationMove.NONE;
-    public AnnotationState annotationState = AnnotationState.NONE;
+    private AnnotationMove annotationMove = AnnotationMove.NONE;
+    private AnnotationState annotationState = AnnotationState.NONE;
 
     public Position.Optional getOrigin() {
       if (promotion != null) return promotion.origin;
@@ -294,7 +313,8 @@ public class Move implements Token {
 
     @Override
     public TokenizeResult handleInnerMatch(Token at, TokenizeResult res, String str) {
-      if (res.consumedCount < 2) return new TokenizeResult();
+      if (res.consumedCount == 0) return new TokenizeResult();
+      if (res.consumedCount == 1 && !str.matches("^.($|\\s|,)")) return new TokenizeResult();
 
       for (Token t : ((AndToken) at).getTokens()) {
         if (t instanceof Position.Optional) {
