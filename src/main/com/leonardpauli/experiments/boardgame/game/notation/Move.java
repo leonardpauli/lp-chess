@@ -302,7 +302,7 @@ public class Move implements Token {
             new Token[] {
               new PieceType.Token(true),
               new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
-              new Position.Optional(false),
+              new Position.Optional(true),
               new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
               new Position.Optional(true),
               new OptionalToken(

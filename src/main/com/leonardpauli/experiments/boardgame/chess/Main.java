@@ -8,6 +8,7 @@ import com.leonardpauli.experiments.boardgame.game.State;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -53,6 +54,7 @@ public class Main {
         "Moves are written in standard chess notation, eg. Kb1a3, Kh, or just a3 should do, see wikipedia :)");
 
     ChessGame game = new ChessGame();
+    scanner.useDelimiter(Pattern.compile("\\s"));
 
     while (game.getState() == State.DEFAULT) {
 

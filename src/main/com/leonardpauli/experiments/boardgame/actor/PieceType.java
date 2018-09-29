@@ -19,7 +19,9 @@ public enum PieceType {
       1,
       "♟",
       "♙",
-      new MovementType[] {FORWARD_ONE, FORWARD_TWO_FROM_HOME, ENPASSANT, PROMOTION});
+      new MovementType[] {
+        FORWARD_ONE, FORWARD_TWO_FROM_HOME, FORWARD_DIAGONAL_ONE_CAPTURE, ENPASSANT, PROMOTION
+      });
 
   public final String title;
   public final String letter;

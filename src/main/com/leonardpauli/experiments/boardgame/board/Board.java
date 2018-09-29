@@ -107,7 +107,10 @@ public class Board {
             ms.removeIf(
                 m ->
                     (c.target.hasX() && m.edge.target.position.x != c.target.getX(0))
-                        || (c.target.hasY() && m.edge.target.position.y != c.target.getY(0)));
+                        || (c.target.hasY() && m.edge.target.position.y != c.target.getY(0))
+                        || (c.isCapture
+                            && (!m.edge.target.hasPiece()
+                                || m.edge.target.getPiece().owner.equals(currentPlayer))));
           movements.addAll(ms);
         } catch (GameException e) {
           e.printStackTrace();

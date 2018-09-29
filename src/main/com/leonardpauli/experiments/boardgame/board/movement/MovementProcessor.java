@@ -49,7 +49,10 @@ public class MovementProcessor {
     Tile source;
     EdgeType[] path;
     boolean skipOccupiedInBetween = false;
+    boolean skipOccupiedInBetweenRepetitions = false;
     int repetitionsMax = 0;
+    boolean allowCapture = true;
+    boolean requireCapture = false;
     MovementType type;
 
     static Options[] withMultiDirectionalRepeatablePath(
@@ -85,8 +88,11 @@ public class MovementProcessor {
       o.source = source;
       o.path = path;
       o.skipOccupiedInBetween = skipOccupiedInBetween;
+      o.skipOccupiedInBetweenRepetitions = skipOccupiedInBetweenRepetitions;
       o.repetitionsMax = repetitionsMax;
       o.type = type;
+      o.allowCapture = allowCapture;
+      o.requireCapture = requireCapture;
       return o;
     }
   }
@@ -116,15 +122,20 @@ public class MovementProcessor {
       Edge fullEdge = new Edge(opt.source, edge.target);
       Movement movement = new Movement(opt.type, fullEdge);
 
-      if (edge.target.hasPiece()) {
+      boolean isCapture = edge.target.hasPiece();
+      if (isCapture) {
         movement.setCapturedPiece(edge.target.getPiece());
       }
 
-      movements.add(movement);
-      addedCount++;
+      if (isCapture ? opt.allowCapture : !opt.requireCapture) {
+        movements.add(movement);
+        addedCount++;
+      }
 
       boolean isLastSegment = segmentIndex == segments.length - 1;
-      if (isLastSegment && opt.repetitionsMax > 1) {
+      if (isLastSegment
+          && opt.repetitionsMax > 1
+          && (opt.skipOccupiedInBetweenRepetitions || !edge.target.hasPiece())) {
         Options o = opt.clone();
         o.repetitionsMax--;
         addedCount += addAvailableTo(movements, o, edge.target, 0);
@@ -148,6 +159,7 @@ public class MovementProcessor {
       opt.type = FORWARD_ONE;
       opt.source = piece.tile;
       opt.path = new EdgeType[] {forward};
+      opt.allowCapture = false;
       addAvailableTo(movements, opt);
 
     } else if (type == FORWARD_TWO_FROM_HOME) {
@@ -158,6 +170,7 @@ public class MovementProcessor {
       opt.type = FORWARD_TWO_FROM_HOME;
       opt.source = piece.tile;
       opt.path = new EdgeType[] {forward, forward};
+      opt.allowCapture = false;
       addAvailableTo(movements, opt);
 
     } else if (type == ONE_STEP) {
@@ -207,8 +220,23 @@ public class MovementProcessor {
 
     } else if (type == DIAGONAL) {
       for (Options opt :
-          Options.withMultiDirectionalRepeatablePath(new EdgeType[] {UP, LEFT}, piece, DIAGONAL))
+          Options.withMultiDirectionalRepeatablePath(new EdgeType[] {UP, LEFT}, piece, DIAGONAL)) {
+        opt.skipOccupiedInBetween = true;
         addAvailableTo(movements, opt);
+      }
+
+    } else if (type == FORWARD_DIAGONAL_ONE_CAPTURE) {
+
+      Options opt = new Options();
+      opt.type = FORWARD_DIAGONAL_ONE_CAPTURE;
+      opt.source = piece.tile;
+      opt.path = new EdgeType[] {forward, LEFT};
+      opt.skipOccupiedInBetween = true;
+      opt.requireCapture = true;
+      addAvailableTo(movements, opt);
+
+      opt.path = new EdgeType[] {forward, RIGHT};
+      addAvailableTo(movements, opt);
 
     } else if (type == CASTLING) {
       // TODO

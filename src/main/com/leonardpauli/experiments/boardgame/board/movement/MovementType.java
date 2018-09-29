@@ -8,6 +8,7 @@ public enum MovementType {
 
   FORWARD_ONE("forward-one"),
   FORWARD_TWO_FROM_HOME("forward-two-from-home"),
+  FORWARD_DIAGONAL_ONE_CAPTURE("forward-diagonal-one"),
 
   LMOVE("l-move"), // eg. the horse
   CASTLING("castling"), // tower and king move
