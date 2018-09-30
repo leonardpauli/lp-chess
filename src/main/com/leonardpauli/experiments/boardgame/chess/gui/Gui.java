@@ -170,7 +170,7 @@ public class Gui extends Application {
     return borderPane;
   }
 
-  private void showForNotation(String command, boolean executeIfUnambiguous) {
+  private boolean showForNotation(String command, boolean executeIfUnambiguous) {
     List<Movement> ms = game.board.getMovementsForNotation(command, game.getCurrentPlayer());
     System.out.println(command + ms.size());
     if (ms.size() == 0) {
@@ -182,8 +182,10 @@ public class Gui extends Application {
       updateBoardWithAvailableMovements(ms);
       if (executeIfUnambiguous) {
         playMovement(ms.get(0));
+        return true;
       }
     }
+    return false;
   }
 
   private void playMovement(Movement m) {
@@ -222,7 +224,7 @@ public class Gui extends Application {
           if (event.getCharacter() != null
               && event.getCharacter().length() == 1
               && !event.getCharacter().equals("\r")) keySequence += event.getCharacter();
-          showForNotation(keySequence, false);
+          if (showForNotation(keySequence, true)) keySequence = "";
         });
     root.setOnKeyPressed(
         event -> {

@@ -78,7 +78,7 @@ public class ChessGame {
       throws GameException {
     int turns = player.home.getAngleInTurns();
     EdgeType[] pathIdeal = EdgeType.getPath(pathFromHome);
-    EdgeType[] path = EdgeType.turnedPath(pathIdeal, turns);
+    EdgeType[] path = pathIdeal; // EdgeType.turnedPath(pathIdeal, turns);
 
     Tile tile = player.home.getTile().getFirstRelative(path);
     EdgeType forward = player.home.getEdgeForward().type;

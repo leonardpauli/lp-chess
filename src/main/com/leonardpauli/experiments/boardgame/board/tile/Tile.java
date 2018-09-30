@@ -111,7 +111,7 @@ public class Tile {
   }
 
   public Tile[] getRelative(EdgeType[] path) throws GameException {
-    throw new GameException("not implemented");
+    throw new GameException("Tile.getRelative(path) not implemented");
   }
 
   // string

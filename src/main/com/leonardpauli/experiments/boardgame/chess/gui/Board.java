@@ -1,5 +1,6 @@
 package com.leonardpauli.experiments.boardgame.chess.gui;
 
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;

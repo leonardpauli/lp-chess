@@ -99,7 +99,8 @@ public class LayoutSquare implements Layout {
       private Home getNext(int i) throws GameException {
         return i == 0
             ? new Home(new Position(midXLeft + 1, 0), new Position(midXLeft + 1, 1), board)
-            : new Home(new Position(midXLeft, topY), new Position(midXLeft, topY - 1), board);
+            : new Home(
+                new Position(midXLeft + 1, topY), new Position(midXLeft + 1, topY - 1), board);
       }
     };
   }
