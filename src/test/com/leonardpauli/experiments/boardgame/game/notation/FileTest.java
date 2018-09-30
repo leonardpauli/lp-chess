@@ -32,7 +32,6 @@ class FileTest {
     File f = new File(File.class.getResourceAsStream("carlsen-excerpt.pgn"));
     f.loadNextGame();
     f.loadNextGame();
-    f.loadNextGame();
     assertEquals(3, f.games.size());
 
     assertEquals(10, f.games.get(0).tags.size());

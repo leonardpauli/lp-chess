@@ -27,7 +27,7 @@ class MoveTest {
   void fromString() {
     Move.Config c = Move.fromString("Qd2").get().getConfig();
     assertTrue(c.origin.isEmpty());
-    assertEquals("d2", c.target.getPosition(0, 0).toString());
-    assertEquals(PieceType.QUEEN, c.type);
+    assertEquals("D2", c.target.getPosition(0, 0).toString());
+    assertEquals(PieceType.QUEEN, c.type.get());
   }
 }

@@ -295,20 +295,52 @@ public class Move implements Token {
     public boolean isCapture = false;
     public boolean isEnPassant = false;
 
+    private static OptionalToken getCaptureSegmentToken() {
+      return new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture"));
+    }
+
     @Override
     public Token[] getInnerTokens() {
       return new Token[] {
         new AndToken(
             new Token[] {
-              new PieceType.Token(true),
-              new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
-              new Position.Optional(true),
-              new OptionalToken(new PatternToken(Pattern.compile("^(x|:)"), "capture")),
+              new OrToken(
+                  new Token[] {
+                    new AndToken(
+                        new Token[] {
+                          new PieceType.Token(true),
+                          MoveNormal.getCaptureSegmentToken(),
+                          new Position.Optional(false),
+                        }),
+                    new AndToken(
+                        new Token[] {
+                          new PieceType.Token(false),
+                          MoveNormal.getCaptureSegmentToken(),
+                          new Position.Optional(true),
+                        })
+                  }),
+              MoveNormal.getCaptureSegmentToken(),
               new Position.Optional(true),
               new OptionalToken(
                   new PatternToken(Pattern.compile("^ ?:?(?<enpassant>e\\.p\\.):?"), "enpassant"))
             })
       };
+    }
+
+    private void handleAndPart(Token t) {
+      if (t instanceof Position.Optional) {
+        if (origin.isEmpty()) origin = (Position.Optional) t;
+        else target = (Position.Optional) t;
+      } else if (t instanceof PieceType.Token) {
+        type = Optional.of(((PieceType.Token) t).type);
+      } else if (t instanceof OptionalToken) {
+        PatternToken pt = (PatternToken) ((OptionalToken) t).getToken();
+        if ("capture".equals(pt.patternName)) {
+          isCapture = true;
+        } else {
+          isEnPassant = true;
+        }
+      }
     }
 
     @Override
@@ -317,19 +349,10 @@ public class Move implements Token {
       if (res.consumedCount == 1 && !str.matches("^.($|\\s|,)")) return new TokenizeResult();
 
       for (Token t : ((AndToken) at).getTokens()) {
-        if (t instanceof Position.Optional) {
-          if (origin.isEmpty()) origin = (Position.Optional) t;
-          else target = (Position.Optional) t;
-        } else if (t instanceof PieceType.Token) {
-          type = Optional.of(((PieceType.Token) t).type);
-        } else if (t instanceof OptionalToken) {
-          PatternToken pt = (PatternToken) ((OptionalToken) t).getToken();
-          if ("capture".equals(pt.patternName)) {
-            isCapture = true;
-          } else {
-            isEnPassant = true;
-          }
-        }
+        if (t instanceof OrToken) t = ((OrToken) t).getMatchedToken();
+        if (t instanceof AndToken) for (Token ti : ((AndToken) t).getTokens()) handleAndPart(ti);
+
+        handleAndPart(t);
       }
       if (!origin.isEmpty() && target.isEmpty()) {
         target.setFrom(origin);
