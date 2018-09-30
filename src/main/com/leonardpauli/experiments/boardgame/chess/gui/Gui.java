@@ -127,9 +127,13 @@ public class Gui extends Application {
     }
     com.leonardpauli.experiments.boardgame.game.notation.Move move =
         g.rounds.get(roundIdx).moves[moveIdx];
+
     List<Movement> movements = game.board.getMovementsForMove(move, game.getCurrentPlayer());
     if (movements.size() == 0) {
-      System.out.println("No move for" + move.toString());
+      System.out.println("No move for " + move.toString());
+      return;
+    } else if (movements.size() > 1) {
+      System.out.println(move.toString() + " ambiguous (" + movements.size() + ")");
       return;
     }
     playMovement(movements.get(0));
@@ -142,7 +146,7 @@ public class Gui extends Application {
             replayMoves(g, roundIdx, moveIdx + 1);
           }
         },
-        (long) 300);
+        (long) 500);
   }
 
   private BorderPane addMenuBar() {

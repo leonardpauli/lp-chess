@@ -93,14 +93,14 @@ public class ChessGame {
   private void resetPieces(Player player) throws GameException {
     for (Piece p : player.pieces) removePiece(p);
 
-    addPieceToPlayer(player, PieceType.ROOK, "<<<");
-    addPieceToPlayer(player, PieceType.KNIGHT, "<<");
-    addPieceToPlayer(player, PieceType.BISHOP, "<");
+    addPieceToPlayer(player, PieceType.ROOK, "<<<<");
+    addPieceToPlayer(player, PieceType.KNIGHT, "<<<");
+    addPieceToPlayer(player, PieceType.BISHOP, "<<");
+    addPieceToPlayer(player, PieceType.QUEEN, "<");
     addPieceToPlayer(player, PieceType.KING, "");
-    addPieceToPlayer(player, PieceType.QUEEN, ">");
-    addPieceToPlayer(player, PieceType.BISHOP, ">>");
-    addPieceToPlayer(player, PieceType.KNIGHT, ">>>");
-    addPieceToPlayer(player, PieceType.ROOK, ">>>>");
+    addPieceToPlayer(player, PieceType.BISHOP, ">");
+    addPieceToPlayer(player, PieceType.KNIGHT, ">>");
+    addPieceToPlayer(player, PieceType.ROOK, ">>>");
   }
 
   private void resetPieces() throws GameException {

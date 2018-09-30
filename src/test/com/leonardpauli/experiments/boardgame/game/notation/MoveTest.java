@@ -30,4 +30,13 @@ class MoveTest {
     assertEquals("D2", c.target.getPosition(0, 0).toString());
     assertEquals(PieceType.QUEEN, c.type.get());
   }
+
+  @Test
+  void fromString2() {
+    Move.Config c = Move.fromString("Nbd7").get().getConfig();
+    assertTrue(!c.origin.hasY());
+    assertEquals("B", c.origin.getPosition(0, 0).colString());
+    assertEquals("D7", c.target.getPosition(0, 0).toString());
+    assertEquals(PieceType.KNIGHT, c.type.get());
+  }
 }
