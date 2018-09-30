@@ -81,6 +81,11 @@ public class Board {
           .darker()
           .darker();
     }
+
+    public void setMarked(boolean marked) {
+      view.setFill(
+          marked ? getCurrentColor().interpolate(Color.hsb(120, 1, 0.8), 0.05) : getCurrentColor());
+    }
   }
 
   public static class Piece {

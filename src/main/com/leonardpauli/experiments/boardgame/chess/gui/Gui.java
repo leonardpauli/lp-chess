@@ -47,7 +47,8 @@ public class Gui extends Application {
           Board.Tile tile = new Board.Tile();
           tile.ref = t;
 
-          for (Point2D p : game.board.layout.getNormalizedCornersForTile(t)) tile.corners.add(p);
+          for (Point2D p : game.board.layout.getNormalizedCornersForTile(t))
+            tile.corners.add(new Point2D(p.getX(), 1 - p.getY()));
 
           tile.baseColor = t.color.getFXColor();
           tile.updateBgColor();
@@ -98,6 +99,10 @@ public class Gui extends Application {
           for (Board.Piece p : board.pieces) {
             if (p.view.getBoundsInParent().contains(dragStart)) {
               dragPiece = p;
+
+              List<Movement> ms = dragPiece.ref.getAvailableMovements(game.board);
+              updateBoardWithAvailableMovements(ms);
+
               break;
             }
           }
@@ -108,7 +113,9 @@ public class Gui extends Application {
           Point2D pos = new Point2D(event.getSceneX(), event.getSceneY());
 
           if (dragPiece != null) {
-            dragPiece.updatePosition(dragPiece.position.add(pos.subtract(dragStart)));
+            Point2D destination = dragPiece.position.add(pos.subtract(dragStart));
+            dragPiece.updatePosition(destination);
+
             return;
           }
 
@@ -127,6 +134,7 @@ public class Gui extends Application {
             if (!tryMovePiece(dragPiece, pos)) {
               dragPiece.updatePosition(dragPiece.position);
             }
+            updateBoard();
             dragPiece = null;
             return;
           }
@@ -154,5 +162,18 @@ public class Gui extends Application {
     piece.updateLayout();
 
     return true;
+  }
+
+  private void updateBoard() {
+    List<Movement> ms = game.getCurrentPlayer().getAvailableMovements(game.board);
+    updateBoardWithAvailableMovements(ms);
+  }
+
+  private void updateBoardWithAvailableMovements(List<Movement> ms) {
+    game.board.setTileMarksFromAvailableMovements(ms.toArray(new Movement[] {}));
+    board.tiles.forEach(
+        t -> {
+          t.setMarked(game.board.getMarkerForTile(t.ref).isPresent());
+        });
   }
 }
