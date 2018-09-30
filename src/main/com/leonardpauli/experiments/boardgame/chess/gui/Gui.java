@@ -35,25 +35,68 @@ public class Gui extends Application {
   private ChessGame game;
   private Board board;
   private boolean showGutter = true;
+  private Menu playPgnMenu;
+  private File pgnFile;
 
   public static void main(String[] args) {
     launch(args);
   }
 
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) {
     Group root = new Group();
     Scene scene = new Scene(root, size.getX(), size.getY());
 
     Rectangle bg = new Rectangle(size.getX(), size.getY());
     bg.setFill(Color.hsb(40, 0.17, 0.078));
 
-    double marginV = showGutter ? 20 : 10;
+    double marginV = (showGutter ? 20 : 10) + (isOsx() ? 15 : 30);
     Point2D margin = new Point2D(marginV, marginV);
 
     board = new Board();
     board.origin = margin.multiply(1);
     board.size = size.subtract(margin.multiply(2));
+
+    root.getChildren().add(bg);
+    root.getChildren().add(board.view);
+    root.getChildren().add(addMenuBar());
+
+    addMouseInteraction(stage, root);
+    addKeyboardInteraction(root);
+
+    stage.setScene(scene);
+    stage.setTitle("Chess");
+    StageStyle style = StageStyle.UNDECORATED;
+    stage.initStyle(style);
+    stage.show();
+
+    root.requestFocus(); // for keyboard
+
+    newGame();
+  }
+
+  private File loadPgnFile(InputStream stream) {
+    File file;
+    try {
+      file = new File(stream);
+      file.loadNextGame();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    return file;
+  }
+
+  public void newGame() {
+    try {
+      newGameRaw();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void newGameRaw() throws Exception {
+    board.pieces.clear();
+    board.tiles.clear();
 
     game = new ChessGame();
     game.board.tilesAll.forEach(
@@ -108,33 +151,11 @@ public class Gui extends Application {
 
     board.tiles.forEach(t -> t.updateBgPath(board, 1));
     board.pieces.forEach(t -> t.updateLayout());
-
-    root.getChildren().add(bg);
-    root.getChildren().add(board.view);
-    root.getChildren().add(addMenuBar());
-
-    addMouseInteraction(stage, root);
-    addKeyboardInteraction(root);
-
-    stage.setScene(scene);
-    stage.setTitle("Chess");
-    StageStyle style = StageStyle.UNDECORATED;
-    stage.initStyle(style);
-    stage.show();
-
-    root.requestFocus(); // for keyboard
   }
 
-  private void replayGame() {
-    InputStream resource = Gui.class.getResourceAsStream("carlsen-excerpt.pgn");
-    File file;
-    try {
-      file = new File(resource);
-      file.loadNextGame();
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-    replayMoves(file.games.get(0), 0, 0);
+  private void replayGame(Game game) {
+    newGame();
+    replayMoves(game, 0, 0);
   }
 
   private void replayMoves(Game g, int roundIdx, int moveIdx) {
@@ -169,21 +190,49 @@ public class Gui extends Application {
 
   private BorderPane addMenuBar() {
     MenuBar menuBar = new MenuBar();
-    MenuItem mi = new MenuItem("Play PGN");
-    MenuBar mb = new MenuBar()
-    menuBar.getMenus().add(new Menu("File", null, mi));
 
+    MenuItem resetmi = new MenuItem("New Game");
+    resetmi.setOnAction(event -> newGame());
+
+    playPgnMenu = new Menu("Play PGN");
+    menuBar.getMenus().add(new Menu("Game", null, resetmi, playPgnMenu));
+
+    MenuItem mi = new MenuItem("Load demo games");
+    playPgnMenu.getItems().add(mi);
     mi.setOnAction(
         event -> {
-          replayGame();
+          InputStream resource = Gui.class.getResourceAsStream("carlsen-excerpt.pgn");
+          pgnFile = loadPgnFile(resource);
+          playPgnMenu.getItems().clear();
+          for (Game g : pgnFile.games) addGame(g);
+          try {
+            while (pgnFile.loadNextGame()) {
+              addGame(pgnFile.games.get(pgnFile.games.size() - 1));
+            }
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
         });
 
-    final String os = System.getProperty("os.name");
-    if (os != null && os.startsWith("Mac")) menuBar.useSystemMenuBarProperty().set(true);
+    if (isOsx()) menuBar.useSystemMenuBarProperty().set(true);
 
     BorderPane borderPane = new BorderPane();
     borderPane.setTop(menuBar);
     return borderPane;
+  }
+
+  private boolean isOsx() {
+    final String os = System.getProperty("os.name");
+    return os != null && os.startsWith("Mac");
+  }
+
+  private void addGame(Game g) {
+    MenuItem mi = new MenuItem(g.getTitle());
+    playPgnMenu.getItems().add(mi);
+    mi.setOnAction(
+        event -> {
+          replayGame(g);
+        });
   }
 
   private boolean showForNotation(String command, boolean executeIfUnambiguous) {
