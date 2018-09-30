@@ -34,6 +34,7 @@ public class Gui extends Application {
   private Board.Piece dragPiece;
   private ChessGame game;
   private Board board;
+  private boolean showGutter = true;
 
   public static void main(String[] args) {
     launch(args);
@@ -45,9 +46,10 @@ public class Gui extends Application {
     Scene scene = new Scene(root, size.getX(), size.getY());
 
     Rectangle bg = new Rectangle(size.getX(), size.getY());
-    bg.setFill(Color.hsb(0, 0.07, 0.12 * 0));
+    bg.setFill(Color.hsb(40, 0.17, 0.078));
 
-    Point2D margin = new Point2D(10, 10);
+    double marginV = showGutter ? 20 : 10;
+    Point2D margin = new Point2D(marginV, marginV);
 
     board = new Board();
     board.origin = margin.multiply(1);
@@ -58,6 +60,19 @@ public class Gui extends Application {
         t -> {
           Board.Tile tile = new Board.Tile();
           tile.ref = t;
+
+          if (t.getRelative(EdgeType.LEFT).length == 0) {
+            tile.gutter.put(EdgeType.LEFT, t.position.rowString());
+          }
+          if (t.getRelative(EdgeType.DOWN).length == 0) {
+            tile.gutter.put(EdgeType.DOWN, t.position.colString());
+          }
+          if (t.getRelative(EdgeType.RIGHT).length == 0) {
+            tile.gutter.put(EdgeType.RIGHT, t.position.rowString());
+          }
+          if (t.getRelative(EdgeType.UP).length == 0) {
+            tile.gutter.put(EdgeType.UP, t.position.colString());
+          }
 
           for (Point2D p : game.board.layout.getNormalizedCornersForTile(t))
             tile.corners.add(new Point2D(p.getX(), 1 - p.getY()));
@@ -149,12 +164,13 @@ public class Gui extends Application {
             replayMoves(g, roundIdx, moveIdx + 1);
           }
         },
-        (long) 500);
+        (long) 200);
   }
 
   private BorderPane addMenuBar() {
     MenuBar menuBar = new MenuBar();
     MenuItem mi = new MenuItem("Play PGN");
+    MenuBar mb = new MenuBar()
     menuBar.getMenus().add(new Menu("File", null, mi));
 
     mi.setOnAction(
@@ -292,20 +308,7 @@ public class Gui extends Application {
     List<Movement> ms = piece.ref.getAvailableMovements(game.board, t.get().ref.position);
     if (ms.size() == 0) return false;
     Movement movement = ms.get(0);
-
-    try {
-      game.playMove(new Move(game.getCurrentPlayer(), piece.ref, movement));
-    } catch (InvalidMoveException e) {
-      return false;
-    }
-
-    if (movement.getCapturedPiece().isPresent()) {
-      board.getPiece(t.get()).ifPresent(Board.Piece::setCaptured);
-    }
-
-    piece.tile = t.get();
-    piece.updateLayout();
-
+    playMovement(movement);
     return true;
   }
 

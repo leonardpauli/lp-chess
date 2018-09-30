@@ -10,10 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,23 +66,68 @@ public class Board {
   public static class Tile {
     public List<Point2D> corners = new ArrayList<>();
     public Color baseColor = Color.hsb(0, 0, 0.85);
-    public Path view = new Path();
+    public Group view = new Group();
+    public Path bg = new Path();
     public com.leonardpauli.experiments.boardgame.board.tile.Tile ref;
+    public HashMap<EdgeType, String> gutter = new HashMap<>();
+    private HashMap<EdgeType, Text> gutterViews = new HashMap<>();
 
     public Tile() {
-      view.setStrokeWidth(0);
+      view.getChildren().add(bg);
+      bg.setStrokeWidth(0);
     }
 
     public void updateBgPath(Board board, double factor) {
-      Util.simplePathInterpolation(view, corners, board.size, board.origin, factor);
+      Util.simplePathInterpolation(bg, corners, board.size, board.origin, factor);
+      updateGutterViews();
+    }
+
+    private void updateGutterViews() {
+      double fontSize = 10;
+      double margin = fontSize - 1;
+      for (EdgeType t : EdgeType.values()) {
+        String val = gutter.get(t);
+        Text v = gutterViews.get(t);
+        if (val == null) {
+          if (v != null) {
+            gutterViews.remove(t);
+            view.getChildren().remove(v);
+          }
+          continue;
+        }
+        if (v == null) {
+          v = new Text();
+          v.setFill(Color.gray(1));
+          v.setTextAlignment(TextAlignment.CENTER);
+          v.setTextOrigin(VPos.CENTER);
+          v.setFont(Font.font(null, FontWeight.EXTRA_BOLD, fontSize));
+          v.setOpacity(0.2);
+
+          gutterViews.put(t, v);
+          view.getChildren().add(v);
+        }
+        v.setText(val);
+        v.setX(
+            bg.getBoundsInParent().getMinX()
+                + bg.getBoundsInParent().getWidth()
+                    * (t == EdgeType.DOWN || t == EdgeType.UP ? 0.5 : t == EdgeType.RIGHT ? 1 : 0)
+                + (t == EdgeType.RIGHT
+                    ? -fontSize * 0.4 + margin
+                    : t == EdgeType.LEFT ? -fontSize * 0.4 - margin : -fontSize / 2));
+        v.setY(
+            bg.getBoundsInParent().getMinY()
+                + bg.getBoundsInParent().getHeight()
+                    * (t == EdgeType.DOWN ? 1 : t == EdgeType.RIGHT || t == EdgeType.LEFT ? 0.5 : 0)
+                + (t == EdgeType.UP ? -margin : t == EdgeType.DOWN ? margin : 0));
+      }
     }
 
     public void updateBgColor() {
-      view.setFill(getCurrentColor());
+      bg.setFill(getCurrentColor());
     }
 
     public Bounds getBounds() {
-      return view.getBoundsInParent();
+      return bg.getBoundsInParent();
     }
 
     public Color getCurrentColor() {
@@ -93,7 +140,7 @@ public class Board {
     }
 
     public void setMarked(boolean marked) {
-      view.setFill(marked ? getCurrentColor().deriveColor(80, 2, 1.1, 1) : getCurrentColor());
+      bg.setFill(marked ? getCurrentColor().deriveColor(80, 2, 1.1, 1) : getCurrentColor());
     }
   }
 
