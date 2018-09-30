@@ -189,5 +189,9 @@ public class Board {
       view.setOpacity(0.5);
       updateLayout();
     }
+
+    public boolean isCaptured() {
+      return isCaptured;
+    }
   }
 }

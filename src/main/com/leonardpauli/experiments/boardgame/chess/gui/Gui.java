@@ -258,7 +258,7 @@ public class Gui extends Application {
 
           dragPiece = null;
           for (Board.Piece p : board.pieces) {
-            if (p.view.getBoundsInParent().contains(dragStart)) {
+            if (p.view.getBoundsInParent().contains(dragStart) && !p.isCaptured()) {
               dragPiece = p;
 
               List<Movement> ms = dragPiece.ref.getAvailableMovements(game.board);
