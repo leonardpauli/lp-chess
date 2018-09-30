@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ChessGame {
   private Player[] players;
-  Board board;
+  public final Board board;
   private List<Round> rounds = new ArrayList<Round>();
   private State state = State.DEFAULT;
 

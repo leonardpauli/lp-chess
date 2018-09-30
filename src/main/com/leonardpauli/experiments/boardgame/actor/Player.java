@@ -2,7 +2,6 @@ package com.leonardpauli.experiments.boardgame.actor;
 
 import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
-import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Color;
 
 import java.util.ArrayList;
@@ -54,12 +53,8 @@ public class Player {
   public List<Movement> getAvailableMovements(Board board) {
     List<Movement> allMovements = new ArrayList<>();
     for (Piece piece : getAlivePieces()) {
-      try {
-        List<Movement> movements = board.movement.getAvailable(piece);
-        allMovements.addAll(movements);
-      } catch (GameException e) {
-        e.printStackTrace();
-      }
+      List<Movement> movements = board.movement.getAvailable(piece);
+      allMovements.addAll(movements);
     }
     return allMovements;
   }

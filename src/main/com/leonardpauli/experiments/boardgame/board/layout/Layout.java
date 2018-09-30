@@ -5,6 +5,7 @@ import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
+import javafx.geometry.Point2D;
 
 import java.util.Iterator;
 
@@ -20,4 +21,6 @@ public interface Layout {
   Iterator<Home> getPlayerHomes(Board board);
 
   Printer getPrinter();
+
+  Point2D[] getNormalizedCornersForTile(Tile tile);
 }

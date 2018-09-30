@@ -3,12 +3,12 @@ package com.leonardpauli.experiments.boardgame.board.movement;
 import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.board.tile.Edge;
 
+import java.util.Optional;
+
 public class Movement {
   public MovementType type;
   public Edge edge;
-
-  Piece capturedPiece;
-  int value;
+  private Optional<Piece> capturedPiece = Optional.empty();
 
   public Movement(MovementType type, Edge edge) {
     this.type = type;
@@ -16,7 +16,10 @@ public class Movement {
   }
 
   public void setCapturedPiece(Piece piece) {
-    this.capturedPiece = piece;
-    this.value = piece.type.getValue();
+    capturedPiece = Optional.of(piece);
+  }
+
+  public Optional<Piece> getCapturedPiece() {
+    return capturedPiece;
   }
 }

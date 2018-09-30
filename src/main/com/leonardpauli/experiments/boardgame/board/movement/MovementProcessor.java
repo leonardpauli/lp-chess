@@ -29,7 +29,7 @@ public class MovementProcessor {
   // 	and doesn't need the reference to Board
   // 	(because navigation through edges)
 
-  public List<Movement> getAvailable(Piece piece) throws GameException {
+  public List<Movement> getAvailable(Piece piece) {
     List<Movement> movements = new ArrayList<Movement>();
     for (MovementType type : piece.type.movementTypes) {
       addAvailableTo(movements, type, piece);
@@ -37,7 +37,7 @@ public class MovementProcessor {
     return movements;
   }
 
-  public List<Movement> getAvailable(Piece piece, Position destination) throws GameException {
+  public List<Movement> getAvailable(Piece piece, Position destination) {
     List<Movement> movements = getAvailable(piece);
     movements.removeIf(movement -> !movement.edge.target.position.equals(destination));
     return movements;
@@ -149,7 +149,15 @@ public class MovementProcessor {
     return addAvailableTo(movements, opt, opt.source, 0);
   }
 
-  private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece)
+  private void addAvailableTo(List<Movement> movements, MovementType type, Piece piece) {
+    try {
+      addAvailableToThrowing(movements, type, piece);
+    } catch (GameException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void addAvailableToThrowing(List<Movement> movements, MovementType type, Piece piece)
       throws GameException {
     Edge forwardEdge = piece.owner.home.getEdgeForward();
     EdgeType forward = forwardEdge.type;

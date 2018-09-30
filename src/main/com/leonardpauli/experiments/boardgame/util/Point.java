@@ -1,5 +1,7 @@
 package com.leonardpauli.experiments.boardgame.util;
 
+import javafx.geometry.Point2D;
+
 import java.util.Objects;
 
 public class Point {
@@ -40,5 +42,11 @@ public class Point {
   @Override
   public int hashCode() {
     return Objects.hash(x, y);
+  }
+
+  // conversions
+
+  public Point2D getPoint2D() {
+    return new Point2D((double) x, (double) y);
   }
 }

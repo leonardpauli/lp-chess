@@ -19,9 +19,10 @@ import com.leonardpauli.experiments.boardgame.util.Util;
 import java.util.*;
 
 public class Board {
+  public List<Tile> tilesAll = new ArrayList<>();
   public Tile[][] tiles;
   public final MovementProcessor movement;
-  private final Layout layout;
+  public final Layout layout;
   private HashMap<Tile, Marker> tileMarks = new HashMap<>();
 
   public static enum Marker {
@@ -101,21 +102,16 @@ public class Board {
         if (!t.hasPiece()) continue;
         if (!t.getPiece().owner.equals(currentPlayer)) continue;
         if (c.type.isPresent() && t.getPiece().type != c.type.get()) continue;
-        try {
-          List<Movement> ms = movement.getAvailable(t.getPiece());
-          if (!c.target.isEmpty())
-            ms.removeIf(
-                m ->
-                    (c.target.hasX() && m.edge.target.position.x != c.target.getX(0))
-                        || (c.target.hasY() && m.edge.target.position.y != c.target.getY(0))
-                        || (c.isCapture
-                            && (!m.edge.target.hasPiece()
-                                || m.edge.target.getPiece().owner.equals(currentPlayer))));
-          movements.addAll(ms);
-        } catch (GameException e) {
-          e.printStackTrace();
-          continue;
-        }
+        List<Movement> ms = movement.getAvailable(t.getPiece());
+        if (!c.target.isEmpty())
+          ms.removeIf(
+              m ->
+                  (c.target.hasX() && m.edge.target.position.x != c.target.getX(0))
+                      || (c.target.hasY() && m.edge.target.position.y != c.target.getY(0))
+                      || (c.isCapture
+                          && (!m.edge.target.hasPiece()
+                              || m.edge.target.getPiece().owner.equals(currentPlayer))));
+        movements.addAll(ms);
       }
     }
 

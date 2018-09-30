@@ -1,8 +1,13 @@
 package com.leonardpauli.experiments.boardgame.actor;
 
+import com.leonardpauli.experiments.boardgame.board.Board;
+import com.leonardpauli.experiments.boardgame.board.movement.Movement;
+import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.util.Color;
 import com.leonardpauli.experiments.boardgame.util.Util;
+
+import java.util.List;
 
 public class Piece {
   public PieceType type;
@@ -42,5 +47,13 @@ public class Piece {
 
   public String toString() {
     return Util.objectToString(this);
+  }
+
+  public List<Movement> getAvailableMovements(Board board) {
+    return board.movement.getAvailable(this);
+  }
+
+  public List<Movement> getAvailableMovements(Board board, Position destination) {
+    return board.movement.getAvailable(this, destination);
   }
 }

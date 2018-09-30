@@ -9,6 +9,7 @@ import com.leonardpauli.experiments.boardgame.board.tile.Position;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
 import com.leonardpauli.experiments.boardgame.game.GameException;
 import com.leonardpauli.experiments.boardgame.util.Size;
+import javafx.geometry.Point2D;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,7 +29,9 @@ public class LayoutSquare implements Layout {
     for (int x = 0; x < size.x; x++) {
       for (int y = 0; y < size.y; y++) {
         Position position = new Position(x, y);
-        board.tiles[x][y] = new Tile(position);
+        Tile tile = new Tile(position);
+        board.tiles[x][y] = tile;
+        board.tilesAll.add(tile);
       }
     }
   }
@@ -109,5 +112,22 @@ public class LayoutSquare implements Layout {
   @Override
   public Printer getPrinter() {
     return printer;
+  }
+
+  @Override
+  public Point2D[] getNormalizedCornersForTile(Tile tile) {
+    Point2D start = pointDivide(tile.position.getPoint2D(), size.getPoint2D());
+    Point2D end = pointDivide(tile.position.getPoint2D().add(1, 1), size.getPoint2D());
+
+    return new Point2D[] {
+      new Point2D(start.getX(), start.getY()),
+      new Point2D(end.getX(), start.getY()),
+      new Point2D(end.getX(), end.getY()),
+      new Point2D(start.getX(), end.getY())
+    };
+  }
+
+  private Point2D pointDivide(Point2D a, Point2D b) {
+    return new Point2D(a.getX() / b.getX(), a.getY() / b.getY());
   }
 }

@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class Tile {
   public final Position position;
-  private final Color color;
+  public final Color color;
 
   private Piece piece;
   private Edge[][] edgeMap;
