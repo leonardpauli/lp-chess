@@ -1,0 +1,23 @@
+<component name="ArtifactManager">
+  <artifact type="javafx" name="LeonardPChess">
+    <output-path>$PROJECT_DIR$/out/artifacts/LeonardPChess</output-path>
+    <properties id="javafx-properties">
+      <options>
+        <option name="appClass" value="com.leonardpauli.experiments.boardgame.chess.gui.Gui" />
+        <option name="description" value="" />
+        <option name="height" value="500" />
+        <option name="htmlPlaceholderId" value="" />
+        <option name="nativeBundle" value="all" />
+        <option name="title" value="Chess" />
+        <option name="vendor" value="" />
+        <option name="version" value="" />
+        <option name="width" value="500" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="leonardp_hw2.jar">
+        <element id="module-output" name="leonardp-hw2" />
+      </element>
+    </root>
+  </artifact>
+</component>
