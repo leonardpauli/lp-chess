@@ -104,7 +104,7 @@ public class Position extends Point {
       return new Position(getX(defaultX), getY(defaultY));
     }
 
-    static Pattern pattern = Pattern.compile("^([a-z]*)(\\d*(?!\\d*\\.))");
+    static Pattern pattern = Pattern.compile("^([a-z]*)(\\d*(?!\\d|\\.))");
 
     public void setFrom(Position.Optional op) {
       this.x = op.x;

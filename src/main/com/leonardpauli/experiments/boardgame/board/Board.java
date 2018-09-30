@@ -91,10 +91,16 @@ public class Board {
   }
 
   public List<Movement> getMovementsForNotation(String notation, Player currentPlayer) {
-    List<Movement> movements = new ArrayList<>();
+
     Optional<Move> move = Move.fromString(notation);
-    if (!move.isPresent()) return movements;
-    Move.Config c = move.get().getConfig();
+    if (!move.isPresent()) return new ArrayList<>();
+
+    return getMovementsForMove(move.get(), currentPlayer);
+  }
+
+  public List<Movement> getMovementsForMove(Move move, Player currentPlayer) {
+    List<Movement> movements = new ArrayList<>();
+    Move.Config c = move.getConfig();
 
     for (int x = c.origin.x.orElse(0); x <= c.origin.x.orElse(tiles.length - 1); x++) {
       for (int y = c.origin.y.orElse(0); y <= c.origin.y.orElse(tiles.length - 1); y++) {

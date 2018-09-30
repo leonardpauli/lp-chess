@@ -4,17 +4,26 @@ import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveExceptio
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.chess.ChessGame;
 import com.leonardpauli.experiments.boardgame.game.Move;
+import com.leonardpauli.experiments.boardgame.game.notation.File;
+import com.leonardpauli.experiments.boardgame.game.notation.Game;
 import javafx.application.Application;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Gui extends Application {
   private Point2D dragStart;
@@ -84,6 +93,7 @@ public class Gui extends Application {
 
     root.getChildren().add(bg);
     root.getChildren().add(board.view);
+    root.getChildren().add(addMenuBar());
 
     addMouseInteraction(stage, root);
     addKeyboardInteraction(root);
@@ -97,6 +107,62 @@ public class Gui extends Application {
     root.requestFocus(); // for keyboard
   }
 
+  private void replayGame() {
+    InputStream resource = Gui.class.getResourceAsStream("carlsen-excerpt.pgn");
+    File file;
+    try {
+      file = new File(resource);
+      file.loadNextGame();
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+    replayMoves(file.games.get(0), 0, 0);
+  }
+
+  private void replayMoves(Game g, int roundIdx, int moveIdx) {
+    if (roundIdx >= g.rounds.size()) return;
+    if (moveIdx >= g.rounds.get(roundIdx).moves.length) {
+      replayMoves(g, roundIdx + 1, 0);
+      return;
+    }
+    com.leonardpauli.experiments.boardgame.game.notation.Move move =
+        g.rounds.get(roundIdx).moves[moveIdx];
+    List<Movement> movements = game.board.getMovementsForMove(move, game.getCurrentPlayer());
+    if (movements.size() == 0) {
+      System.out.println("No move for" + move.toString());
+      return;
+    }
+    playMovement(movements.get(0));
+
+    Timer timer = new Timer();
+    timer.schedule(
+        new TimerTask() {
+          @Override
+          public void run() {
+            replayMoves(g, roundIdx, moveIdx + 1);
+          }
+        },
+        (long) 300);
+  }
+
+  private BorderPane addMenuBar() {
+    MenuBar menuBar = new MenuBar();
+    MenuItem mi = new MenuItem("Play PGN");
+    menuBar.getMenus().add(new Menu("File", null, mi));
+
+    mi.setOnAction(
+        event -> {
+          replayGame();
+        });
+
+    final String os = System.getProperty("os.name");
+    if (os != null && os.startsWith("Mac")) menuBar.useSystemMenuBarProperty().set(true);
+
+    BorderPane borderPane = new BorderPane();
+    borderPane.setTop(menuBar);
+    return borderPane;
+  }
+
   private void showForNotation(String command, boolean executeIfUnambiguous) {
     List<Movement> ms = game.board.getMovementsForNotation(command, game.getCurrentPlayer());
     System.out.println(command + ms.size());
@@ -108,28 +174,30 @@ public class Gui extends Application {
     } else {
       updateBoardWithAvailableMovements(ms);
       if (executeIfUnambiguous) {
-
-        Optional<Board.Tile> source = board.getTile(ms.get(0).edge.source);
-        Optional<Board.Tile> t = board.getTile(ms.get(0).edge.target);
-        if (!source.isPresent()) return;
-
-        Board.Piece p = board.getPiece(source.get()).get();
-
-        try {
-          game.playMove(
-              new Move(game.getCurrentPlayer(), ms.get(0).edge.source.getPiece(), ms.get(0)));
-        } catch (InvalidMoveException e) {
-          return;
-        }
-
-        if (ms.get(0).getCapturedPiece().isPresent()) {
-          board.getPiece(t.get()).ifPresent(Board.Piece::setCaptured);
-        }
-
-        p.tile = t.get();
-        p.updateLayout();
+        playMovement(ms.get(0));
       }
     }
+  }
+
+  private void playMovement(Movement m) {
+    Optional<Board.Tile> source = board.getTile(m.edge.source);
+    Optional<Board.Tile> t = board.getTile(m.edge.target);
+    if (!source.isPresent()) return;
+
+    Board.Piece p = board.getPiece(source.get()).get();
+
+    try {
+      game.playMove(new Move(game.getCurrentPlayer(), m.edge.source.getPiece(), m));
+    } catch (InvalidMoveException e) {
+      return;
+    }
+
+    if (m.getCapturedPiece().isPresent()) {
+      board.getPiece(t.get()).ifPresent(Board.Piece::setCaptured);
+    }
+
+    p.tile = t.get();
+    p.updateLayout();
   }
 
   private String keySequence = "";
