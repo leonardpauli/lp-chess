@@ -42,6 +42,15 @@ public class Board {
     return Optional.empty();
   }
 
+  public Optional<Board.Tile> getTile(com.leonardpauli.experiments.boardgame.board.tile.Tile ref) {
+    for (Board.Tile t : tiles) {
+      if (t.ref.equals(ref)) {
+        return Optional.of(t);
+      }
+    }
+    return Optional.empty();
+  }
+
   public Optional<Board.Piece> getPiece(Tile tile) {
     for (Board.Piece p : pieces) {
       if (p.tile == tile && !p.isCaptured) {
@@ -83,8 +92,7 @@ public class Board {
     }
 
     public void setMarked(boolean marked) {
-      view.setFill(
-          marked ? getCurrentColor().interpolate(Color.hsb(120, 1, 0.8), 0.05) : getCurrentColor());
+      view.setFill(marked ? getCurrentColor().deriveColor(80, 2, 1.1, 1) : getCurrentColor());
     }
   }
 

@@ -66,7 +66,11 @@ public class Gui extends Application {
                     .interpolate(Color.hsb(20, 0.1, 0.5), 0.6)
                     .interpolate(Color.hsb(0, 0, 0.2), 0)
                     .interpolate(Color.hsb(20, 1, 0.5), 0.2)
-                    .deriveColor(0, (1 - c.getBrightness()) * 0.4 + 0.6, 1, 1)
+                    .deriveColor(
+                        0,
+                        (1 - c.getBrightness()) * 0.3 + 0.8,
+                        (1 - c.getBrightness()) * 0.07 + 0.87,
+                        1)
                     .brighter();
             piece.view.setFill(c);
             board.pieces.add(piece);
@@ -82,12 +86,69 @@ public class Gui extends Application {
     root.getChildren().add(board.view);
 
     addMouseInteraction(stage, root);
+    addKeyboardInteraction(root);
 
     stage.setScene(scene);
     stage.setTitle("Chess");
     StageStyle style = StageStyle.UNDECORATED;
     stage.initStyle(style);
     stage.show();
+
+    root.requestFocus(); // for keyboard
+  }
+
+  private void showForNotation(String command, boolean executeIfUnambiguous) {
+    List<Movement> ms = game.board.getMovementsForNotation(command, game.getCurrentPlayer());
+    System.out.println(command + ms.size());
+    if (ms.size() == 0) {
+      ms = game.getCurrentPlayer().getAvailableMovements(game.board);
+      updateBoardWithAvailableMovements(ms);
+    } else if (ms.size() > 1) {
+      updateBoardWithAvailableMovements(ms);
+    } else {
+      updateBoardWithAvailableMovements(ms);
+      if (executeIfUnambiguous) {
+
+        Optional<Board.Tile> source = board.getTile(ms.get(0).edge.source);
+        Optional<Board.Tile> t = board.getTile(ms.get(0).edge.target);
+        if (!source.isPresent()) return;
+
+        Board.Piece p = board.getPiece(source.get()).get();
+
+        try {
+          game.playMove(
+              new Move(game.getCurrentPlayer(), ms.get(0).edge.source.getPiece(), ms.get(0)));
+        } catch (InvalidMoveException e) {
+          return;
+        }
+
+        if (ms.get(0).getCapturedPiece().isPresent()) {
+          board.getPiece(t.get()).ifPresent(Board.Piece::setCaptured);
+        }
+
+        p.tile = t.get();
+        p.updateLayout();
+      }
+    }
+  }
+
+  private String keySequence = "";
+
+  private void addKeyboardInteraction(Group root) {
+    root.setOnKeyTyped(
+        event -> {
+          if (event.getCharacter() != null
+              && event.getCharacter().length() == 1
+              && !event.getCharacter().equals("\r")) keySequence += event.getCharacter();
+          showForNotation(keySequence, false);
+        });
+    root.setOnKeyPressed(
+        event -> {
+          if ("\n".equals(event.getCode().getChar())) {
+            showForNotation(keySequence, true);
+            keySequence = "";
+          }
+        });
   }
 
   public void addMouseInteraction(Stage stage, Group root) {
