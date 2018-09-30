@@ -27,7 +27,17 @@ public class Board {
   private HashMap<Tile, Marker> tileMarks = new HashMap<>();
 
   public static enum Marker {
-    AVAILABLE;
+    AVAILABLE,
+    UNSAFE_AVAILABLE,
+    UNSAFE;
+
+    public boolean isUnsafe() {
+      return this == UNSAFE || this == UNSAFE_AVAILABLE;
+    }
+
+    public boolean isAvailable() {
+      return this == AVAILABLE || this == UNSAFE_AVAILABLE;
+    }
   }
 
   public Board() throws Exception {
@@ -131,6 +141,18 @@ public class Board {
   }
 
   // marks
+
+  public void setTileMarksFromAvailableMovements(
+      Movement[] movements, Movement[] otherPlayersMovements) {
+    clearTileMarks();
+    for (Movement m : otherPlayersMovements) {
+      tileMarks.put(m.edge.target, Marker.UNSAFE);
+    }
+    for (Movement m : movements) {
+      boolean unsafe = tileMarks.get(m.edge.target) == Marker.UNSAFE;
+      tileMarks.put(m.edge.target, unsafe ? Marker.UNSAFE_AVAILABLE : Marker.AVAILABLE);
+    }
+  }
 
   public void setTileMarksFromAvailableMovements(Movement[] movements) {
     clearTileMarks();

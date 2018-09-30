@@ -48,6 +48,10 @@ public class ChessGame {
     for (int i = 0; i < players.length; i++) players[i] = new Player(i);
   }
 
+  public Player[] getPlayers() {
+    return players;
+  }
+
   public Player getCurrentPlayer() {
     Round round = currentRound();
     int turnNr = round.moves.size() / ChessGame.movesPerPlayerAndRound;
@@ -157,5 +161,26 @@ public class ChessGame {
 
   public State getState() {
     return state;
+  }
+
+  // string
+
+  public String getNotationString() {
+    // TODO: utilize own notation package instead (eg. for castling, etc)
+
+    StringBuilder sb = new StringBuilder();
+    int i = 0;
+    for (Round r : rounds) {
+      sb.append((++i) + ".");
+      for (Move m : r.moves) {
+        sb.append(" ");
+        sb.append(m.piece.type.letter);
+        sb.append(m.movement.edge.source.position.toString().toLowerCase());
+        if (m.movement.getCapturedPiece().isPresent()) sb.append("x");
+        sb.append(m.movement.edge.target.position.toString().toLowerCase());
+      }
+      sb.append(" ");
+    }
+    return sb.toString();
   }
 }

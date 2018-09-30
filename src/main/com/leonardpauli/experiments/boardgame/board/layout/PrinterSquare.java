@@ -29,10 +29,14 @@ public class PrinterSquare implements Printer {
       for (int x = 0; x < size.x; x++) {
         Tile tile = board.tiles[x][y];
         Optional<Board.Marker> marker = board.getMarkerForTile(tile);
-        boolean mark = marker.isPresent();
+        boolean mark =
+            marker.isPresent()
+                && (marker.get() == Board.Marker.AVAILABLE
+                    || marker.get() == Board.Marker.UNSAFE_AVAILABLE);
+        boolean markUnsafe = marker.isPresent() && marker.get() == Board.Marker.UNSAFE;
 
         if (pretty) sb.append(mark ? "⟨" : " ");
-        if (!pretty && mark && !tile.hasPiece()) sb.append("O");
+        if (!pretty && (mark || markUnsafe) && !tile.hasPiece()) sb.append(mark ? "O" : "X");
         else sb.append(pretty ? tile.toCharPretty() : tile.toChar());
         if (pretty) sb.append(mark ? "⟩" : " ");
       }

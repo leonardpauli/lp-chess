@@ -1,5 +1,6 @@
 package com.leonardpauli.experiments.boardgame.chess.gui;
 
+import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.movement.CastlingMovement;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
@@ -16,17 +17,17 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class Gui extends Application {
   private Point2D dragStart;
@@ -194,8 +195,15 @@ public class Gui extends Application {
     MenuItem resetmi = new MenuItem("New Game");
     resetmi.setOnAction(event -> newGame());
 
+    MenuItem copypgn = new MenuItem("Copy notation");
+    copypgn.setOnAction(event -> copyNotation());
+
+    MenuItem pastepgn = new MenuItem("Paste game from notation");
+    pastepgn.setOnAction(
+        event -> replayGameFromNotation(Clipboard.getSystemClipboard().getString()));
+
     playPgnMenu = new Menu("Play PGN");
-    menuBar.getMenus().add(new Menu("Game", null, resetmi, playPgnMenu));
+    menuBar.getMenus().add(new Menu("Game", null, resetmi, playPgnMenu, copypgn, pastepgn));
 
     MenuItem mi = new MenuItem("Load demo games");
     playPgnMenu.getItems().add(mi);
@@ -235,6 +243,18 @@ public class Gui extends Application {
         });
   }
 
+  public void copyNotation() {
+    ClipboardContent content = new ClipboardContent();
+    content.putString(game.getNotationString());
+    Clipboard.getSystemClipboard().setContent(content);
+  }
+
+  public void replayGameFromNotation(String notation) {
+    File file = loadPgnFile(new ByteArrayInputStream(notation.getBytes()));
+    if (file.games.size() == 0) return;
+    replayGame(file.games.get(0));
+  }
+
   private boolean showForNotation(String command, boolean executeIfUnambiguous) {
     List<Movement> ms = game.board.getMovementsForNotation(command, game.getCurrentPlayer());
     System.out.println(command + ms.size());
@@ -253,17 +273,17 @@ public class Gui extends Application {
     return false;
   }
 
-  private void playMovement(Movement m) {
+  private boolean playMovement(Movement m) {
     Optional<Board.Tile> source = board.getTile(m.edge.source);
     Optional<Board.Tile> t = board.getTile(m.edge.target);
-    if (!source.isPresent()) return;
+    if (!source.isPresent()) return false;
 
     Board.Piece p = board.getPiece(source.get()).get();
 
     try {
       game.playMove(new Move(game.getCurrentPlayer(), m.edge.source.getPiece(), m));
     } catch (InvalidMoveException e) {
-      return;
+      return false;
     }
 
     if (m.getCapturedPiece().isPresent()) {
@@ -279,6 +299,7 @@ public class Gui extends Application {
 
     p.tile = t.get();
     p.updateLayout();
+    return true;
   }
 
   private String keySequence = "";
@@ -325,6 +346,8 @@ public class Gui extends Application {
           if (dragPiece != null) {
             Point2D destination = dragPiece.position.add(pos.subtract(dragStart));
             dragPiece.updatePosition(destination);
+            board.view.getChildren().remove(dragPiece.view);
+            board.view.getChildren().add(dragPiece.view);
 
             return;
           }
@@ -357,20 +380,27 @@ public class Gui extends Application {
     List<Movement> ms = piece.ref.getAvailableMovements(game.board, t.get().ref.position);
     if (ms.size() == 0) return false;
     Movement movement = ms.get(0);
-    playMovement(movement);
-    return true;
+    return playMovement(movement);
   }
 
   private void updateBoard() {
-    List<Movement> ms = game.getCurrentPlayer().getAvailableMovements(game.board);
-    updateBoardWithAvailableMovements(ms);
+    Player p = game.getCurrentPlayer();
+    Player p2 = Arrays.stream(game.getPlayers()).filter(l -> !l.equals(p)).findFirst().get();
+    List<Movement> ms = p.getAvailableMovements(game.board);
+    List<Movement> mo = p2.getAvailableMovements(game.board);
+    updateBoardWithAvailableMovements(ms, mo);
+  }
+
+  private void updateBoardWithAvailableMovements(List<Movement> ms, List<Movement> others) {
+    game.board.setTileMarksFromAvailableMovements(
+        ms.toArray(new Movement[] {}), others.toArray(new Movement[] {}));
+    board.tiles.forEach(
+        t -> {
+          t.setMarker(game.board.getMarkerForTile(t.ref));
+        });
   }
 
   private void updateBoardWithAvailableMovements(List<Movement> ms) {
-    game.board.setTileMarksFromAvailableMovements(ms.toArray(new Movement[] {}));
-    board.tiles.forEach(
-        t -> {
-          t.setMarked(game.board.getMarkerForTile(t.ref).isPresent());
-        });
+    updateBoardWithAvailableMovements(ms, new ArrayList<Movement>());
   }
 }

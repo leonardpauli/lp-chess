@@ -139,8 +139,19 @@ public class Board {
           .darker();
     }
 
-    public void setMarked(boolean marked) {
-      bg.setFill(marked ? getCurrentColor().deriveColor(80, 2, 1.1, 1) : getCurrentColor());
+    public void setMarker(
+        Optional<com.leonardpauli.experiments.boardgame.board.Board.Marker> mark) {
+      Color color = getCurrentColor();
+      if (mark.isPresent() && mark.get().isAvailable())
+        color =
+            color.deriveColor(
+                mark.get().isUnsafe() && mark.get().isAvailable()
+                    ? 20
+                    : mark.get().isUnsafe() ? 0 : 60,
+                2,
+                1.1,
+                1);
+      bg.setFill(color);
     }
   }
 
