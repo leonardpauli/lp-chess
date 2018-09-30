@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BoardTest {
 
@@ -55,11 +56,37 @@ class BoardTest {
     board.setTileMarksFromAvailableMovements(as.toArray(new Movement[] {}));
     assertArrayEquals(
         new MovementType[] {
-          MovementType.DIAGONAL, MovementType.DIAGONAL, MovementType.DIAGONAL, MovementType.DIAGONAL
+          MovementType.STRAIGHT,
+          MovementType.DIAGONAL,
+          MovementType.DIAGONAL,
+          MovementType.STRAIGHT,
+          MovementType.DIAGONAL,
+          MovementType.DIAGONAL
         },
         as.stream().map(m -> m.type).toArray());
 
-    // assertThrows(InvalidMoveException.class, () -> board.getMovementForNotation("Qa2", player));
+    // TODO: assertThrows(InvalidMoveException.class, () -> board.getMovementForNotation("Qa2",
+    // player));
+
+    // castling
+
+    for (int i = 0; i < 5; i++) {
+      p = new Piece(PieceType.PAWN);
+      p.owner = p2;
+      p.setHome(board.placePiece(p, new Position(i, 6)));
+    }
+
+    p = new Piece(PieceType.ROOK);
+    p.owner = p2;
+    p.setHome(board.placePiece(p, Position.fromString("a8")));
+
+    p = new Piece(PieceType.KING);
+    p.owner = p2;
+    p.setHome(board.placePiece(p, Position.fromString("d8")));
+
+    System.out.println(board.toString());
+    as = board.getMovementsForNotation("O-O", p2);
+    assertEquals(1, as.size());
   }
 
   @Test

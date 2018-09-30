@@ -24,7 +24,7 @@ class MoveTest {
   }
 
   @Test
-  void fromString() {
+  void fromStringQd2() {
     Move.Config c = Move.fromString("Qd2").get().getConfig();
     assertTrue(c.origin.isEmpty());
     assertEquals("D2", c.target.getPosition(0, 0).toString());
@@ -32,11 +32,20 @@ class MoveTest {
   }
 
   @Test
-  void fromString2() {
+  void fromStringNbd7() {
     Move.Config c = Move.fromString("Nbd7").get().getConfig();
     assertTrue(!c.origin.hasY());
     assertEquals("B", c.origin.getPosition(0, 0).colString());
     assertEquals("D7", c.target.getPosition(0, 0).toString());
     assertEquals(PieceType.KNIGHT, c.type.get());
+  }
+
+  @Test
+  void fromStringCastling() {
+    Move.Config c = Move.fromString("O-O").get().getConfig();
+    assertTrue(c.origin.isEmpty());
+    assertTrue(c.target.isEmpty());
+    assertTrue(c.isCastling);
+    assertEquals(PieceType.KING, c.type.get());
   }
 }

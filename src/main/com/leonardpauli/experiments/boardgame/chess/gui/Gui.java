@@ -1,7 +1,10 @@
 package com.leonardpauli.experiments.boardgame.chess.gui;
 
+import com.leonardpauli.experiments.boardgame.board.movement.CastlingMovement;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
+import com.leonardpauli.experiments.boardgame.board.tile.Edge;
+import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
 import com.leonardpauli.experiments.boardgame.chess.ChessGame;
 import com.leonardpauli.experiments.boardgame.game.Move;
 import com.leonardpauli.experiments.boardgame.game.notation.File;
@@ -198,6 +201,13 @@ public class Gui extends Application {
 
     if (m.getCapturedPiece().isPresent()) {
       board.getPiece(t.get()).ifPresent(Board.Piece::setCaptured);
+    }
+
+    if (m instanceof CastlingMovement) {
+      Edge rookEdge = ((CastlingMovement) m).rookEdge;
+      Board.Piece rook = board.getPiece(board.getTile(rookEdge.source).get()).get();
+      rook.tile = board.getTile(rookEdge.target).get();
+      rook.updateLayout();
     }
 
     p.tile = t.get();

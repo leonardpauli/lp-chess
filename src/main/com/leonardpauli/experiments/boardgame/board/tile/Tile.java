@@ -49,6 +49,11 @@ public class Tile {
     return hasPiece() && getPiece().owner.equals(player);
   }
 
+  public boolean isSafeFor(Player player) {
+    // TODO: tile.isSafeFor player
+    return true;
+  }
+
   // edges
 
   public Edge[] getEdges() {

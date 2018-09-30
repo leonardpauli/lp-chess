@@ -5,6 +5,7 @@ import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.actor.PieceType;
 import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.Board;
+import com.leonardpauli.experiments.boardgame.board.movement.CastlingMovement;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.tile.EdgeType;
 import com.leonardpauli.experiments.boardgame.board.tile.Tile;
@@ -132,6 +133,11 @@ public class ChessGame {
     }
 
     target.setPiece(move.piece);
+
+    if (move.movement instanceof CastlingMovement) {
+      CastlingMovement cm = (CastlingMovement) move.movement;
+      cm.rookEdge.target.setPiece(cm.rookEdge.source.getPiece());
+    }
 
     // TODO: check times, etc
 

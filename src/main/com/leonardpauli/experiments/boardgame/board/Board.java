@@ -6,6 +6,7 @@ import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.layout.Layout;
 import com.leonardpauli.experiments.boardgame.board.layout.LayoutSquare;
 import com.leonardpauli.experiments.boardgame.board.layout.PrinterSquare;
+import com.leonardpauli.experiments.boardgame.board.movement.CastlingMovement;
 import com.leonardpauli.experiments.boardgame.board.movement.InvalidMoveException;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.board.movement.MovementProcessor;
@@ -117,6 +118,11 @@ public class Board {
                       || (c.isCapture
                           && (!m.edge.target.hasPiece()
                               || m.edge.target.getPiece().owner.equals(currentPlayer))));
+        ms.removeIf(
+            m ->
+                (c.isCastling
+                    && (!(m instanceof CastlingMovement)
+                        || (c.isCastlingKingside != ((CastlingMovement) m).isKingside()))));
         movements.addAll(ms);
       }
     }

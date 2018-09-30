@@ -24,6 +24,7 @@ public class Move implements Token {
     public Optional<PieceType> type = Optional.empty();
     public boolean isPromotion = false;
     public boolean isCastling = false;
+    public boolean isCastlingKingside = false;
     public boolean isCheckmate = false;
     public boolean isCheck = false;
     public boolean isCapture = false;
@@ -170,6 +171,7 @@ public class Move implements Token {
       c.type = getType();
       c.isPromotion = isPromotion();
       c.isCastling = isCastling();
+      c.isCastlingKingside = isCastling() && castling.kingside;
       c.isCheckmate = isCheckmate;
       c.isCheck = isCheck();
       c.isCapture = isCapture();

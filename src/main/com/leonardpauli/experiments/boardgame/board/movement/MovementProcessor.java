@@ -1,6 +1,7 @@
 package com.leonardpauli.experiments.boardgame.board.movement;
 
 import com.leonardpauli.experiments.boardgame.actor.Piece;
+import com.leonardpauli.experiments.boardgame.actor.PieceType;
 import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.Board;
 import com.leonardpauli.experiments.boardgame.board.tile.Edge;
@@ -247,7 +248,11 @@ public class MovementProcessor {
       addAvailableTo(movements, opt);
 
     } else if (type == CASTLING) {
-      // TODO
+      if (!piece.isAtHome()) return;
+
+      for (EdgeType direction : new EdgeType[] {LEFT, RIGHT}) {
+        addAvailableCastlingTo(movements, piece, piece.tile, direction, 0, null, null);
+      }
 
     } else if (type == ENPASSANT) {
       // TODO
@@ -257,6 +262,48 @@ public class MovementProcessor {
 
     } else {
       throw new GameException("MovementType movements not implemented for type: " + type);
+    }
+  }
+
+  private void addAvailableCastlingTo(
+      List<Movement> movements,
+      Piece piece,
+      Tile fromTile,
+      EdgeType direction,
+      int nr,
+      Tile kingTarget,
+      Tile rookTarget)
+      throws GameException {
+    Tile[] nextTileAlts = fromTile.getRelative(direction);
+    if (nextTileAlts.length == 0) return;
+
+    Piece rook = null;
+    boolean blocked = false;
+    Tile last = null;
+    for (Tile tile : nextTileAlts) {
+      last = tile;
+      if (!tile.hasPiece()) {
+        blocked = !tile.isSafeFor(piece.owner);
+        if (blocked) break;
+        continue;
+      }
+
+      Piece p = tile.getPiece();
+      boolean isOwnRook = p.type == PieceType.ROOK && p.owner.equals(piece.owner);
+      blocked = !isOwnRook || !p.isAtHome();
+      if (blocked) break;
+      rook = p;
+
+      CastlingMovement m =
+          new CastlingMovement(
+              new Edge(piece.tile, kingTarget), new Edge(rook.tile, rookTarget), direction);
+      movements.add(m);
+    }
+    if (blocked) return;
+    if (nr == 0) rookTarget = last;
+    if (nr == 1) kingTarget = last;
+    if (rook == null && nr < 7) {
+      addAvailableCastlingTo(movements, piece, last, direction, nr + 1, kingTarget, rookTarget);
     }
   }
 }
