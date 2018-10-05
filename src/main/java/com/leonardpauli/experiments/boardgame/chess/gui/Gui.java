@@ -46,7 +46,7 @@ public class Gui extends Application {
   @Override
   public void start(Stage stage) {
     Group root = new Group();
-    Scene scene = new Scene(root, size.getX(), size.getY());
+    final Scene scene = new Scene(root, size.getX(), size.getY());
 
     Rectangle bg = new Rectangle(size.getX(), size.getY());
     bg.setFill(Color.hsb(40, 0.17, 0.078));
@@ -124,7 +124,7 @@ public class Gui extends Application {
           for (Point2D p : game.board.layout.getNormalizedCornersForTile(t))
             tile.corners.add(new Point2D(p.getX(), 1 - p.getY()));
 
-          tile.baseColor = t.color.getFXColor();
+          tile.baseColor = t.color.getFxColor();
           tile.updateBgColor();
           board.tiles.add(tile);
 
@@ -134,7 +134,7 @@ public class Gui extends Application {
             piece.tile = tile;
             piece.view.setText(
                 t.getPiece().type.toChar(com.leonardpauli.experiments.boardgame.util.Color.white));
-            Color c = t.getPiece().getColor().getFXColor();
+            Color c = t.getPiece().getColor().getFxColor();
             c =
                 c.darker()
                     .interpolate(Color.hsb(20, 0.1, 0.5), 0.6)
@@ -221,7 +221,7 @@ public class Gui extends Application {
   }
 
   private BorderPane addMenuBar() {
-    MenuBar menuBar = new MenuBar();
+    final MenuBar menuBar = new MenuBar();
 
     MenuItem resetmi = new MenuItem("New Game");
     resetmi.setOnAction(event -> newGame());
@@ -314,7 +314,7 @@ public class Gui extends Application {
     Optional<Board.Tile> t = board.getTile(m.edge.target);
     if (!source.isPresent()) return false;
 
-    Board.Piece p = board.getPiece(source.get()).get();
+    final Board.Piece p = board.getPiece(source.get()).get();
 
     try {
       game.playMove(new Move(game.getCurrentPlayer(), m.edge.source.getPiece(), m));

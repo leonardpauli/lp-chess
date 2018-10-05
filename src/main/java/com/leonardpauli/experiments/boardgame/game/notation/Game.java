@@ -40,7 +40,7 @@ public class Game implements Token {
     return res;
   }
 
-  public HashMap<String, String> getKVTags() {
+  public HashMap<String, String> getKeyValueTags() {
     HashMap<String, String> map = new HashMap<>();
     for (Tag.Section t : tags) {
       map.put(t.tag.key.toLowerCase(), t.tag.value);
@@ -49,7 +49,7 @@ public class Game implements Token {
   }
 
   public String getTitle() {
-    HashMap<String, String> map = getKVTags();
+    HashMap<String, String> map = getKeyValueTags();
     StringBuilder sb = new StringBuilder();
     // sb.append(map.get("event"));
     // sb.append(": ");

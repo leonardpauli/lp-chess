@@ -42,6 +42,10 @@ public class Tokenizer {
     return res;
   }
 
+  public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
+    return tokenize(token, 0);
+  }
+
   private TokenizeResult tokenizeInner(Token t, int offset) throws TokenizerException, IOException {
     TokenizeResult innerTokenRes = null;
 
@@ -55,10 +59,6 @@ public class Tokenizer {
       }
     }
     return innerTokenRes;
-  }
-
-  public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
-    return tokenize(token, 0);
   }
 
   public void increaseConsumedCount(int consumedChars) {
@@ -77,7 +77,7 @@ public class Tokenizer {
       result.write(buffer, 0, length);
     }
     // TODO: instead of copying old string, reuse by shifting cutOffset
-    // 	initialize string to bufferTargetSize*2 so no reallocation needed
+    //  initialize string to bufferTargetSize*2 so no reallocation needed
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
     cutOffset = 0;
 

@@ -1,8 +1,8 @@
 package com.leonardpauli.experiments.boardgame.game;
 
+import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
-import com.leonardpauli.experiments.boardgame.actor.Piece;
 import com.leonardpauli.experiments.boardgame.util.Event;
 
 public class Move {
