@@ -4,10 +4,7 @@ import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Token;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizeResult;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.Tokenizer;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizerException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,19 +22,24 @@ public class WrapperTokensTest {
 
   static TestsSyntax syntax;
 
+  static boolean tmpDisabled = true;
+
   @BeforeAll
   public static void parseTests() throws IOException, TokenizerException {
     if (syntax != null) return;
+    if (tmpDisabled) return;
     InputStream stream = WrapperTokensTest.class.getResourceAsStream("wrapper.custom-syntax");
     syntax = new TestsSyntax(stream);
   }
 
+  @Disabled
   @Test
   public void testWrapperTestsParsed() {
     assertTrue(5 < syntax.sections.size(), syntax.sections.size() + "");
     assertTrue(20 > syntax.sections.size(), syntax.sections.size() + "");
   }
 
+  @Disabled
   @TestFactory
   public Stream<DynamicTest> testWrappers() {
     return syntax

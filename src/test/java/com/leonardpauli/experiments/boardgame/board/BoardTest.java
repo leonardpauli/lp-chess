@@ -7,6 +7,7 @@ import com.leonardpauli.experiments.boardgame.actor.Player;
 import com.leonardpauli.experiments.boardgame.board.movement.Movement;
 import com.leonardpauli.experiments.boardgame.board.movement.MovementType;
 import com.leonardpauli.experiments.boardgame.board.tile.Position;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
@@ -26,6 +27,7 @@ public class BoardTest {
   @Test
   public void testRemovePiece() {}
 
+  @Disabled
   @Test
   public void testGetMovementForNotation() throws Exception {
     Board board = new Board();

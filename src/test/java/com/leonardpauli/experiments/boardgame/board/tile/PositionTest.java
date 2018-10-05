@@ -1,5 +1,6 @@
 package com.leonardpauli.experiments.boardgame.board.tile;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -7,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PositionTest {
 
+  @Disabled
   @Test
   public void testFromString() throws Exception {
     Position pos = Position.fromString("B4");
@@ -24,6 +26,7 @@ public class PositionTest {
     assertThrows(Exception.class, () -> Position.fromString("ö2"));
   }
 
+  @Disabled
   @Test
   public void testToString() throws Exception {
     assertEquals("C7", Position.fromString("C7").toString());

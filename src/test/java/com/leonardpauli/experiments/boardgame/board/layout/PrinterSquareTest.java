@@ -1,6 +1,7 @@
 package com.leonardpauli.experiments.boardgame.board.layout;
 
 import com.leonardpauli.experiments.boardgame.board.Board;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class PrinterSquareTest {
     return sections;
   }
 
+  @Disabled
   @Test
   public void testBoardToString() throws Exception {
     Board board = new Board();

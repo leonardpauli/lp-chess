@@ -3,6 +3,7 @@ package com.leonardpauli.experiments.boardgame.game.notation;
 import com.leonardpauli.experiments.boardgame.actor.PieceType;
 import com.leonardpauli.experiments.boardgame.game.State;
 import com.leonardpauli.experiments.boardgame.game.notation.tokenizer.TokenizerException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FileTest {
 
+  @Disabled
   @Test
   public void testLoadNextGame() throws IOException, TokenizerException {
     File f = new File(File.class.getResourceAsStream("carlsen-excerpt.pgn"));
@@ -27,6 +29,7 @@ public class FileTest {
     // TODO: parsing of move
   }
 
+  @Disabled
   @Test
   public void testLoadNextGameSyntax() throws IOException, TokenizerException {
     File f = new File(File.class.getResourceAsStream("carlsen-excerpt.pgn"));

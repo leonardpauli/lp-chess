@@ -1,5 +1,6 @@
 package com.leonardpauli.experiments.boardgame.game.notation.tokenizer;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenizerTest {
 
+  @Disabled
   @Test
   public void testTokenizeInner() throws IOException, TokenizerException {
 
@@ -49,6 +51,7 @@ public class TokenizerTest {
     // TODO: test needsMore by parsing comment with length > (buffer size, maxNeededStringSize)
   }
 
+  @Disabled
   @Test
   public void testTokenizeOuter() throws IOException, TokenizerException {
 
