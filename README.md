@@ -5,13 +5,19 @@ A Chess flavoured GameBoard implemented using edges of movements between tiles i
 
 Initially created as a project in the indatapluplus course at KTH.
 
+## build system
+
+- prerequisite: `JDK 10` + `maven` installed
+- `git clone ... chess && cd $_`
+- `mvn install`
+- `mvn package`
+- `java -jar target/*.jar`
 
 ## WIP
 
 see `rim/Chess.Simple.rim` for current MVP goal, then the rest of the files in `rim/` for notes about the final goal.
 
 `rim/Chess.Simple.rim` is being implemented in `src`; open the repo folder with intelliJ + see tests
-
 
 ### Process
 
@@ -38,23 +44,30 @@ plan:
 - open project with intelliJ, run google linting
 - run tests, from tiny to larger, while resolving logic issues
 - abort for now because I absolutely don't have time for this
+- get back, fix simple interface for handling simple 8x8 board
+- use build system + package manager
 
 then:
-- get back, fix simple interface for handling simple 8x8 board
+
+- fix CI: travis, CLA check, PR + issue template, lint on commit
 - fix adapter from ChessGame to interface
 - fix GUI as separate package, with logic defered to the interface
-- implement adapter for someone else's engine (before friday)
+- fix local network player mode using sockets and protobuf (?)
+- implement discovery service + deploy using now
+- implement optional proxying service (workaround for limited networks) + deploy using now
+- implement adapter for indapluplus legacy json format/protocol + test with other engine
+- implement gui adapter for someone else's engine
+- add github issues + pr to others
 
 then:
-- implement UI for 3/multiple-kingdoms-chess + dimentional/teleport-chess + "Fischer Random Chess" combo + move-10s-max-dur
 
+- implement UI for 3/multiple-kingdoms-chess + dimentional/teleport-chess + "Fischer Random Chess" combo + move-10s-max-dur
 
 ### notes
 
 - using rim
 - using js
 - using java
-
 
 #### idea: to create a general/abstract "BoardGame" base class (extended by Chess); following the normalisation principle.
 
