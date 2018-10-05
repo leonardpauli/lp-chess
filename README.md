@@ -48,10 +48,10 @@ plan:
 - abort for now because I absolutely don't have time for this
 - get back, fix simple interface for handling simple 8x8 board
 - use build system + package manager
+- CI: travis on PR (running maven test inc. check style)
 
 then:
 
-- fix CI: travis, CLA check, PR + issue template, lint on commit
 - fix adapter from ChessGame to interface
 - fix GUI as separate package, with logic defered to the interface
 - fix local network player mode using sockets and protobuf (?)
@@ -64,6 +64,7 @@ then:
 then:
 
 - implement UI for 3/multiple-kingdoms-chess + dimentional/teleport-chess + "Fischer Random Chess" combo + move-10s-max-dur
+- CI: CLA check, PR + issue template
 
 ### notes
 
