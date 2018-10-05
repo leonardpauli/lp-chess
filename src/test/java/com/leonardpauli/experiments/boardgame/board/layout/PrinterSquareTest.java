@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class PrinterSquareTest {
+public class PrinterSquareTest {
 
   private static HashMap<String, String> expectedBoards;
 
@@ -41,7 +41,7 @@ class PrinterSquareTest {
   }
 
   @Test
-  void boardToString() throws Exception {
+  public void testBoardToString() throws Exception {
     Board board = new Board();
     assertEquals(
         PrinterSquareTest.getExpectedBoard("empty"), board.toString(PrinterSquare.Style.PLAIN));

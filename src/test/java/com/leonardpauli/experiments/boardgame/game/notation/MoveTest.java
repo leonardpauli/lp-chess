@@ -11,10 +11,10 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class MoveTest {
+public class MoveTest {
 
   @Test
-  void inner() throws IOException, TokenizerException {
+  public void testInner() throws IOException, TokenizerException {
     Move s = new Move();
     Tokenizer tokenizer = new Tokenizer(new ByteArrayInputStream("e8".getBytes()));
     tokenizer.tokenize(s);
@@ -24,7 +24,7 @@ class MoveTest {
   }
 
   @Test
-  void fromStringQd2() {
+  public void testFromStringQd2() {
     Move.Config c = Move.fromString("Qd2").get().getConfig();
     assertTrue(c.origin.isEmpty());
     assertEquals("D2", c.target.getPosition(0, 0).toString());
@@ -32,7 +32,7 @@ class MoveTest {
   }
 
   @Test
-  void fromStringNbd7() {
+  public void testFromStringNbd7() {
     Move.Config c = Move.fromString("Nbd7").get().getConfig();
     assertTrue(!c.origin.hasY());
     assertEquals("B", c.origin.getPosition(0, 0).colString());
@@ -41,7 +41,7 @@ class MoveTest {
   }
 
   @Test
-  void fromStringCastling() {
+  public void testFromStringCastling() {
     Move.Config c = Move.fromString("O-O").get().getConfig();
     assertTrue(c.origin.isEmpty());
     assertTrue(c.target.isEmpty());

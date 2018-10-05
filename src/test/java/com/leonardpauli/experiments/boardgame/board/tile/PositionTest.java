@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class PositionTest {
+public class PositionTest {
 
   @Test
-  void fromString() throws Exception {
+  public void testFromString() throws Exception {
     Position pos = Position.fromString("B4");
     assertEquals(1, pos.x);
     assertEquals(3, pos.y);
@@ -25,7 +25,7 @@ class PositionTest {
   }
 
   @Test
-  void toStringTest() throws Exception {
+  public void testToString() throws Exception {
     assertEquals("C7", Position.fromString("C7").toString());
   }
 }

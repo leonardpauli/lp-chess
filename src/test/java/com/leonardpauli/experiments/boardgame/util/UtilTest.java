@@ -4,11 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class UtilTest {
+public class UtilTest {
 
   @Test
-  void objectToString() {
-
+  public void testObjectToString() {
     Person obj = new Person("Anna", 34);
     assertEquals("Person{name: Anna}", obj.toString());
   }

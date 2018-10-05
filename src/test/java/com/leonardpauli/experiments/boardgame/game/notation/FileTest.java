@@ -10,10 +10,10 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class FileTest {
+public class FileTest {
 
   @Test
-  void loadNextGame() throws IOException, TokenizerException {
+  public void testLoadNextGame() throws IOException, TokenizerException {
     File f = new File(File.class.getResourceAsStream("carlsen-excerpt.pgn"));
     f.loadNextGame();
     assertEquals(2, f.comments.size());
@@ -28,7 +28,7 @@ class FileTest {
   }
 
   @Test
-  void loadNextGameSyntax() throws IOException, TokenizerException {
+  public void testLoadNextGameSyntax() throws IOException, TokenizerException {
     File f = new File(File.class.getResourceAsStream("carlsen-excerpt.pgn"));
     f.loadNextGame();
     f.loadNextGame();

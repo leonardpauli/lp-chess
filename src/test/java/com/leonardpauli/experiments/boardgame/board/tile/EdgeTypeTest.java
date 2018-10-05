@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 import static com.leonardpauli.experiments.boardgame.board.tile.EdgeType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class EdgeTypeTest {
+public class EdgeTypeTest {
 
   @Test
-  void canBeTurned() {
+  public void testCanBeTurned() {
     assertTrue(RIGHT.canBeTurned());
     assertTrue(LEFT.canBeTurned());
     assertTrue(UP.canBeTurned());
@@ -18,13 +18,13 @@ class EdgeTypeTest {
   }
 
   @Test
-  void getTurnedOnce() throws GameException {
+  public void testGetTurnedOnce() throws GameException {
     assertEquals(UP, RIGHT.getTurned());
     assertEquals(RIGHT.getTurned(1), RIGHT.getTurned());
   }
 
   @Test
-  void getTurned() throws GameException {
+  public void testGetTurned() throws GameException {
     assertEquals(UP.getTurned(0), UP.getTurned(4));
     assertEquals(UP.getTurned(1), UP.getTurned(5));
     assertEquals(UP.getTurned(1), LEFT);
@@ -32,7 +32,7 @@ class EdgeTypeTest {
   }
 
   @Test
-  void getTurns() throws GameException {
+  public void testGetTurns() throws GameException {
     assertEquals(0, RIGHT.getTurns(RIGHT));
     assertEquals(3, RIGHT.getTurns(DOWN));
     assertEquals(1, DOWN.getTurns(RIGHT));
@@ -42,7 +42,7 @@ class EdgeTypeTest {
   }
 
   @Test
-  void turnedPath() throws GameException {
+  public void testTurnedPath() throws GameException {
     assertEquals(EdgeType.getPath("").length, 0);
     assertArrayEquals(EdgeType.getPath(""), EdgeType.turnedPath(new EdgeType[] {}, 0));
     assertArrayEquals(EdgeType.getPath("^"), EdgeType.turnedPath(new EdgeType[] {UP}, 0));
@@ -52,19 +52,19 @@ class EdgeTypeTest {
   }
 
   @Test
-  void fromCode() throws GameException {
+  public void testFromCode() throws GameException {
     assertEquals(UP, EdgeType.fromCode('^'));
     assertThrows(GameException.class, () -> EdgeType.fromCode('x'));
   }
 
   @Test
-  void getPath() throws GameException {
+  public void testGetPath() throws GameException {
     assertArrayEquals(new EdgeType[] {UP, LEFT, RIGHT, DOWN, DOWN}, EdgeType.getPath("^<>vv"));
     assertArrayEquals(new EdgeType[] {}, EdgeType.getPath(""));
   }
 
   @Test
-  void stringFromPath() {
+  public void testStringFromPath() {
     assertEquals("", EdgeType.stringFromPath(new EdgeType[] {}));
     assertEquals(
         "^<>vv.", EdgeType.stringFromPath(new EdgeType[] {UP, LEFT, RIGHT, DOWN, DOWN, ANY}));

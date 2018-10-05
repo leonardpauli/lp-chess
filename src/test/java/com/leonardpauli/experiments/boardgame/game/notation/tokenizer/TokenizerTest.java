@@ -9,10 +9,10 @@ import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TokenizerTest {
+public class TokenizerTest {
 
   @Test
-  void tokenizeInner() throws IOException, TokenizerException {
+  public void testTokenizeInner() throws IOException, TokenizerException {
 
     InputStream stream = TokenizerTest.class.getResourceAsStream("example.custom-syntax");
     Tokenizer tokenizer = new Tokenizer(stream);
@@ -50,7 +50,7 @@ class TokenizerTest {
   }
 
   @Test
-  void tokenizeOuter() throws IOException, TokenizerException {
+  public void testTokenizeOuter() throws IOException, TokenizerException {
 
     InputStream stream = TokenizerTest.class.getResourceAsStream("example.custom-syntax");
     Tokenizer tokenizer = new Tokenizer(stream);

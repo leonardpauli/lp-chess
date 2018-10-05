@@ -21,25 +21,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
-class WrapperTokensTest {
+public class WrapperTokensTest {
 
   static TestsSyntax syntax;
 
   @BeforeAll
-  static void parseTests() throws IOException, TokenizerException {
+  public static void parseTests() throws IOException, TokenizerException {
     if (syntax != null) return;
     InputStream stream = WrapperTokensTest.class.getResourceAsStream("wrapper.custom-syntax");
     syntax = new TestsSyntax(stream);
   }
 
   @Test
-  void wrapperTestsParsed() {
+  public void testWrapperTestsParsed() {
     assertTrue(5 < syntax.sections.size(), syntax.sections.size() + "");
     assertTrue(20 > syntax.sections.size(), syntax.sections.size() + "");
   }
 
   @TestFactory
-  Stream<DynamicTest> wrapperTests() {
+  public Stream<DynamicTest> testWrappers() {
     return syntax
         .sections
         .stream()

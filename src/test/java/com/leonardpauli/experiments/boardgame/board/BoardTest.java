@@ -15,19 +15,19 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class BoardTest {
+public class BoardTest {
 
   @Test
-  void tileExistsAt() {}
+  public void testTileExistsAt() {}
 
   @Test
-  void tileAt() {}
+  public void testTileAt() {}
 
   @Test
-  void removePiece() {}
+  public void testRemovePiece() {}
 
   @Test
-  void getMovementForNotation() throws Exception {
+  public void testGetMovementForNotation() throws Exception {
     Board board = new Board();
     Player player = new Player(0);
     Iterator<Home> homes = board.getPlayerHomes();
@@ -90,5 +90,5 @@ class BoardTest {
   }
 
   @Test
-  void placePiece() {}
+  public void testPlacePiece() {}
 }
