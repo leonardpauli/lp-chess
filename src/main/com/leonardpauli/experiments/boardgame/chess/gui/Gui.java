@@ -51,12 +51,7 @@ public class Gui extends Application {
     Rectangle bg = new Rectangle(size.getX(), size.getY());
     bg.setFill(Color.hsb(40, 0.17, 0.078));
 
-    double marginV = (showGutter ? 20 : 10) + (isOsx() ? 15 : 30);
-    Point2D margin = new Point2D(marginV, marginV);
-
     board = new Board();
-    board.origin = margin.multiply(1);
-    board.size = size.subtract(margin.multiply(2));
 
     root.getChildren().add(bg);
     root.getChildren().add(board.view);
@@ -73,7 +68,15 @@ public class Gui extends Application {
 
     root.requestFocus(); // for keyboard
 
+    updateBoardLayout(15);
     newGame();
+  }
+
+  private void updateBoardLayout(double m) {
+    double marginV = m + (showGutter ? 20 : 0) + (isOsx() ? 0 : 15);
+    Point2D margin = new Point2D(marginV, marginV);
+    board.origin = margin.multiply(1);
+    board.size = size.subtract(margin.multiply(2));
   }
 
   private File loadPgnFile(InputStream stream) {
@@ -189,6 +192,34 @@ public class Gui extends Application {
         (long) 200);
   }
 
+  double t = 0;
+
+  private void devAction() {
+    updateBoardLayout(30);
+
+    board.tiles.forEach(
+        tile -> {
+          Point2D t0 = tile.corners.get(0);
+          tile.corners.set(0, tile.corners.get(2));
+          tile.corners.set(2, t0);
+        });
+
+    Timer timer = new Timer();
+    timer.schedule(
+        new TimerTask() {
+          @Override
+          public void run() {
+            t += 0.002;
+
+            board.tiles.forEach(tile -> tile.updateBgPath(board, t));
+            board.pieces.forEach(t -> t.updateLayout());
+            if (t > 1) timer.cancel();
+          }
+        },
+        0,
+        80);
+  }
+
   private BorderPane addMenuBar() {
     MenuBar menuBar = new MenuBar();
 
@@ -202,8 +233,13 @@ public class Gui extends Application {
     pastepgn.setOnAction(
         event -> replayGameFromNotation(Clipboard.getSystemClipboard().getString()));
 
+    MenuItem devAction = new MenuItem("Dev action");
+    devAction.setOnAction(event -> devAction());
+
     playPgnMenu = new Menu("Play PGN");
-    menuBar.getMenus().add(new Menu("Game", null, resetmi, playPgnMenu, copypgn, pastepgn));
+    menuBar
+        .getMenus()
+        .add(new Menu("Game", null, resetmi, playPgnMenu, copypgn, pastepgn, devAction));
 
     MenuItem mi = new MenuItem("Load demo games");
     playPgnMenu.getItems().add(mi);
