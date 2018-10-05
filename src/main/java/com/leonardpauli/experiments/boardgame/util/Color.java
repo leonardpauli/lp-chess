@@ -12,15 +12,15 @@ public class Color {
 
   public String getName() {
     return name;
-  };
+  }
 
-  public static Color fromHSL(float hue, float saturation, float lightness) {
+  public static Color fromHsl(float hue, float saturation, float lightness) {
     String name =
         String.format("hsl(%f, %f%%, %f%%)", hue * 360, saturation * 100, lightness * 100);
     return new Color(name);
   }
 
-  public javafx.scene.paint.Color getFXColor() {
+  public javafx.scene.paint.Color getFxColor() {
     return javafx.scene.paint.Color.web(name);
   }
 }

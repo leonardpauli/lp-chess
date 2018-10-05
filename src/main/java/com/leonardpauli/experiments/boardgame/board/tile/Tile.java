@@ -100,6 +100,10 @@ public class Tile {
     return tiles;
   }
 
+  public Tile[] getRelative(EdgeType[] path) throws GameException {
+    throw new GameException("Tile.getRelative(path) not implemented");
+  }
+
   public Tile getFirstRelative(EdgeType[] path) throws GameException {
     Tile tile = this;
     for (EdgeType segment : path) {
@@ -108,10 +112,6 @@ public class Tile {
       tile = tiles[0];
     }
     return tile;
-  }
-
-  public Tile[] getRelative(EdgeType[] path) throws GameException {
-    throw new GameException("Tile.getRelative(path) not implemented");
   }
 
   // string

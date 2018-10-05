@@ -30,7 +30,7 @@ public class Player {
       color = Color.black;
       name = "Black";
     } else {
-      color = Color.fromHSL(ordinal / 10f, 0.5f, 0.5f);
+      color = Color.fromHsl(ordinal / 10f, 0.5f, 0.5f);
       name = "Player " + Integer.toString(1 + ordinal);
     }
   }

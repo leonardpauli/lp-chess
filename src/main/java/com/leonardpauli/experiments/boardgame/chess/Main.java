@@ -14,7 +14,7 @@ public class Main {
 
   public static void main(String[] args) throws Exception {
     if (args.length == 0) {
-      startInteractiveREPL(new Scanner(System.in));
+      startInteractiveRepl(new Scanner(System.in));
     } else if (args[0].equals("about")) {
       printAbout();
     } else {
@@ -48,10 +48,11 @@ public class Main {
     game.playMove(new Move(game.getCurrentPlayer(), movement.edge.source.getPiece(), movement));
   }
 
-  private static void startInteractiveREPL(Scanner scanner) throws Exception {
+  private static void startInteractiveRepl(Scanner scanner) throws Exception {
     System.out.println("Welcome to Chess!");
     System.out.println(
-        "Moves are written in standard chess notation, eg. Kb1a3, Kh, or just a3 should do, see wikipedia :)");
+        "Moves are written in standard chess notation, eg. Kb1a3, Kh, "
+            + "or just a3 should do, see wikipedia :)");
 
     ChessGame game = new ChessGame();
     scanner.useDelimiter(Pattern.compile("\\s"));

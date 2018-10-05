@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class Comment implements Token {
   public String getText() {
     return comment.text;
-  };
+  }
 
   public LineComment comment;
 

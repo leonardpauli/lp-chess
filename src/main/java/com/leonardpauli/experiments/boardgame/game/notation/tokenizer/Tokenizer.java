@@ -42,6 +42,10 @@ public class Tokenizer {
     return res;
   }
 
+  public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
+    return tokenize(token, 0);
+  }
+
   private TokenizeResult tokenizeInner(Token t, int offset) throws TokenizerException, IOException {
     TokenizeResult innerTokenRes = null;
 
@@ -55,10 +59,6 @@ public class Tokenizer {
       }
     }
     return innerTokenRes;
-  }
-
-  public TokenizeResult tokenize(Token token) throws IOException, TokenizerException {
-    return tokenize(token, 0);
   }
 
   public void increaseConsumedCount(int consumedChars) {
