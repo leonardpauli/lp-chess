@@ -17,6 +17,8 @@
 # IntelliJ
 /out/
 .idea/uiDesigner.xml
+.idea/compiler.xml
+.idea/misc.xml
 lib
 files
 target
