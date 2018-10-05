@@ -5,6 +5,10 @@ A Chess flavoured GameBoard implemented using edges of movements between tiles i
 
 Initially created as a project in the indatapluplus course at KTH.
 
+See [screen capture](https://github.com/leonardpauli/lp-chess/blob/master/rim/screencapture-1oct2018.mp4?raw=true) of interaction (including game replay from PGN (Portable Game Notation) files).
+
+![screenshot 6 oct 2018](https://github.com/leonardpauli/lp-chess/blob/master/rim/screenshot-6oct2018.png?raw=true)
+
 ## build system
 
 - prerequisite: `JDK 10` + `maven` installed
@@ -39,14 +43,16 @@ see `rim/Chess.Simple.rim` for current MVP goal, then the rest of the files in `
 
 ![16 sept 2018 MVP moves](rim/16sept2018-mvp-moves.png?raw=true "Proof of concept")
 
-plan:
-
 - finish implementation
 - add some tests
 - open project with intelliJ, run google linting
 - run tests, from tiny to larger, while resolving logic issues
 - abort for now because I absolutely don't have time for this
 - get back, fix simple interface for handling simple 8x8 board
+- work on tokenizer for different versions of chess notation
+- tokenizer working
+- create GUI using JavaFX (using paths instead of rects to support polygon board later on)
+- implemented "load PGN file" + replay of game in GUI
 - use build system + package manager
 - CI: travis on PR (running maven test inc. check style)
 
