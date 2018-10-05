@@ -1,4 +1,4 @@
-# LeonardPauli/chess
+# LeonardPauli/chess [![Build Status](https://travis-ci.com/leonardpauli/lp-chess.svg?branch=master)](https://travis-ci.com/leonardpauli/lp-chess)
 *code experiments with the board game chess as subject*
 
 A Chess flavoured GameBoard implemented using edges of movements between tiles instead of a usual hardcoded 8x8 board. The idea is that this will allow for many variations of rules and board layouts with minimal code change (eg. chess with three kingdoms using a pentagon board).
@@ -11,6 +11,7 @@ Initially created as a project in the indatapluplus course at KTH.
 - `git clone ... chess && cd $_`
 - `mvn install`
 - `mvn test`
+- `mvn checkstyle:check`
 - `mvn package`
 - `java -jar target/*.jar`
 

@@ -19,6 +19,9 @@
     <maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
     <junit.platform.surefire.provider.version>1.3.1</junit.platform.surefire.provider.version>
     <junit.version>5.2.0</junit.version>
+
+    <checkstyle.file.path>style_checks.xml</checkstyle.file.path>
+    <checkstyle.latest.version>8.13</checkstyle.latest.version>
   </properties>
 
   <dependencies>
@@ -62,6 +65,34 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+          <configLocation>${checkstyle.file.path}</configLocation>
+          <consoleOutput>true</consoleOutput>
+          <failOnViolation>true</failOnViolation>
+        </configuration>
+        <executions>
+          <execution>
+            <id>checkstyle</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>${checkstyle.latest.version}</version>
           </dependency>
         </dependencies>
       </plugin>

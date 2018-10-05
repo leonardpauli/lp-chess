@@ -77,7 +77,7 @@ public class Tokenizer {
       result.write(buffer, 0, length);
     }
     // TODO: instead of copying old string, reuse by shifting cutOffset
-    // 	initialize string to bufferTargetSize*2 so no reallocation needed
+    //  initialize string to bufferTargetSize*2 so no reallocation needed
     this.buffer = this.buffer.substring(cutOffset) + result.toString(StandardCharsets.UTF_8);
     cutOffset = 0;
 
