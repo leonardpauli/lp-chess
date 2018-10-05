@@ -10,6 +10,7 @@ Initially created as a project in the indatapluplus course at KTH.
 - prerequisite: `JDK 10` + `maven` installed
 - `git clone ... chess && cd $_`
 - `mvn install`
+- `mvn test`
 - `mvn package`
 - `java -jar target/*.jar`
 
